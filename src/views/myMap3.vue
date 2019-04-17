@@ -1,0 +1,1071 @@
+<template>
+  <div class="myMapWrap">
+    <div id="myMap"></div>
+    <!--顶部-->
+    <div class="map_top flex flex_center">
+      <i></i><span>衢州市非机动车"芯车牌"管理系统</span>
+      <!--搜索框-->
+      <div class="map_searchWrap"><i></i></div>
+      <!--右边两按钮-->
+      <div class="map_list"></div>
+      <div class="map_fullScreen"></div>
+    </div>
+    <!--左边模块警告信息-->
+    <!--左边模块收起图标-->
+    <div class="map_leftShrikIcon" @click="openLeft"><i></i></div>
+    <!--左边模块展开部分-->
+    <div class="map_alarmWrap" :class="{fadeOutLeft:shrink_left,fadeInLeft:open_left}">
+      <!--告警-->
+      <div class="map_alarm map_alarmTop">
+        <!--标题-->
+        <div class="map_alarmTitle flex flex_center">
+          <span>告警</span>
+        </div>
+        <!--时间-->
+        <div class="map_alarmTime">
+          <div>2019/04/15 14:15:00</div>
+        </div>
+        <div class="map_alarmLine">
+          <div class="map_alarmLineWrap">
+            <div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}">
+              <div class="map_alarms" v-for="(item,key) in alarmData" :key="item.id">
+                <!--左边信息-->
+                <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}">
+                  <div class="left alarm_time"><span>{{item.time}}</span><i></i></div>
+                  <div class="right alarm_con">
+                    <i></i>
+                    <div>车牌号:{{item.mobileId}}</div>
+                    <div>基站:{{item.mobileSite}}</div>
+                    <div class="text_overflow">类型:{{item.alarmType}}</div>
+                  </div>
+                </div>
+                <!--右边信息-->
+                <div class="alarm_info alarm_right" :class="{showLeft:item.id%2==0}">
+                  <div class="right alarm_time"><i></i><span>{{item.time}}</span></div>
+                  <div class="left alarm_con">
+                    <i></i>
+                    <div>车牌号:{{item.mobileId}}</div>
+                    <div>基站:{{item.mobileSite}}</div>
+                    <div class="text_overflow">类型:{{item.alarmType}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+        </div>
+      </div>
+      <!--分割线-->
+      <div class="map_splitLine"></div>
+      <!--事故-->
+      <div class="map_alarm map_accident">
+        <!--标题-->
+        <div class="map_alarmTitle flex flex_center">
+          <span>事故</span>
+        </div>
+        <!--时间-->
+        <div class="map_alarmTime">
+          <div>2019/04/15 14:15:00</div>
+        </div>
+        <div class="map_alarmLine">
+          <div class="map_alarmLineWrap">
+            <div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}">
+              <div class="map_alarms" v-for="(item,key) in alarmData" :key="item.id">
+                <!--左边信息-->
+                <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}">
+                  <div class="left alarm_time"><span>{{item.time}}</span><i></i></div>
+                  <div class="right alarm_con">
+                    <i></i>
+                    <div>车牌号:{{item.mobileId}}</div>
+                    <div>基站:{{item.mobileSite}}</div>
+                    <div class="text_overflow">类型:{{item.alarmType}}</div>
+                  </div>
+                </div>
+                <!--右边信息-->
+                <div class="alarm_info alarm_right" :class="{showLeft:item.id%2==0}">
+                  <div class="right alarm_time"><i></i><span>{{item.time}}</span></div>
+                  <div class="left alarm_con">
+                    <i></i>
+                    <div>车牌号:{{item.mobileId}}</div>
+                    <div>基站:{{item.mobileSite}}</div>
+                    <div class="text_overflow">类型:{{item.alarmType}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--收缩箭头栏-->
+      <div class="map_shrikArrow" @click="shrinkLeft">
+        <span><i></i></span>
+      </div>
+      <!--告警详情按钮-->
+      <div class="map_alarmListIcon">
+      </div>
+    </div>
+
+    <!--右边模块统计部分-->
+    <!--左边模块收起图标-->
+    <div class="map_rightShrikIcon" @click="openRight"><i></i></div>
+    <!--右边模块展开部分-->
+    <div class="map_statistics" :class="{fadeOutRight:shrink_right,fadeInRight:open_right}">
+      <!--统计数据按钮栏-->
+       <div class="map_dataIcon">
+         <span><i></i></span>
+       </div>
+      <!--收缩箭头栏-->
+      <div class="map_shrikArrow"  @click="shrinkRight">
+        <span><i></i></span>
+      </div>
+       <!--数据部分-->
+       <div class="map_dataWrap">
+          <!--第一部分 车辆活跃总数-->
+          <div class="map_datas">
+            <div class="map_dataTitle">车辆活跃总数</div>
+            <div class="flex flex_between map_dataCon">
+              <div class="flex flex_align">
+                <div id="map_activeNum" style="width:1.7rem;height:1.3rem;"></div>
+                <div class="map_dataDetail">
+                  <div>上牌车辆总数: <span>190415</span></div>
+                  <div>上路车辆总数:<span>145788</span></div>
+                  <div>外卖车辆总数: <span>10859</span></div>
+                  <div>违标车辆总数: <span>3088</span></div>
+                </div>
+              </div>
+              <div class="map_rightTitle flex flex_center">
+                <span>车辆统计</span>
+              </div>
+            </div>
+          </div>
+         <!--第二部分 告警总数-->
+         <div class="map_datas">
+           <div class="map_dataTitle">告警总数</div>
+           <div class="flex flex_between map_dataCon">
+             <div class="flex flex_align">
+               <div id="map_alarmTotal" style="width:1.7rem;height:1.3rem;"></div>
+               <div class="map_dataDetail">
+                 <div>超速告警总数: <span>190415</span></div>
+                 <div>逆行告警总数:<span>145788</span></div>
+                 <div>布控告警总数: <span>10859</span></div>
+                 <div>事故告警总数: <span>3088</span></div>
+               </div>
+             </div>
+             <div class="map_rightTitle flex flex_center">
+               <span>告警统计</span>
+             </div>
+           </div>
+         </div>
+         <!--第三部分 事故统计-->
+         <div class="map_datas">
+           <div class="map_dataTitle">事故死亡率</div>
+           <div class="flex flex_between map_dataCon">
+             <div class="flex flex_align">
+               <div id="map_accidentTotal" style="width:1.7rem;height:1.3rem;"></div>
+               <div class="map_dataDetail">
+                 <div>事故报警总数: <span>190415</span></div>
+                 <div>事故处理总数:<span>145788</span></div>
+                 <div>死亡事故总数: <span>10859</span></div>
+                 <div>伤人事故总数: <span>3088</span></div>
+                 <div>简易事故总数: <span>3088</span></div>
+               </div>
+             </div>
+             <div class="map_rightTitle flex flex_center">
+               <span>事故统计</span>
+             </div>
+           </div>
+         </div>
+         <!--第四部分 基站总数-->
+         <div class="map_datas">
+           <div class="map_dataTitle">基站总数</div>
+           <div class="flex flex_between map_dataCon">
+             <div class="flex flex_align">
+               <div id="map_siteTotal" style="width:1.7rem;height:1.3rem;"></div>
+               <div class="map_dataDetail">
+                 <div>衢江区基站总数: <span>190415</span></div>
+                 <div>柯城区基站总数:<span>145788</span></div>
+                 <div>龙游县基站总数: <span>10859</span></div>
+                 <div>常山县基站总数: <span>3088</span></div>
+                 <div>江山市基站总数: <span>3088</span></div>
+                 <div>开化县基站总数: <span>3088</span></div>
+               </div>
+             </div>
+             <div class="map_rightTitle flex flex_center">
+               <span>基站统计</span>
+             </div>
+           </div>
+         </div>
+       </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  export default {
+    name: "test",
+    data(){
+      return{
+        showAnimation:false, //滚动动画
+        alarmInterval:null, //滚动定时器
+        alarmTimeout:null,
+        left_show:true, //车辆左右两边布局显示
+        map_activeNum:'',//车辆活跃总数折线图
+        map_alarmTotal:'',//告警总数饼图
+        map_accidentTotal:'',//事故死亡率折线图
+        map_siteTotal:'',//基站总数 环形图
+        shrink_left:false,//左边展开状态
+        open_left:false,
+        shrink_right:false,//右边展开状态
+        open_right:false,
+        alarmData:[{
+          id:0,
+          time:'14:37:00',
+          mobileId:'浙H20190606',
+          mobileSite:'ZQ0067',
+          alarmType:'超速50%'
+        },{
+          id:1,
+          time:'14:37:01',
+          mobileId:'浙H20190606',
+          mobileSite:'ZQ0067',
+          alarmType:'超速50%'
+        },{
+          id:2,
+          time:'14:37:02',
+          mobileId:'浙H20190606',
+          mobileSite:'ZQ0067',
+          alarmType:'超速50%'
+        },{
+          id:3,
+          time:'14:37:03',
+          mobileId:'浙H20190606',
+          mobileSite:'ZQ0067',
+          alarmType:'超速50%'
+        }]
+      }
+    },
+    mounted(){
+      this.getMap();
+      // this.setAnimation();
+      this.map_activeNum = this.$echarts.init(document.getElementById('map_activeNum'));
+      this.getMapActiveNum();//车辆活跃总数 折线图
+
+      this.map_alarmTotal = this.$echarts.init(document.getElementById('map_alarmTotal'));
+      this.getMapAlarmTotal(); // 告警总数 饼图
+
+      this.map_accidentTotal = this.$echarts.init(document.getElementById('map_accidentTotal'));
+      this.getAccidentTotal(); // 事故死亡率 折线图
+
+      this.map_siteTotal = this.$echarts.init(document.getElementById('map_siteTotal'));
+      this.getSiteTotal(); // 基站总数 环形图
+    },
+    methods:{
+      openLeft(){
+        //点击左边按钮展开
+        this.shrink_left = false;
+        this.open_left = true;
+      },
+      shrinkLeft(){
+        //左边底部按钮点击收起模块
+        this.open_left = false;
+        this.shrink_left = true;
+      },
+      openRight(){
+        //点击左边按钮展开
+        this.shrink_right = false;
+        this.open_right = true;
+      },
+      shrinkRight(){
+        //右边底部按钮点击收起模块
+        this.open_right = false;
+        this.shrink_right = true;
+      },
+      setAnimation(){
+        let i = 4;
+        this.alarmInterval = setInterval(()=>{
+          // console.log(i);
+          this.alarmData.unshift({
+            id:i++,
+            time:'14:15:0'+i,
+            mobileId:'浙H20190606',
+            mobileSite:'ZQ0067',
+            alarmType:'超速:50%'
+          });
+          // this.alarmData.pop();
+          this.showAnimation = false;
+          this.alarmTimeout = setTimeout(()=>{
+            this.showAnimation = true;
+          },1000);
+        },2000);
+      },
+      getMap(){
+        var map = new AMap.Map('myMap', {
+          resizeEnable: true, //是否监控地图容器尺寸变化
+          zoom:15, //初始化地图层级
+          center: [118.86631,28.97504] //初始化地图中心点
+        });
+        //***************************************** 热力图
+        if (!isSupportCanvas()) {
+          alert('热力图仅对支持canvas的浏览器适用,您所使用的浏览器不能使用热力图功能,请换个浏览器试试~')
+        }
+        var heatmap;
+        map.plugin(["AMap.Heatmap"], function () {
+          var points =[
+            {"lng":118.860129,"lat":28.974408,"count":50},
+            {"lng":118.858117,"lat":28.974156,"count":51},
+            {"lng":118.859267,"lat":28.974156,"count":15},
+            {"lng":118.860273,"lat":28.974282,"count":40},
+            {"lng":118.855674,"lat":28.973903,"count":100}];
+          //初始化heatmap对象
+          heatmap = new AMap.Heatmap(map, {
+            radius: 25, //给定半径
+            opacity: [0, 0.8]
+            /*,
+            gradient:{
+                0.5: 'blue',
+                0.65: 'rgb(117,211,248)',
+                0.7: 'rgb(0, 255, 0)',
+                0.9: '#ffea00',
+                1.0: 'red'
+            }
+             */
+          });
+          //设置数据集：该数据为北京部分“公园”数据
+          heatmap.setDataSet({
+            data: points,
+            max: 100
+          });
+        });
+
+        //判断浏览区是否支持canvas
+        function isSupportCanvas() {
+          var elem = document.createElement('canvas');
+          return !!(elem.getContext && elem.getContext('2d'));
+        }
+        // ***********************************************************
+
+        // 布点基站
+        // 创建一个 Icon
+        var startIcon = new AMap.Icon({
+          // 图标尺寸
+          size: new AMap.Size(100, 134),
+          // 图标的取图地址
+          image: 'http://lbsyun.baidu.com/jsdemo/img/fox.gif',
+          // image:'https://webapi.amap.com/theme/v1.3/markers/n/mark_bs.png',
+          // // 图标所用图片大小
+          imageSize: new AMap.Size(135, 100),
+          // // 图标取图偏移量
+          imageOffset: new AMap.Pixel(-47, -13)
+        });
+        let maker1 = new AMap.Marker({
+          position: new AMap.LngLat(118.867388,28.975262),   // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
+          icon:startIcon,
+          animation:'AMAP_ANIMATION_BOUNCE',
+          offset: new AMap.Pixel(-13, -30),
+          title: '衢州1'
+        });
+        let maker2 = new AMap.Marker({
+          position: new AMap.LngLat(118.880323,28.970332),   // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
+          title: '衢州2'
+        });
+        map.add([maker1,maker2]);
+
+        // 轨迹
+        let path_track = [
+          [118.867388,28.975262],
+          [118.880323,28.970332]
+        ];
+
+        var polyline_track = new AMap.Polyline({
+          path: path_track,
+          isOutline: true,
+          outlineColor: '#ffeeff',
+          borderWeight: 3,
+          strokeColor: "#3366FF",
+          strokeOpacity: 1,
+          strokeWeight: 6,
+          // 折线样式还支持 'dashed'
+          strokeStyle: "solid",
+          // strokeStyle是dashed时有效
+          strokeDasharray: [10, 5],
+          lineJoin: 'round',
+          lineCap: 'round',
+          zIndex: 50,
+        });
+
+        polyline_track.setMap(map);
+        // 缩放地图到合适的视野级别
+        // map.setFitView([ polyline_track ])
+      },
+      getMapActiveNum(){
+        //车辆活跃总数
+        var vm = this;
+        let options= {
+          grid:{
+            left: '0.1%',
+            right: '6%',
+            bottom: '0.3%',
+            top:'10%',
+            containLabel: true
+          },
+          xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            // "axisLabel":{
+            //   interval: 0
+            // },
+            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+          },
+          yAxis: {
+            type: 'value'
+          },
+          series: [{
+            data: [820, 932, 901, 934, 1290, 1330, 1320],
+            type: 'line',
+            areaStyle: {}
+          }]
+        };
+        this.map_activeNum.setOption(options);
+        this.drawChart(this.map_activeNum);
+      },
+      getMapAlarmTotal(){
+        // 告警总数 饼图
+        var vm = this;
+        let options = {
+          backgroundColor: '#fff',
+          // tooltip : {
+          //   trigger: 'item',
+          //   formatter: "{a} <br/>{b} : {c} ({d}%)"
+          // },
+          visualMap: {
+            show: false,
+            min: 80,
+            max: 600,
+            inRange: {
+              colorLightness: [0, 1]
+            }
+          },
+          series : [
+            {
+              name:'告警总数',
+              type:'pie',
+              // hoverAnimation: false,
+              radius : '95%',
+              center: ['50%', '52%'],
+              data:[
+                {value:335, name:'超速'},
+                {value:310, name:'逆行'},
+                {value:274, name:'布控'},
+                {value:235, name:'事故'}
+              ].sort(function (a, b) { return a.value - b.value; }),
+              roseType: 'radius',
+              label: {
+                normal: {
+                  position: 'inner',
+                  textStyle: {
+                    color: '#fff'
+                  }
+                }
+              },
+              labelLine: {
+                normal: {
+                  show:false
+                  // lineStyle: {
+                  //   color: '#666'
+                  // },
+                  // smooth: 0.2,
+                  // length: 10,
+                  // length2: 20
+                }
+              },
+              itemStyle: {
+                normal: {
+                  color: '#017AFF',
+                  shadowBlur: 200,
+                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+              },
+              animationType: 'scale',
+              animationEasing: 'elasticOut',
+              animationDelay: function (idx) {
+                return Math.random() * 200;
+              }
+            }
+          ]
+        };
+        this.map_alarmTotal.setOption(options);
+        this.drawChart(this.map_alarmTotal);
+      },
+      getAccidentTotal(){
+        var vm = this;
+        let options= {
+          grid:{
+            left: '0.1%',
+            right: '1%',
+            bottom: '0.3%',
+            top:'10%',
+            containLabel: true
+          },
+          xAxis: {
+            type: 'category',
+            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+          },
+          yAxis: {
+            type: 'value'
+          },
+          series: [{
+            data: [820, 932, 901, 934, 1290, 1330, 1320],
+            type: 'line',
+            smooth: true
+          }]
+        };
+        this.map_accidentTotal.setOption(options);
+        this.drawChart(this.map_accidentTotal);
+      },
+      getSiteTotal(){
+        //基站总数 环形图
+        var vm = this;
+        let options =  {
+          // tooltip: {
+          //   trigger: 'item',
+          //   formatter: "{a} <br/>{b}: {c} ({d}%)"
+          // },
+          series: [
+            {
+              name:'访问来源',
+              type:'pie',
+              radius: ['50%', '90%'],
+              avoidLabelOverlap: false,
+              hoverAnimation:false,
+              label: {
+                normal: {
+                  position: 'inner',
+                  formatter:  function(param){
+                    if (!param.percent) return ''
+                    var f = Math.round(param.percent * 10) / 10;
+                    var s = f.toString();
+                    var rs = s.indexOf('.');
+                    if (rs < 0) {
+                      rs = s.length;
+                      s += '.';
+                    }
+                    while (s.length <= rs + 1) {
+                      s += '0';
+                    }
+                    return s + '%';
+                  }
+                },
+                emphasis: {
+                  show: true,
+                  textStyle: {
+                    fontSize: '15',
+                    fontWeight: 'bold'
+                  }
+                }
+              },
+              labelLine: {
+                normal: {
+                  show: false
+                }
+              },
+              data:[
+                {value:335, name:'直接访问'},
+                {value:310, name:'邮件营销'},
+                {value:234, name:'联盟广告'},
+                {value:135, name:'视频广告'},
+                {value:1548, name:'搜索引擎'}
+              ]
+            }
+          ]
+        };
+        this.map_siteTotal.setOption(options);
+        this.drawChart(this.map_siteTotal);
+      },
+      drawChart(myChart){
+        window.addEventListener('resize',function(){
+          myChart.resize();
+        })
+      }
+    }
+  }
+</script>
+
+<style scoped lang="scss">
+  .myMapWrap{
+    width:100%;
+    height:100vh;
+    position:relative;
+    #myMap{
+      width:100%;
+      height:100vh;
+    }
+    /*顶部信息*/
+    .map_top{
+      position:absolute;
+      top:0;left:0;
+      width:100%;
+      height:0.8rem;
+      /*background:rgba(0,0,0,.1);*/
+       background:linear-gradient(rgba(216,216,216,1), rgba(255,255,255,0));
+      i{
+        display: inline-block;
+        width:0.528rem;
+        height:0.6rem;
+        background:url("../img/logo.png") no-repeat center;
+        background-size:100% 100%;
+      }
+      span{
+        font-size:0.28rem;
+        font-family: 'pingfangBold';
+        margin-left:0.18rem;
+      }
+      .map_searchWrap{
+        position:absolute;
+        top:50%;left:0.2rem;
+        width:0.5rem;
+        height:0.5rem;
+        margin-top:-0.25rem;
+        background:#FFFFFF;
+        box-shadow:0 2px 4px 0 rgba(0,0,0,0.50);
+        border-radius:0.1rem;
+        cursor: pointer;
+        i{
+          position:absolute;
+          width:0.35rem;
+          height:0.35rem;
+          background:url("../img/search.png") no-repeat center;
+          background-size:100% 100%;
+          top:50%;left:50%;
+          margin-top:-0.17rem;
+          margin-left:-0.17rem;
+        }
+      }
+      /*列表按钮*/
+      .map_list{
+        position:absolute;
+        width:0.34rem;
+        height:0.34rem;
+        top:50%;
+        margin-top:-0.17rem;
+        right:1.12rem;
+        background:url("../img/list.png") no-repeat center;
+        background-size:100% 100%;
+        cursor: pointer;
+      }
+      /*全屏按钮*/
+      .map_fullScreen{
+        position:absolute;
+        width:0.38rem;
+        height:0.38rem;
+        top:50%;
+        margin-top:-0.17rem;
+        right:0.26rem;
+        background:url("../img/fullscreen.png") no-repeat center;
+        background-size:100% 100%;
+        cursor: pointer;
+      }
+    }
+    /*左边部分*/
+    /*模块收起icon*/
+    .map_leftShrikIcon{
+      position:absolute;
+      top:0.9rem;left:0.2rem;
+      width:0.5rem;
+      height:0.5rem;
+      background:#FFFFFF;
+      box-shadow:0 2px 4px 0 rgba(0,0,0,0.50);
+      border-radius:0.1rem;
+      cursor: pointer;
+      i{
+        position:absolute;
+        width:0.35rem;
+        height:0.36rem;
+        background:url("../img/alarm_blue.png") no-repeat center;
+        background-size:100% 100%;
+        top:50%;left:50%;
+        margin-top:-0.18rem;
+        margin-left:-0.17rem;
+      }
+    }
+    /*模块展开部分*/
+    .map_alarmWrap{
+      position:absolute;
+      top:0.9rem;
+      left:0;
+      z-index: 1000;
+      width:4.4rem;
+      height:9.14rem;
+      box-sizing: border-box;
+      background: #FCFCFC;
+      box-shadow: 0 0.02rem 0.04rem 0 rgba(0,0,0,0.50);
+      border-radius: 0 0.2rem 0.2rem 0;
+      /*告警*/
+      .map_alarm{
+        width:100%;
+        height:4.57rem;
+        box-sizing: border-box;
+        position:relative;
+        overflow: hidden;
+        /*padding-top:0.2rem;*/
+        /*background: #FCFCFC;*/
+        .map_alarmLine{
+          position:absolute;
+          top:0.39rem;
+          bottom:0;
+          width:0.01rem;
+          background:#017AFF;
+          left:54%;
+          .map_alarmLineWrap{
+            height:6.5rem;
+            position:absolute;
+            top:-0.45rem;
+          }
+        }
+        .map_alarmsWrap{
+          position:relative;
+          height:100%;
+          .map_alarms{
+            /*height:1.2rem;*/
+            height:0.8rem;
+          }
+        }
+        .animation_alarms{
+          margin-top:0.8rem;
+          transition:all 1s ;
+          /*animation: fadeDown 1s linear;*/
+        }
+        .alarm_info{
+          position:absolute;
+          width:0.11rem;
+          height:0.11rem;
+          background:url("../img/message_point.png") no-repeat center;
+          background-size:100% 100%;
+          left:50%;
+          /*top:0.5rem;*/
+          margin-left:-0.055rem;
+          .alarm_time{
+            position:absolute;
+            display: flex;
+            align-items: center;
+            height:0.35rem;
+            top:50%;
+            margin-top:-0.17rem;
+            span{
+              font-size:0.14rem;
+              font-family: 'pingfangMedium';
+              color:#333;
+            }
+            i{
+              display: inline-block;
+              width:0.41rem;
+              height:0.3rem;
+              background:url("../img/mobile_left.png") no-repeat center;
+              background-size:100% 100%;
+              vertical-align: middle;
+            }
+          }
+          .alarm_con{
+            position:absolute;
+            width:1.7rem;
+            height:0.68rem;
+            text-align: left;
+            background: #FFFFFF;
+            box-shadow: 0 0.01rem 0.04rem 0 rgba(0,0,0,0.20);
+            border-radius: 0.04rem;
+            top:50%;
+            margin-top:-0.35rem;
+            box-sizing: border-box;
+            padding-top:0.05rem;
+            i{
+              position:absolute;
+              width:0.06rem;
+              height:0.14rem;
+              background:url("../img/arrow_right.png") no-repeat center;
+              background-size:100% 100%;
+              top:50%;
+              margin-top:-0.07rem;
+            }
+            div{
+              font-size:0.14rem;
+              color:#333;
+              line-height: 0.2rem;
+            }
+          }
+        }
+        .alarm_left{
+          .left{
+            right:0.2rem;
+            i{
+              background:url("../img/mobile_left.png") no-repeat center;
+              background-size:100% 100%;
+              margin-left:0.1rem;
+            }
+          }
+          .right{
+            left:0.2rem;
+            padding-left:0.12rem;
+            padding-right:0.08rem;
+            i{
+              background:url("../img/arrow_right.png") no-repeat center;
+              background-size:100% 100%;
+              left:-0.06rem;
+            }
+          }
+        }
+        .alarm_right{
+          /*margin-top:1rem;*/
+          .left{
+            right:0.2rem;
+            padding-left:0.08rem;
+            padding-right:0.08rem;
+            i{
+              background:url("../img/arrow_left.png") no-repeat center;
+              background-size:100% 100%;
+              right:-0.06rem;
+            }
+          }
+          .right{
+            left:0.2rem;
+            i{
+              background:url("../img/mobile_right.png") no-repeat center;
+              background-size:100% 100%;
+              margin-right:0.1rem;
+            }
+          }
+        }
+        /*时间*/
+        .map_alarmTime{
+          padding-top:0.2rem;
+          position: relative;
+          background: #FCFCFC;
+          z-index: 100;
+          div{
+            width:2.95rem;
+            height:0.19rem;
+            line-height: 0.19rem;
+            background: #017AFF;
+            border-radius:0.95rem;
+            margin:0 auto;
+            font-size:0.14rem;
+            color: #FFFFFF;
+          }
+        }
+        /*标题*/
+        .map_alarmTitle{
+          position:absolute;
+          background:#017AFF;
+          border-radius: 0 0.1rem 0.1rem 0;
+          left:0;
+          width:0.38rem;
+          height:1rem;
+          top:50%;
+          margin-top:-0.5rem;
+          box-sizing: border-box;
+          padding-right:0.05rem;
+          span{
+            font-size:0.18rem;
+            color: #FFFFFF;
+            letter-spacing:0.035rem;
+            font-family: 'pingfangMedium';
+          }
+        }
+      }
+      .map_alarmTop{
+        .map_alarmTime{
+          border-top-right-radius: 0.2rem;
+        }
+      }
+      /*分割线*/
+      .map_splitLine{
+        width:4.1rem;
+        height:0.01rem;
+        background:#ccc;
+        margin:0 auto;
+      }
+      /*事故*/
+      .map_accident{
+        .map_alarmTitle{
+          background:#EA6500;
+        }
+        .map_alarmLine{
+          background:#CB0500;
+        }
+        .map_alarmTime{
+          div{
+            background: #EA6500;
+          }
+        }
+        .alarm_info{
+          background:url("../img/message_red.png") no-repeat center;
+          background-size:100% 100%;
+          .alarm_time{
+            i{
+              background:url("../img/left_red.png") no-repeat center;
+              background-size:100% 100%;
+            }
+          }
+        }
+        .alarm_right{
+          .right{
+            i{
+              background:url("../img/right_red.png") no-repeat center;
+              background-size:100% 100%;
+            }
+          }
+        }
+      }
+      .map_shrikArrow{
+        position:absolute;
+        height:0.25rem;
+        bottom:-0.05rem;
+        width:100%;
+        background: #FCFCFC;
+        border-bottom-right-radius: 0.2rem;
+        cursor: pointer;
+        span{
+          position:absolute;
+          width:0.4rem;
+          height:0.2rem;
+          bottom:0.02rem;
+          right:0;
+          i{
+            position:absolute;
+            width:0.14rem;
+            height:0.14rem;
+            background:url("../img/shrink_left.png") no-repeat center;
+            background-size:100% 100%;
+            right:0.07rem;
+            bottom:0.05rem;
+          }
+        }
+      }
+      /*告警详情列表按钮*/
+      .map_alarmListIcon{
+        position:absolute;
+        z-index:101;
+        width:0.27rem;
+        height:0.28rem;
+        background:url("../img/alarm_gray.png") no-repeat center;
+        background-size:100% 100%;
+        left:0.2rem;
+        top:0.15rem;
+      }
+    }
+
+    /*右边统计数据部分*/
+    .map_rightShrikIcon{
+      position:absolute;
+      top:0.9rem;right:0.2rem;
+      width:0.5rem;
+      height:0.5rem;
+      background:#FFFFFF;
+      box-shadow:0 2px 4px 0 rgba(0,0,0,0.50);
+      border-radius:0.1rem;
+      cursor: pointer;
+      i{
+        position:absolute;
+        width:0.34rem;
+        height:0.34rem;
+        background:url("../img/data_blue.png") no-repeat center;
+        background-size:100% 100%;
+        top:50%;left:50%;
+        margin-top:-0.17rem;
+        margin-left:-0.17rem;
+      }
+    }
+    .map_statistics{
+      position:absolute;
+      top:0.9rem;
+      right:0;
+      z-index: 1100;
+      width:4rem;
+      height:8.43rem;
+      padding-left:0.2rem;
+      box-sizing: border-box;
+      background: #FCFCFC;
+      box-shadow: 0 0.02rem 0.04rem 0 rgba(0,0,0,0.50);
+      border-radius: 0.2rem 0 0 0.2rem;
+      .map_dataIcon{
+        height:0.37rem;
+        span{
+          position:absolute;
+          width:0.5rem;
+          height:0.5rem;
+          right:0;top:0;
+          i{
+            position:absolute;
+            width:0.28rem;
+            height:0.28rem;
+            background:url("../img/data_icon.png") no-repeat center;
+            background-size:100% 100%;
+            right:0.07rem;
+            bottom:0.01rem;
+          }
+        }
+      }
+      .map_dataWrap{
+        padding-top:0.2rem;
+        .map_datas{
+          margin-bottom:0.35rem;
+          .map_dataTitle{
+            text-align: left;
+            font-size:0.14rem;
+            color: #666666;
+            margin-bottom:0.1rem;
+          }
+          .map_dataCon{
+            .map_dataDetail{
+              margin-left:0.1rem;
+              text-align: left;
+                div{
+                  font-family:'pingfangMedium';
+                  font-size:0.14rem;
+                  color:#151515;
+                  line-height: 0.21rem;
+                  span{
+                    font-family: 'pingfangRegular';
+                    color:#666;
+                  }
+                }
+            }
+            .map_rightTitle{
+              width:0.38rem;
+              height:1.3rem;
+              background: #017AFF;
+              border-radius:0.1rem 0 0 0.1rem;
+              box-sizing: border-box;
+              padding-left:0.08rem;
+              span{
+                font-family: 'pingfangMedium';
+                font-size:0.18rem;
+                color: #FFFFFF;
+                letter-spacing: 0.025rem;
+              }
+            }
+          }
+        }
+      }
+      /*收缩箭头*/
+      .map_shrikArrow{
+        position:absolute;
+        width:0.4rem;
+        height:0.3rem;
+        bottom:0.02rem;
+        left:0;
+        i{
+          position:absolute;
+          width:0.14rem;
+          height:0.14rem;
+          background:url("../img/shrink_right.png") no-repeat center;
+          background-size:100% 100%;
+          left:0.1rem;
+          bottom:0.05rem;
+        }
+      }
+    }
+  }
+  .showLeft{
+    display: none;
+  }
+
+
+</style>

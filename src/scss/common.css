@@ -1,0 +1,133 @@
+@charset "UTF-8";
+.flex {
+  display: flex; }
+
+.flex_center {
+  justify-content: center;
+  align-items: center; }
+
+.flex_align {
+  align-items: center; }
+
+.flex_between {
+  justify-content: space-between; }
+
+@font-face {
+  font-family: 'pingfangBold';
+  /*给自定义字体命名*/
+  src: url("~@/assets/fonts/PingFangBold.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal; }
+@font-face {
+  font-family: 'pingfangMedium';
+  /*给自定义字体命名*/
+  src: url("~@/assets/fonts/PingFangMedium.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal; }
+.text_overflow {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap; }
+
+/*从左进入*/
+.fadeInLeft {
+  animation: fadeInLeft 1s ease-out forwards; }
+
+@keyframes fadeInLeft {
+  0% {
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0); }
+  100% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0); } }
+@-webkit-keyframes fadeInLeft {
+  0% {
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0); }
+  100% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0); } }
+/*从左离开*/
+.fadeOutLeft {
+  animation: fadeOutLeft 1s ease-in forwards; }
+
+@keyframes fadeOutLeft {
+  0% {
+    opacity: 1; }
+  50% {
+    opacity: 0;
+    -webkit-transform: scale3d(0.3, 0.3, 0.3);
+    transform: scale3d(0.3, 0.3, 0.3);
+    transform-origin: 0 0 0; }
+  100% {
+    opacity: 0;
+    -webkit-transform: scale3d(0, 0, 0);
+    transform: scale3d(0, 0, 0);
+    transform-origin: 0 0 0; } }
+@-webkit-keyframes fadeOutLeft {
+  0% {
+    opacity: 1; }
+  50% {
+    opacity: 0;
+    -webkit-transform: scale3d(0.3, 0.3, 0.3);
+    transform: scale3d(0.3, 0.3, 0.3);
+    transform-origin: 0 0 0; }
+  100% {
+    opacity: 0;
+    -webkit-transform: scale3d(0, 0, 0);
+    transform: scale3d(0, 0, 0);
+    transform-origin: 0 0 0; } }
+/*从右进入*/
+.fadeInRight {
+  animation: fadeInRight 1s ease-out forwards; }
+
+@keyframes fadeInRight {
+  0% {
+    opacity: 0;
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0); }
+  100% {
+    opacity: 1;
+    -webkit-transform: none;
+    transform: none; } }
+@-webkit-keyframes fadeInRight {
+  0% {
+    opacity: 0;
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0); }
+  100% {
+    opacity: 1;
+    -webkit-transform: none;
+    transform: none; } }
+/*从右离开*/
+.fadeOutRight {
+  animation: fadeOutRight 1s ease-in forwards; }
+
+@keyframes fadeOutRight {
+  0% {
+    opacity: 1; }
+  50% {
+    opacity: 0;
+    -webkit-transform: scale3d(0.3, 0.3, 0.3);
+    transform: scale3d(0.3, 0.3, 0.3);
+    transform-origin: 100% 0 0; }
+  100% {
+    opacity: 0;
+    -webkit-transform: scale3d(0, 0, 0);
+    transform: scale3d(0, 0, 0);
+    transform-origin: 100% 0 0; } }
+@-webkit-keyframes fadeOutRight {
+  0% {
+    opacity: 1; }
+  50% {
+    opacity: 0;
+    -webkit-transform: scale3d(0.3, 0.3, 0.3);
+    transform: scale3d(0.3, 0.3, 0.3);
+    transform-origin: 100% 0 0; }
+  100% {
+    opacity: 0;
+    -webkit-transform: scale3d(0, 0, 0);
+    transform: scale3d(0, 0, 0);
+    transform-origin: 100% 0 0; } }
+
+/*# sourceMappingURL=common.css.map */
