@@ -3,12 +3,16 @@
     <div id="myMap"></div>
     <!--顶部-->
     <div class="map_top flex flex_center">
-      <i></i><span>衢州市非机动车"芯车牌"管理系统</span>
+      <i class="logo"></i><span>衢州市非机动车"芯车牌"管理系统</span>
       <!--搜索框-->
-      <div class="map_searchWrap"><i></i></div>
+      <div class="map_searchWrap" v-if="false"><i></i></div>
+      <!--展开的搜索框-->
+      <el-input class="searchInput"  v-model="searchInputVal" placeholder="请输入车牌号/事故id查询" @keyup.enter.native="searchEnterInput">
+        <i slot="suffix" class="el-input__icon el-icon-search" @click="searchEnterInput"></i>
+      </el-input>
       <!--右边两按钮-->
       <div class="map_list"></div>
-      <div class="map_fullScreen"></div>
+      <div class="map_fullScreen" @click="launchFullScreen"></div>
     </div>
     <!--左边模块警告信息-->
     <!--左边模块收起图标-->
@@ -216,6 +220,8 @@
         open_left:false,
         shrink_right:false,//右边展开状态
         open_right:false,
+        goFullScreen:0,
+        searchInputVal:'',
         alarmData:[{
           id:0,
           time:'14:37:00',
@@ -259,6 +265,48 @@
       this.getSiteTotal(); // 基站总数 环形图
     },
     methods:{
+      searchEnterInput(){
+        console.log('search');
+      },
+      fullScreenChange(){
+        var isFullscreen = document.fullscreenEnabled ||
+          window.fullScreen ||
+          document.webkitIsFullScreen ||
+          document.msFullscreenEnabled;
+        if(!isFullscreen){
+          this.goFullScreen = 0;
+        }
+      },
+      launchFullScreen(){
+        if(this.goFullScreen == 0){
+          this.goFullScreen = 1;
+          var element = document.documentElement;
+          if(element.requestFullscreen) {
+            element.requestFullscreen();
+          } else if(element.mozRequestFullScreen) {
+            element.mozRequestFullScreen();
+          } else if(element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen();
+          } else if(element.msRequestFullscreen) {
+            element.msRequestFullscreen();
+          }
+        }else{
+          this.goFullScreen = 0;
+          if(document.exitFullscreen){
+            document.exitFullscreen();
+          } else if(document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+          } else if(document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          }else if(document.msExitFullscreen){
+            document.msExiFullscreen();
+          }
+        }
+        document.addEventListener('fullscreenchange',this.fullScreenChange);
+        document.addEventListener('webkitfullscreenchange',this.fullScreenChange);
+        document.addEventListener('mozfullscreenchange',this.fullScreenChange);
+        document.addEventListener('MSFullscreenChange',this.fullScreenChange);
+      },
       openLeft(){
         //点击左边按钮展开
         this.shrink_left = false;
@@ -594,6 +642,7 @@
     width:100%;
     height:100vh;
     position:relative;
+    overflow: hidden;
     #myMap{
       width:100%;
       height:100vh;
@@ -606,7 +655,7 @@
       height:0.8rem;
       /*background:rgba(0,0,0,.1);*/
        background:linear-gradient(rgba(216,216,216,1), rgba(255,255,255,0));
-      i{
+      .logo{
         display: inline-block;
         width:0.528rem;
         height:0.6rem;
@@ -1060,6 +1109,32 @@
           left:0.1rem;
           bottom:0.05rem;
         }
+      }
+    }
+  }
+
+  /*展开的搜索框*/
+  .myMapWrap /deep/ .map_top{
+    .el-input{
+      position:absolute;
+      top:50%;left:0.2rem;
+      width:2.5rem;
+      height:0.4rem;
+      margin-top:-0.2rem;
+      .el-input__inner{
+        height:0.4rem;
+        font-size:0.14rem;
+        padding:0 0.15rem 0 0.3rem;
+      }
+      .el-icon-search:before{
+        position:absolute;
+        content:'';
+        width:0.25rem;
+        height:0.25rem;
+        top:50%;left:50%;
+        margin-top:-0.12rem;margin-left:-0.175rem;
+        background:url("../img/search.png") no-repeat center;
+        background-size:100% 100%;
       }
     }
   }
