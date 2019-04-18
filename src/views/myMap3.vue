@@ -31,7 +31,7 @@
               <div class="map_alarms" v-for="(item,key) in alarmData" :key="item.id">
                 <!--左边信息-->
                 <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}">
-                  <div class="left alarm_time"><span>{{item.time}}</span><i></i></div>
+                  <div class="left alarm_time"><span>{{toTimeString(new Date)}}</span><i></i></div>
                   <div class="right alarm_con">
                     <i></i>
                     <div>车牌号:{{item.mobileId}}</div>
@@ -41,7 +41,7 @@
                 </div>
                 <!--右边信息-->
                 <div class="alarm_info alarm_right" :class="{showLeft:item.id%2==0}">
-                  <div class="right alarm_time"><i></i><span>{{item.time}}</span></div>
+                  <div class="right alarm_time"><i></i><span>{{toTimeString(new Date)}}</span></div>
                   <div class="left alarm_con">
                     <i></i>
                     <div>车牌号:{{item.mobileId}}</div>
@@ -64,20 +64,20 @@
         </div>
         <!--时间-->
         <div class="map_alarmTime">
-          <div>2019/04/15 14:15:00</div>
+          <div>{{(accident_data.length > 0) && ((new Date).toISOString().split('T')[0] + ' ' + accident_data[0].time)}}</div>
         </div>
         <div class="map_alarmLine">
           <div class="map_alarmLineWrap">
-            <div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}">
-              <div class="map_alarms" v-for="(item,key) in alarmData" :key="item.id">
+            <div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}" :style="{transform: 'translateY(' + offset1 + 'rem)', background: 'red'}">
+              <div class="map_alarms" v-for="(item,key) in accident_data" :key="item.id">
                 <!--左边信息-->
                 <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}">
                   <div class="left alarm_time"><span>{{item.time}}</span><i></i></div>
                   <div class="right alarm_con">
                     <i></i>
-                    <div>车牌号:{{item.mobileId}}</div>
-                    <div>基站:{{item.mobileSite}}</div>
-                    <div class="text_overflow">类型:{{item.alarmType}}</div>
+                    <div>车牌号:{{item.plate_no}}</div>
+                    <div>基站:{{item.device_id}}</div>
+                    <div class="text_overflow">类型:{{item.type}}</div>
                   </div>
                 </div>
                 <!--右边信息-->
@@ -85,9 +85,9 @@
                   <div class="right alarm_time"><i></i><span>{{item.time}}</span></div>
                   <div class="left alarm_con">
                     <i></i>
-                    <div>车牌号:{{item.mobileId}}</div>
-                    <div>基站:{{item.mobileSite}}</div>
-                    <div class="text_overflow">类型:{{item.alarmType}}</div>
+                    <div>车牌号:{{item.plate_no}}</div>
+                    <div>基站:{{item.device_id}}</div>
+                    <div class="text_overflow">类型:{{item.type}}</div>
                   </div>
                 </div>
               </div>
@@ -201,12 +201,14 @@
 
 <script>
   import {getBaseStation, getTrack, getTrafficFlow} from "../api/remConfig";
-
+  import gen_mock_event from '../data/accident-data'
   export default {
     name: "test",
     data() {
       return {
         vehicle_track: null,
+        offset1: -5.7,
+        offset2: -5.7,
         heat_map_points: [],
         base_station_markers: [],
         base_stations: [],
@@ -222,31 +224,8 @@
         open_left: false,
         shrink_right: false,//右边展开状态
         open_right: false,
-        alarmData: [{
-          id: 0,
-          time: '14:37:00',
-          mobileId: '浙H20190606',
-          mobileSite: 'ZQ0067',
-          alarmType: '超速50%'
-        }, {
-          id: 1,
-          time: '14:37:01',
-          mobileId: '浙H20190606',
-          mobileSite: 'ZQ0067',
-          alarmType: '超速50%'
-        }, {
-          id: 2,
-          time: '14:37:02',
-          mobileId: '浙H20190606',
-          mobileSite: 'ZQ0067',
-          alarmType: '超速50%'
-        }, {
-          id: 3,
-          time: '14:37:03',
-          mobileId: '浙H20190606',
-          mobileSite: 'ZQ0067',
-          alarmType: '超速50%'
-        }]
+        alarmData: [],
+        accident_data: []
       }
     },
     mounted() {
@@ -289,7 +268,27 @@
         })
       })
 
+
       this.showVehicleTrack(1)
+
+      // 事故滚动列表
+      var index = 0
+      const fn = () => {
+        console.log(index)
+        let e = gen_mock_event();
+        e.id = index++;
+        e.time = this.toTimeString(new Date);
+        this.accident_data.unshift(e)
+        this.offset1 += 0.8
+        setTimeout(fn, Math.floor(2 + Math.random() * 4) * 1000)
+      }
+      fn()
+
+      // 告警滚动列表
+      var ws = new WebSocket('ws://172.16.0.34:8889')
+      ws.on('message', r => {
+        console.log(r)
+      })
     },
     watch: {
       base_stations: function (new_data, old_data) {
@@ -306,6 +305,9 @@
       }
     },
     methods: {
+      toTimeString(dt) {
+        return dt.toTimeString().split(' ')[0]
+      },
       openLeft() {
         //点击左边按钮展开
         this.shrink_left = false;
@@ -803,9 +805,10 @@
         }
 
         .map_alarmsWrap {
-          position: relative;
-          height: 100%;
-
+          position: absolute;
+          bottom: 0;
+          width: 100%;
+          transition: all .2s;
           .map_alarms {
             /*height:1.2rem;*/
             height: 0.8rem;
