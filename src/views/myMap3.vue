@@ -41,7 +41,7 @@
                   <div class="right alarm_con" @click="openAlarmDialog(item,'1')">
                     <i></i>
                     <div>车牌号:{{item.plate_no}}</div>
-                    <div>基站:{{item.device_id}}</div>
+                    <div>基站:QZRF{{item.device_id.padStart(5, '0')}}</div>
                     <div class="text_overflow">类型:{{item.type}}</div>
                   </div>
                 </div>
@@ -51,7 +51,7 @@
                   <div class="left alarm_con" @click="openAlarmDialog(item,'1')">
                     <i></i>
                     <div>车牌号:{{item.plate_no}}</div>
-                    <div>基站:{{item.device_id}}</div>
+                    <div>基站:QZRF{{item.device_id.padStart(5, '0')}}</div>
                     <div class="text_overflow">类型:{{item.type}}</div>
                   </div>
                 </div>
