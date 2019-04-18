@@ -30,3 +30,8 @@ export const getTrafficFlow = (data) => {
 export const getTrack = (data) => {
   return axios.post(`${base}/points`, data);
 };
+
+// 搜索
+export const searchInfo = (data)=>{
+  return axios.post(`${base}/search`,data);
+}

@@ -223,7 +223,7 @@
 <script>
   import alarmDialog from '../components/alarmDialog'
   import mobileInfo from '../components/mobileInfo'
-  import {getBaseStation, getTrack, getTrafficFlow} from "../api/remConfig";
+  import {getBaseStation, getTrack, getTrafficFlow,searchInfo} from "../api/remConfig";
   import {gen_mock_event} from '../data/accident-data'
   import {gen_mock_alert, gen_alert_desc} from '../data/alarm-data'
 
@@ -423,6 +423,8 @@
       },
       hiddenDialog(){
         this.showAlarmDialog = false;
+        this.vehicle_track.setPath(['','']);
+        this.hasShowTrack = false;
       },
       hiddenMobileDialog(){
         this.showMobileDialog = false;
@@ -436,7 +438,13 @@
         this.detailType = type;
       },
       searchEnterInput(){
-        this.showMobileDialog = true;
+        // this.showMobileDialog = true;
+        console.log(this.searchInputVal);
+        searchInfo({"key_word":this.searchInputVal}).then(refs=>{
+          console.log(refs);
+        }).catch(err=>{
+          console.log(err);
+        });
       },
       fullScreenChange(){
         var isFullscreen = document.fullscreenEnabled ||
