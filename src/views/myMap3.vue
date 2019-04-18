@@ -200,10 +200,15 @@
 </template>
 
 <script>
+  import {getBaseStation, getTrafficFlow} from "../api/remConfig";
+
   export default {
     name: "test",
     data(){
       return{
+        heat_map_points: [],
+        base_station_markers: [],
+        base_stations: [],
         showAnimation:false, //滚动动画
         alarmInterval:null, //滚动定时器
         alarmTimeout:null,
@@ -244,6 +249,7 @@
       }
     },
     mounted(){
+      const me = this
       this.getMap();
       // this.setAnimation();
       this.map_activeNum = this.$echarts.init(document.getElementById('map_activeNum'));
@@ -257,6 +263,44 @@
 
       this.map_siteTotal = this.$echarts.init(document.getElementById('map_siteTotal'));
       this.getSiteTotal(); // 基站总数 环形图
+
+      getBaseStation().then(function (r) {
+        me.base_stations = r.data.data
+      })
+
+      getTrafficFlow({flag: 2}).then(r => {
+        console.log(r.data.result)
+        this.heat_map_points = [];
+        r.data.result.forEach(e => {
+          for (let i = 0; i < this.base_stations.length; i++) {
+            if (this.base_stations[i].id == e[0]) {
+              this.heat_map_points.push({
+                lng: this.base_stations[i].longitude,
+                lat: this.base_stations[i].latitude,
+                count: e[1]
+              })
+            }
+          }
+        })
+        this.heatMap.setDataSet({
+          data: this.heat_map_points,
+          max: 100
+        })
+      })
+    },
+    watch: {
+      base_stations: function(new_data, old_data) {
+        this.map.remove(this.base_station_markers)
+        this.base_station_markers = []
+        new_data.forEach(e => {
+          let marker = new AMap.Marker({
+            position: new AMap.LngLat(e.longitude, e.latitude),   // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
+            title: '衢州3'
+          });
+          this.map.add(marker);
+          this.base_station_markers.push(marker);
+        })
+      }
     },
     methods:{
       openLeft(){
@@ -303,10 +347,12 @@
           zoom:15, //初始化地图层级
           center: [118.86631,28.97504] //初始化地图中心点
         });
+        this.map = map;
         //***************************************** 热力图
         if (!isSupportCanvas()) {
           alert('热力图仅对支持canvas的浏览器适用,您所使用的浏览器不能使用热力图功能,请换个浏览器试试~')
         }
+        var me = this;
         var heatmap;
         map.plugin(["AMap.Heatmap"], function () {
           var points =[
@@ -329,11 +375,12 @@
             }
              */
           });
+          me.heatMap = heatmap
           //设置数据集：该数据为北京部分“公园”数据
-          heatmap.setDataSet({
-            data: points,
-            max: 100
-          });
+          // heatmap.setDataSet({
+          //   data: points,
+          //   max: 100
+          // });
         });
 
         //判断浏览区是否支持canvas
