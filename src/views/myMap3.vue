@@ -68,9 +68,11 @@
         </div>
         <div class="map_alarmLine">
           <div class="map_alarmLineWrap">
+
             <div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}" :style="{transform: 'translateY(' + offset1 + 'rem)', background: 'red'}">
               <div class="map_alarms" v-for="(item,key) in accident_data" :key="item.id">
                 <!--左边信息-->
+
                 <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}">
                   <div class="left alarm_time"><span>{{item.time}}</span><i></i></div>
                   <div class="right alarm_con">
