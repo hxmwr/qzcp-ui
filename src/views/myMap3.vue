@@ -326,27 +326,24 @@
       fn();
 
       // 告警滚动列表
-      // var ws = new WebSocket('ws://172.16.0.34:8889');
-      // ws.onmessage = (e) => {
-      //   console.log(e);
-      // };
-      // ws.on('message', r => {
-      //   console.log(r)
-      // })
-      var index2 = 0;
-      const fn2 = () => {
-        let e = gen_mock_alert();
-        e.id = index2++;
-        e.time = this.toTimeString(new Date);
-        this.alarmData.unshift(e);
-        this.offset2 += 0.8;
-        if (this.alarmData.length > 15) {
-          this.alarmData = this.alarmData.slice(0, -5);
-          this.offset2 -= (0.8 * 5);
-        }
-        setTimeout(fn2, Math.floor(2 + Math.random() * 4) * 1000)
+      var ws = new WebSocket('ws://172.16.0.34:8889');
+      ws.onmessage = (e) => {
+        console.log(e);
       };
-      fn2();
+      // var index2 = 0;
+      // const fn2 = () => {
+      //   let e = gen_mock_alert();
+      //   e.id = index2++;
+      //   e.time = this.toTimeString(new Date);
+      //   this.alarmData.unshift(e);
+      //   this.offset2 += 0.8;
+      //   if (this.alarmData.length > 15) {
+      //     this.alarmData = this.alarmData.slice(0, -5);
+      //     this.offset2 -= (0.8 * 5);
+      //   }
+      //   setTimeout(fn2, Math.floor(2 + Math.random() * 4) * 1000)
+      // };
+      // fn2();
     },
     watch: {
       base_stations: function (new_data, old_data) {
