@@ -29,6 +29,11 @@
   overflow: hidden;
   white-space: nowrap; }
 
+.show_btn {
+  outline: none;
+  padding: 0;
+  cursor: pointer; }
+
 /*从左进入*/
 .fadeInLeft {
   animation: fadeInLeft 1s ease-out forwards; }

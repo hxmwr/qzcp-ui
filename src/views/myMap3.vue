@@ -7,18 +7,18 @@
       <!--搜索框-->
       <div class="map_searchWrap" v-if="false"><i></i></div>
       <!--展开的搜索框-->
-      <el-input class="searchInput"  v-model="searchInputVal" placeholder="请输入车牌号/事故id查询" @keyup.enter.native="searchEnterInput">
+      <el-input class="searchInput" v-show="showTrack" v-model="searchInputVal" placeholder="请输入车牌号/告警ID" @keyup.enter.native="searchEnterInput">
         <i slot="suffix" class="el-input__icon el-icon-search" @click="searchEnterInput"></i>
       </el-input>
       <!--右边两按钮-->
-      <div class="map_list"></div>
-      <div class="map_fullScreen" @click="launchFullScreen"></div>
+      <div class="map_list" v-show="showTrack"></div>
+      <div class="map_fullScreen" @click="launchFullScreen" v-show="showTrack"></div>
     </div>
     <!--左边模块警告信息-->
     <!--左边模块收起图标-->
-    <div class="map_leftShrikIcon" @click="openLeft"><i></i></div>
+    <div class="map_leftShrikIcon" @click="openLeft" v-show="showTrack"><i></i></div>
     <!--左边模块展开部分-->
-    <div class="map_alarmWrap" :class="{fadeOutLeft:shrink_left,fadeInLeft:open_left}">
+    <div class="map_alarmWrap" v-show="showTrack" :class="{fadeOutLeft:shrink_left,fadeInLeft:open_left}">
       <!--告警-->
       <div class="map_alarm map_alarmTop">
         <!--标题-->
@@ -44,7 +44,7 @@
                   </div>
                 </div>
                 <!--右边信息-->
-                <div class="alarm_info alarm_right" :class="{showLeft:item.id%2==0}">
+                <div class="alarm_info alarm_right" :class="{showLeft:item.id%2==0}" @click="openAlarmDialog">
                   <div class="right alarm_time"><i></i><span>{{item.time}}</span></div>
                   <div class="left alarm_con">
                     <i></i>
@@ -75,7 +75,7 @@
             <div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}">
               <div class="map_alarms" v-for="(item,key) in alarmData" :key="item.id">
                 <!--左边信息-->
-                <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}">
+                <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}" @click="openAlarmDialog">
                   <div class="left alarm_time"><span>{{item.time}}</span><i></i></div>
                   <div class="right alarm_con">
                     <i></i>
@@ -85,7 +85,7 @@
                   </div>
                 </div>
                 <!--右边信息-->
-                <div class="alarm_info alarm_right" :class="{showLeft:item.id%2==0}">
+                <div class="alarm_info alarm_right" :class="{showLeft:item.id%2==0}" @click="openAlarmDialog">
                   <div class="right alarm_time"><i></i><span>{{item.time}}</span></div>
                   <div class="left alarm_con">
                     <i></i>
@@ -110,9 +110,9 @@
 
     <!--右边模块统计部分-->
     <!--左边模块收起图标-->
-    <div class="map_rightShrikIcon" @click="openRight"><i></i></div>
+    <div class="map_rightShrikIcon" v-show="showTrack" @click="openRight"><i></i></div>
     <!--右边模块展开部分-->
-    <div class="map_statistics" :class="{fadeOutRight:shrink_right,fadeInRight:open_right}">
+    <div class="map_statistics" v-show="showTrack" :class="{fadeOutRight:shrink_right,fadeInRight:open_right}">
       <!--统计数据按钮栏-->
       <div class="map_dataIcon">
         <span><i></i></span>
@@ -202,20 +202,31 @@
     </div>
 
     <!--告警详情弹窗-->
-    <alarmDialog :showDialog="showAlarmDialog"></alarmDialog>
+    <alarmDialog v-if="showAlarmDialog" @closeDia="hiddenDialog" @toshowTrack="toShowTrack"></alarmDialog>
+    <!--车辆信息弹窗-->
+    <mobileInfo v-if="showMobileDialog" @closeMobileDia="hiddenMobileDialog" @searchTrack="toSearchTrack"></mobileInfo>
+
+     <!--关闭轨迹大按钮  右上角-->
+     <div class="track_closeBtn" v-show="!showTrack" @click="closeTrack"></div>
+     <!--查询信息查询轨迹后缩放成icon-->
+     <div class="track_infoIcon" v-show="!showTrack" @click="showInfoDialog"></div>
   </div>
 </template>
 
 <script>
   import alarmDialog from '../components/alarmDialog'
+  import mobileInfo from '../components/mobileInfo'
   import {getBaseStation, getTrack, getTrafficFlow} from "../api/remConfig";
   export default {
     name: "test",
     components:{
-      alarmDialog
+      alarmDialog,mobileInfo
     },
     data() {
       return {
+        showTrack:true,//显示轨迹的页面，其他模块按钮都隐藏
+        selectDialog:0,//看是打开告警窗口还是信息查询窗口 默认0是告警窗口
+        map:null,
         vehicle_track: null,
         heat_map_points: [],
         base_station_markers: [],
@@ -233,6 +244,8 @@
         shrink_right: false,//右边展开状态
         open_right: false,
         showAlarmDialog:false,//告警详情对话框
+        showMobileDialog:false,//车辆信息对话框
+        searchInputVal:'',//搜索
         alarmData: [{
           id: 0,
           time: '14:37:00',
@@ -277,10 +290,12 @@
       this.getSiteTotal(); // 基站总数 环形图
 
       getBaseStation().then(function (r) {
+        //得到基站值
         me.base_stations = r.data.data
-      })
+      });
 
       getTrafficFlow({flag: 2}).then(r => {
+        //热力图
         console.log(r.data.result)
         this.heat_map_points = [];
         r.data.result.forEach(e => {
@@ -299,16 +314,27 @@
           max: 100
         })
       })
-
       this.showVehicleTrack(1)
     },
     watch: {
       base_stations: function (new_data, old_data) {
         this.map.remove(this.base_station_markers)
-        this.base_station_markers = []
+        this.base_station_markers = [];
+        var startIcon = new AMap.Icon({
+          // 图标尺寸
+          size: new AMap.Size(45, 45),
+          // 图标的取图地址
+          image: '../../static/site.gif',
+          // // 图标所用图片大小
+          imageSize: new AMap.Size(45,45),
+          // // 图标取图偏移量
+          // imageOffset: new AMap.Pixel(-5,8)
+        });
         new_data.forEach(e => {
           let marker = new AMap.Marker({
-            position: new AMap.LngLat(e.longitude, e.latitude),   // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
+            position: new AMap.LngLat(e.longitude, e.latitude),   // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9],
+            // icon:startIcon,
+            // offset: new AMap.Pixel(-20, -25),
             title: '衢州3'
           });
           this.map.add(marker);
@@ -317,11 +343,43 @@
       }
     },
     methods:{
+      showInfoDialog(){
+        //重新打开告警信息等窗口
+          if(this.selectDialog==0){
+            this.showTrack = true;
+            this.showAlarmDialog = true;
+          }else{
+            this.showTrack = true;
+            this.showMobileDialog = true;
+          }
+      },
+      toShowTrack(){
+        //显示轨迹   告警窗口过来的
+        this.showTrack = false;
+        this.showAlarmDialog = false;
+        this.selectDialog = 0;
+      },
+      toSearchTrack(){
+        //显示轨迹   车辆所有信息窗口过来的
+        this.showTrack = false;
+        this.showMobileDialog = false;
+        this.selectDialog = 1;
+      },
+      closeTrack(){
+        //关闭轨迹
+        this.showTrack = true;
+      },
+      hiddenDialog(){
+        this.showAlarmDialog = false;
+      },
+      hiddenMobileDialog(){
+        this.showMobileDialog = false;
+      },
       openAlarmDialog(){
         this.showAlarmDialog = true;
       },
       searchEnterInput(){
-        console.log('search');
+        this.showMobileDialog = true;
       },
       fullScreenChange(){
         var isFullscreen = document.fullscreenEnabled ||
@@ -424,18 +482,8 @@
           heatmap = new AMap.Heatmap(map, {
             radius: 25, //给定半径
             opacity: [0, 0.8]
-            /*,
-            gradient:{
-                0.5: 'blue',
-                0.65: 'rgb(117,211,248)',
-                0.7: 'rgb(0, 255, 0)',
-                0.9: '#ffea00',
-                1.0: 'red'
-            }
-             */
           });
           me.heatMap = heatmap
-          //设置数据集：该数据为北京部分“公园”数据
           // heatmap.setDataSet({
           //   data: points,
           //   max: 100
@@ -474,7 +522,7 @@
           position: new AMap.LngLat(118.880323, 28.970332),   // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
           title: '衢州2'
         });
-        map.add([maker1, maker2]);
+        // map.add([maker1, maker2]);
 
         // 轨迹
         let path_track = [
@@ -499,7 +547,7 @@
         });
 
         polyline_track.setMap(map);
-        this.vehicle_track = polyline_track
+        this.vehicle_track = polyline_track;
         // 缩放地图到合适的视野级别
         // map.setFitView([ polyline_track ])
       },
@@ -715,6 +763,7 @@
     width:100%;
     height:100vh;
     overflow: hidden;
+    position:relative;
     #myMap{
       width:100%;
       height:100vh;
@@ -1249,6 +1298,30 @@
         }
       }
     }
+
+    /*关闭轨迹按钮*/
+    .track_closeBtn{
+      position:absolute;
+      top:0.8rem;
+      right:0.2rem;
+      width:0.34rem;
+      height:0.34rem;
+      background:url("../img/bigClose.png") no-repeat center;
+      background-size:100% 100%;
+      cursor: pointer;
+    }
+    /*轨迹查询后缩放的icon*/
+     .track_infoIcon{
+       position:absolute;
+       bottom:1rem;
+       left:50%;
+       margin-left:-0.25rem;
+       width:0.5rem;
+       height:0.5rem;
+       background:url("../img/trackIcon.png") no-repeat center;
+       background-size:100% 100%;
+       cursor: pointer;
+     }
   }
 
   /*展开的搜索框*/
@@ -1256,21 +1329,23 @@
     .el-input{
       position:absolute;
       top:50%;left:0.2rem;
-      width:2.5rem;
-      height:0.4rem;
+      width:3rem;
+      height:0.5rem;
       margin-top:-0.2rem;
       .el-input__inner{
-        height:0.4rem;
-        font-size:0.14rem;
+        height:0.5rem;
+        font-size:0.18rem;
         padding:0 0.15rem 0 0.3rem;
+        color:#666;
       }
       .el-icon-search:before{
+        cursor: pointer;
         position:absolute;
         content:'';
-        width:0.25rem;
-        height:0.25rem;
+        width:0.33rem;
+        height:0.33rem;
         top:50%;left:50%;
-        margin-top:-0.12rem;margin-left:-0.175rem;
+        margin-top:-0.165rem;margin-left:-0.35rem;
         background:url("../img/search.png") no-repeat center;
         background-size:100% 100%;
       }

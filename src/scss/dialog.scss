@@ -13,9 +13,16 @@
     height:70px;
     line-height: 70px;
     background:#fff;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom:2px solid #EDECEC;
     .el-dialog__title{
-      font-size:14px;
-      color: #E9E9E9;
+      font-size: 20px;
+      color: #333333;
+      font-family: 'pingfangMedium';
     }
     .el-dialog__headerbtn{
       width:16px;
@@ -29,67 +36,18 @@
   }
   // 弹框内容部分
   .el-dialog__body{
-    padding-top:10px;
-    padding-bottom: 4px;
-    //background:$maincolor;
-    .el-form{
-      .el-form-item__label{
-        font-size:12px;
-        //color:$lightfontColor;
-        line-height: 30px;
-        text-align: left;
-      }
-      .el-form-item{
-        margin-bottom: 20px;
-      }
-      .el-form-item__content{
-        display:flex;
-        line-height: 30px;
-        .el-button{
-          border-radius: 0;
-          padding:0 18px;
-          margin-left:7px;
-          font-size:12px;
-          color:#fff;
-          span{
-            color:#fff;
-          }
+    padding:30px 40px 20px;
+    text-align: left;
+    .dialog_con{
+      div{
+        font-size: 16px;
+        color: #666666;
+        margin-bottom:8px;
+        span{
+          color: #333;
+          font-family: 'pingfangMedium';
         }
       }
-      .el-textarea__inner{
-        border-radius: 0;
-        height:136px;
-        font-size:12px;
-      }
-    }
-    .el-input__inner{
-      border-radius: 0;
-      font-size:12px;
-    }
-  }
-  // 底部按钮
-  .el-dialog__footer{
-    text-align: center;
-    //background:$maincolor;
-    background:#fff;
-    .el-button{
-      border-radius: 5px;
-      font-size:14px;
-      color:#4A4A4A;
-      width:96px;
-      height:40px;
-      span{
-        font-size:14px;
-      }
-    }
-    .btn_confirm{
-      //background-color:$mainbgColor;
-      span{
-        color:#fff;
-      }
-    }
-    .btn_cancel{
-      background:#4A4A4A;
     }
   }
 }

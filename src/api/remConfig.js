@@ -18,10 +18,12 @@ export default function () {
 }
 
 export const getBaseStation = () => {
+  //基站
   return axios.get(`${base}/base-station`);
 };
 
 export const getTrafficFlow = (data) => {
+  //位置
   return axios.post(`${base}/points`, data);
 };
 

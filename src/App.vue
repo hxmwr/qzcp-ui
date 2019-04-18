@@ -10,7 +10,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
   @import "./scss/common.scss";
   @font-face{
     font-family: 'pingfangRegular';  /*给自定义字体命名*/
@@ -26,5 +26,19 @@ export default {
     text-align: center;
     /*color: #2c3e50;*/
     /*margin-top: 60px;*/
+  }
+  .dateSel_obj{
+    .el-picker-panel__body{
+      .el-date-range-picker__time-header{
+        .el-date-range-picker__editors-wrap{
+          .el-input__inner{
+            height:26px;
+            line-height: 26px;
+            padding: 5px;
+            border-radius: 0;
+          }
+        }
+      }
+    }
   }
 </style>
