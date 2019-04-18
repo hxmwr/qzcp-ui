@@ -326,7 +326,7 @@
       fn();
 
       // 告警滚动列表
-      var ws = new WebSocket('ws://172.16.0.34:8889');
+      var ws = new WebSocket('ws://192.168.199.88:8889');
       ws.onmessage = (e) => {
         console.log(e);
       };
