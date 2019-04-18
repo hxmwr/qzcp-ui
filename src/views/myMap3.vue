@@ -7,7 +7,8 @@
       <!--搜索框-->
       <div class="map_searchWrap" v-if="false"><i></i></div>
       <!--展开的搜索框-->
-      <el-input class="searchInput" v-show="showTrack" v-model="searchInputVal" placeholder="请输入车牌号/告警ID" @keyup.enter.native="searchEnterInput">
+      <el-input class="searchInput" v-show="showTrack" v-model="searchInputVal" placeholder="请输入车牌号/告警ID"
+                @keyup.enter.native="searchEnterInput">
         <i slot="suffix" class="el-input__icon el-icon-search" @click="searchEnterInput"></i>
       </el-input>
       <!--右边两按钮-->
@@ -27,20 +28,21 @@
         </div>
         <!--时间-->
         <div class="map_alarmTime">
-          <div>2019/04/15 14:15:00</div>
+          <div>{{(alarmData.length > 0) && ((new Date).toISOString().split('T')[0] + ' ' +
+            alarmData[0].time)}}</div>
         </div>
         <div class="map_alarmLine">
           <div class="map_alarmLineWrap">
-            <div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}">
+            <div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}" :style="{transform: 'translateY(' + offset2 + 'rem)', background: 'red'}">
               <div class="map_alarms" v-for="(item,key) in alarmData" :key="item.id">
                 <!--左边信息-->
                 <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}" @click="openAlarmDialog">
                   <div class="left alarm_time"><span>{{item.time}}</span><i></i></div>
                   <div class="right alarm_con">
                     <i></i>
-                    <div>车牌号:{{item.mobileId}}</div>
-                    <div>基站:{{item.mobileSite}}</div>
-                    <div class="text_overflow">类型:{{item.alarmType}}</div>
+                    <div>车牌号:{{item.plate_no}}</div>
+                    <div>基站:{{item.device_id}}</div>
+                    <div class="text_overflow">类型:超速</div>
                   </div>
                 </div>
                 <!--右边信息-->
@@ -48,9 +50,9 @@
                   <div class="right alarm_time"><i></i><span>{{toTimeString(new Date)}}</span></div>
                   <div class="left alarm_con">
                     <i></i>
-                    <div>车牌号:{{item.mobileId}}</div>
-                    <div>基站:{{item.mobileSite}}</div>
-                    <div class="text_overflow">类型:{{item.alarmType}}</div>
+                    <div>车牌号:{{item.plate_no}}</div>
+                    <div>基站:{{item.device_id}}</div>
+                    <div class="text_overflow">类型:超速</div>
                   </div>
                 </div>
               </div>
@@ -68,12 +70,15 @@
         </div>
         <!--时间-->
         <div class="map_alarmTime">
-          <div>{{(accident_data.length > 0) && ((new Date).toISOString().split('T')[0] + ' ' + accident_data[0].time)}}</div>
+          <div>{{(accident_data.length > 0) && ((new Date).toISOString().split('T')[0] + ' ' +
+            accident_data[0].time)}}
+          </div>
         </div>
         <div class="map_alarmLine">
           <div class="map_alarmLineWrap">
 
-            <div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}" :style="{transform: 'translateY(' + offset1 + 'rem)', background: 'red'}">
+            <div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}"
+                 :style="{transform: 'translateY(' + offset1 + 'rem)', background: 'red'}">
               <div class="map_alarms" v-for="(item,key) in accident_data" :key="item.id">
                 <!--左边信息-->
 
@@ -208,10 +213,10 @@
     <!--车辆信息弹窗-->
     <mobileInfo v-if="showMobileDialog" @closeMobileDia="hiddenMobileDialog" @searchTrack="toSearchTrack"></mobileInfo>
 
-     <!--关闭轨迹大按钮  右上角-->
-     <div class="track_closeBtn" v-show="!showTrack" @click="closeTrack"></div>
-     <!--查询信息查询轨迹后缩放成icon-->
-     <div class="track_infoIcon" v-show="!showTrack" @click="showInfoDialog"></div>
+    <!--关闭轨迹大按钮  右上角-->
+    <div class="track_closeBtn" v-show="!showTrack" @click="closeTrack"></div>
+    <!--查询信息查询轨迹后缩放成icon-->
+    <div class="track_infoIcon" v-show="!showTrack" @click="showInfoDialog"></div>
   </div>
 </template>
 
@@ -219,17 +224,19 @@
   import alarmDialog from '../components/alarmDialog'
   import mobileInfo from '../components/mobileInfo'
   import {getBaseStation, getTrack, getTrafficFlow} from "../api/remConfig";
-  import gen_mock_event from '../data/accident-data'
+  import {gen_mock_event} from '../data/accident-data'
+  import {gen_mock_alert, gen_alert_desc} from '../data/alarm-data'
+
   export default {
     name: "test",
-    components:{
-      alarmDialog,mobileInfo
+    components: {
+      alarmDialog, mobileInfo
     },
     data() {
       return {
-        showTrack:true,//显示轨迹的页面，其他模块按钮都隐藏
-        selectDialog:0,//看是打开告警窗口还是信息查询窗口 默认0是告警窗口
-        map:null,
+        showTrack: true,//显示轨迹的页面，其他模块按钮都隐藏
+        selectDialog: 0,//看是打开告警窗口还是信息查询窗口 默认0是告警窗口
+        map: null,
         vehicle_track: null,
         offset1: -5.7,
         offset2: -5.7,
@@ -248,9 +255,9 @@
         open_left: false,
         shrink_right: false,//右边展开状态
         open_right: false,
-        showAlarmDialog:false,//告警详情对话框
-        showMobileDialog:false,//车辆信息对话框
-        searchInputVal:'',//搜索
+        showAlarmDialog: false,//告警详情对话框
+        showMobileDialog: false,//车辆信息对话框
+        searchInputVal: '',//搜索
         alarmData: [],
         accident_data: []
       }
@@ -301,24 +308,41 @@
       // 事故滚动列表
       var index = 0;
       const fn = () => {
-        console.log(index)
         let e = gen_mock_event();
         e.id = index++;
         e.time = this.toTimeString(new Date);
         this.accident_data.unshift(e);
         this.offset1 += 0.8;
+        if (this.accident_data.length > 50) {
+          this.accident_data = this.accident_data.slice(0, -40)
+          this.offset1 -= (0.8 * 40);
+        }
         setTimeout(fn, Math.floor(2 + Math.random() * 4) * 1000)
       };
       fn();
 
       // 告警滚动列表
-      var ws = new WebSocket('ws://172.16.0.34:8889');
-      ws.onmessage = (e)=>{
-        console.log(e);
-      };
+      // var ws = new WebSocket('ws://172.16.0.34:8889');
+      // ws.onmessage = (e) => {
+      //   console.log(e);
+      // };
       // ws.on('message', r => {
       //   console.log(r)
       // })
+      var index2 = 0;
+      const fn2 = () => {
+        let e = gen_mock_alert();
+        e.id = index2++;
+        e.time = this.toTimeString(new Date);
+        this.alarmData.unshift(e);
+        this.offset2 += 0.8;
+        if (this.alarmData.length > 15) {
+          this.alarmData = this.alarmData.slice(0, -5);
+          this.offset2 -= (0.8 * 5);
+        }
+        setTimeout(fn2, Math.floor(2 + Math.random() * 4) * 1000)
+      };
+      fn2();
     },
     watch: {
       base_stations: function (new_data, old_data) {
@@ -330,7 +354,7 @@
           // 图标的取图地址
           image: '../../static/site.gif',
           // // 图标所用图片大小
-          imageSize: new AMap.Size(45,45),
+          imageSize: new AMap.Size(45, 45),
           // // 图标取图偏移量
           // imageOffset: new AMap.Pixel(-5,8)
         });
@@ -346,86 +370,86 @@
         })
       }
     },
-    methods:{
-      showInfoDialog(){
+    methods: {
+      showInfoDialog() {
         //重新打开告警信息等窗口
-          if(this.selectDialog==0){
-            this.showTrack = true;
-            this.showAlarmDialog = true;
-          }else{
-            this.showTrack = true;
-            this.showMobileDialog = true;
-          }
+        if (this.selectDialog == 0) {
+          this.showTrack = true;
+          this.showAlarmDialog = true;
+        } else {
+          this.showTrack = true;
+          this.showMobileDialog = true;
+        }
       },
-      toShowTrack(){
+      toShowTrack() {
         //显示轨迹   告警窗口过来的
         this.showTrack = false;
         this.showAlarmDialog = false;
         this.selectDialog = 0;
       },
-      toSearchTrack(){
+      toSearchTrack() {
         //显示轨迹   车辆所有信息窗口过来的
         this.showTrack = false;
         this.showMobileDialog = false;
         this.selectDialog = 1;
       },
-      closeTrack(){
+      closeTrack() {
         //关闭轨迹
         this.showTrack = true;
       },
-      hiddenDialog(){
+      hiddenDialog() {
         this.showAlarmDialog = false;
       },
-      hiddenMobileDialog(){
+      hiddenMobileDialog() {
         this.showMobileDialog = false;
       },
       toTimeString(dt) {
         return dt.toTimeString().split(' ')[0]
       },
-      openAlarmDialog(){
+      openAlarmDialog() {
         this.showAlarmDialog = true;
       },
-      searchEnterInput(){
+      searchEnterInput() {
         this.showMobileDialog = true;
       },
-      fullScreenChange(){
+      fullScreenChange() {
         var isFullscreen = document.fullscreenEnabled ||
           window.fullScreen ||
           document.webkitIsFullScreen ||
           document.msFullscreenEnabled;
-        if(!isFullscreen){
+        if (!isFullscreen) {
           this.goFullScreen = 0;
         }
       },
-      launchFullScreen(){
-        if(this.goFullScreen == 0){
+      launchFullScreen() {
+        if (this.goFullScreen == 0) {
           this.goFullScreen = 1;
           var element = document.documentElement;
-          if(element.requestFullscreen) {
+          if (element.requestFullscreen) {
             element.requestFullscreen();
-          } else if(element.mozRequestFullScreen) {
+          } else if (element.mozRequestFullScreen) {
             element.mozRequestFullScreen();
-          } else if(element.webkitRequestFullscreen) {
+          } else if (element.webkitRequestFullscreen) {
             element.webkitRequestFullscreen();
-          } else if(element.msRequestFullscreen) {
+          } else if (element.msRequestFullscreen) {
             element.msRequestFullscreen();
           }
-        }else{
+        } else {
           this.goFullScreen = 0;
-          if(document.exitFullscreen){
+          if (document.exitFullscreen) {
             document.exitFullscreen();
-          } else if(document.mozCancelFullScreen) {
+          } else if (document.mozCancelFullScreen) {
             document.mozCancelFullScreen();
-          } else if(document.webkitExitFullscreen) {
+          } else if (document.webkitExitFullscreen) {
             document.webkitExitFullscreen();
-          }else if(document.msExitFullscreen){
+          } else if (document.msExitFullscreen) {
             document.msExiFullscreen();
           }
         }
-        document.addEventListener('fullscreenchange',this.fullScreenChange);
-        document.addEventListener('webkitfullscreenchange',this.fullScreenChange);
-        document.addEventListener('mozfullscreenchange',this.fullScreenChange);
-        document.addEventListener('MSFullscreenChange',this.fullScreenChange);
+        document.addEventListener('fullscreenchange', this.fullScreenChange);
+        document.addEventListener('webkitfullscreenchange', this.fullScreenChange);
+        document.addEventListener('mozfullscreenchange', this.fullScreenChange);
+        document.addEventListener('MSFullscreenChange', this.fullScreenChange);
       },
       openLeft() {
         //点击左边按钮展开
@@ -776,15 +800,17 @@
 
 <style scoped lang="scss">
 
-  .myMapWrap{
-    width:100%;
-    height:100vh;
+  .myMapWrap {
+    width: 100%;
+    height: 100vh;
     overflow: hidden;
-    position:relative;
-    #myMap{
-      width:100%;
-      height:100vh;
+    position: relative;
+
+    #myMap {
+      width: 100%;
+      height: 100vh;
     }
+
     /*顶部信息*/
     .map_top {
       position: absolute;
@@ -793,8 +819,9 @@
       width: 100%;
       height: 0.8rem;
       /*background:rgba(0,0,0,.1);*/
-       background:linear-gradient(rgba(216,216,216,1), rgba(255,255,255,0));
-      .logo{
+      background: linear-gradient(rgba(216, 216, 216, 1), rgba(255, 255, 255, 0));
+
+      .logo {
         display: inline-block;
         width: 0.528rem;
         height: 0.6rem;
@@ -927,6 +954,7 @@
           bottom: 0;
           width: 100%;
           transition: all .2s;
+
           .map_alarms {
             /*height:1.2rem;*/
             height: 0.8rem;
@@ -1318,57 +1346,64 @@
     }
 
     /*关闭轨迹按钮*/
-    .track_closeBtn{
-      position:absolute;
-      top:0.8rem;
-      right:0.2rem;
-      width:0.34rem;
-      height:0.34rem;
-      background:url("../img/bigClose.png") no-repeat center;
-      background-size:100% 100%;
+    .track_closeBtn {
+      position: absolute;
+      top: 0.8rem;
+      right: 0.2rem;
+      width: 0.34rem;
+      height: 0.34rem;
+      background: url("../img/bigClose.png") no-repeat center;
+      background-size: 100% 100%;
       cursor: pointer;
     }
+
     /*轨迹查询后缩放的icon*/
-     .track_infoIcon{
-       position:absolute;
-       bottom:1rem;
-       left:50%;
-       margin-left:-0.25rem;
-       width:0.5rem;
-       height:0.5rem;
-       background:url("../img/trackIcon.png") no-repeat center;
-       background-size:100% 100%;
-       cursor: pointer;
-     }
+    .track_infoIcon {
+      position: absolute;
+      bottom: 1rem;
+      left: 50%;
+      margin-left: -0.25rem;
+      width: 0.5rem;
+      height: 0.5rem;
+      background: url("../img/trackIcon.png") no-repeat center;
+      background-size: 100% 100%;
+      cursor: pointer;
+    }
   }
 
   /*展开的搜索框*/
-  .myMapWrap /deep/ .map_top{
-    .el-input{
-      position:absolute;
-      top:50%;left:0.2rem;
-      width:3rem;
-      height:0.5rem;
-      margin-top:-0.2rem;
-      .el-input__inner{
-        height:0.5rem;
-        font-size:0.18rem;
-        padding:0 0.15rem 0 0.3rem;
-        color:#666;
+  .myMapWrap /deep/ .map_top {
+    .el-input {
+      position: absolute;
+      top: 50%;
+      left: 0.2rem;
+      width: 3rem;
+      height: 0.5rem;
+      margin-top: -0.2rem;
+
+      .el-input__inner {
+        height: 0.5rem;
+        font-size: 0.18rem;
+        padding: 0 0.15rem 0 0.3rem;
+        color: #666;
       }
-      .el-icon-search:before{
-        position:absolute;
-        content:'';
-        width:0.33rem;
-        height:0.33rem;
-        top:50%;left:50%;
-        margin-top:-0.165rem;margin-left:-0.35rem;
-        background:url("../img/search.png") no-repeat center;
-        background-size:100% 100%;
+
+      .el-icon-search:before {
+        position: absolute;
+        content: '';
+        width: 0.33rem;
+        height: 0.33rem;
+        top: 50%;
+        left: 50%;
+        margin-top: -0.165rem;
+        margin-left: -0.35rem;
+        background: url("../img/search.png") no-repeat center;
+        background-size: 100% 100%;
       }
     }
   }
-  .showLeft{
+
+  .showLeft {
     display: none;
   }
 
