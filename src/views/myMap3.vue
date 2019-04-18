@@ -137,10 +137,10 @@
             <div class="flex flex_align">
               <div id="map_activeNum" style="width:1.7rem;height:1.3rem;"></div>
               <div class="map_dataDetail">
-                <div>上牌车辆总数: <span>190415</span></div>
-                <div>上路车辆总数:<span>145788</span></div>
+                <div>上牌车辆总数: <span>740915</span></div>
+                <div>今日活动总数: <span>335788</span></div>
                 <div>外卖车辆总数: <span>10859</span></div>
-                <div>违标车辆总数: <span>3088</span></div>
+                <div>违标车辆总数: <span>13088</span></div>
               </div>
             </div>
             <div class="map_rightTitle flex flex_center">
@@ -156,8 +156,8 @@
               <div id="map_alarmTotal" style="width:1.7rem;height:1.3rem;"></div>
               <div class="map_dataDetail">
                 <div>超速告警总数: <span>190415</span></div>
-                <div>逆行告警总数:<span>145788</span></div>
-                <div>布控告警总数: <span>10859</span></div>
+                <div>逆行告警总数: <span>145788</span></div>
+                <div>布控告警总数: <span>859</span></div>
                 <div>事故告警总数: <span>3088</span></div>
               </div>
             </div>
@@ -174,10 +174,10 @@
               <div id="map_accidentTotal" style="width:1.7rem;height:1.3rem;"></div>
               <div class="map_dataDetail">
                 <div>事故报警总数: <span>190415</span></div>
-                <div>事故处理总数:<span>145788</span></div>
-                <div>死亡事故总数: <span>10859</span></div>
-                <div>伤人事故总数: <span>3088</span></div>
-                <div>简易事故总数: <span>3088</span></div>
+                <div>自动处警总数: <span>551</span></div>
+                <div>死亡事故总数: <span>32</span></div>
+                <div>伤人事故总数: <span>325</span></div>
+                <div>简易事故总数: <span>1089</span></div>
               </div>
             </div>
             <div class="map_rightTitle flex flex_center">
@@ -192,12 +192,12 @@
             <div class="flex flex_align">
               <div id="map_siteTotal" style="width:1.7rem;height:1.3rem;"></div>
               <div class="map_dataDetail">
-                <div>衢江区基站总数: <span>190415</span></div>
-                <div>柯城区基站总数:<span>145788</span></div>
-                <div>龙游县基站总数: <span>10859</span></div>
-                <div>常山县基站总数: <span>3088</span></div>
-                <div>江山市基站总数: <span>3088</span></div>
-                <div>开化县基站总数: <span>3088</span></div>
+                <div>衢江区基站总数: <span>503</span></div>
+                <div>柯城区基站总数: <span>632</span></div>
+                <div>龙游县基站总数: <span>260</span></div>
+                <div>常山县基站总数: <span>255</span></div>
+                <div>江山市基站总数: <span>310</span></div>
+                <div>开化县基站总数: <span>222</span></div>
               </div>
             </div>
             <div class="map_rightTitle flex flex_center">
@@ -211,7 +211,7 @@
     <!--告警详情弹窗-->
     <alarmDialog v-if="showAlarmDialog" @closeDia="hiddenDialog" @toshowTrack="toShowTrack" :detailAlarm="detailAlarm" :detailType="detailType"></alarmDialog>
     <!--车辆信息弹窗-->
-    <mobileInfo v-if="showMobileDialog" @closeMobileDia="hiddenMobileDialog" :detailMobileInfo="detailMobileInfo" @searchTrack="toSearchTrack"></mobileInfo>
+    <mobileInfo v-if="showMobileDialog" :selectTimeArea="selectTimeArea" @closeMobileDia="hiddenMobileDialog" :detailMobileInfo="detailMobileInfo" @searchTrack="toSearchTrack"></mobileInfo>
 
      <!--关闭轨迹大按钮  右上角-->
      <div class="track_closeBtn" v-show="!showTrack" @click="closeTrack"></div>
@@ -234,6 +234,7 @@
     },
     data() {
       return {
+        selectTimeArea:'', //所有车辆查询时间段
         hasShowTrack:false,//是否已经显示轨迹
         detailAlarm:'',//具体事故详情
         detailMobileInfo:'',// 搜索车辆信息详情
@@ -318,7 +319,7 @@
         this.accident_data.unshift(e);
         this.offset1 += 0.8;
         if (this.accident_data.length > 50) {
-          this.accident_data = this.accident_data.slice(0, -40)
+          this.accident_data = this.accident_data.slice(0, -40);
           this.offset1 -= (0.8 * 40);
         }
         setTimeout(fn, Math.floor(2 + Math.random() * 4) * 1000)
@@ -414,15 +415,18 @@
         this.showTrack = false;
         this.showMobileDialog = false;
         this.selectDialog = 1;
+        this.selectTimeArea = data;
         getTrackByTime(data).then(refs=>{
           console.log(refs);
           if(refs.data.result.length>0){
-            if(!this.hasShowTrack){
-              this.hasShowTrack = true;
-              this.vehicle_track.setPath(refs.data.result.map(e => [e.longitude, e.latitude]));
-            }else{
-              return false;
-            }
+            this.vehicle_track.setPath(['','']);
+            this.vehicle_track.setPath(refs.data.result.map(e => [e.longitude, e.latitude]));
+            // if(!this.hasShowTrack){
+            //   this.hasShowTrack = true;
+            //   this.vehicle_track.setPath(refs.data.result.map(e => [e.longitude, e.latitude]));
+            // }else{
+            //   return false;
+            // }
           }
         }).catch(err=>{
           console.log(err);
@@ -430,6 +434,8 @@
       },
       closeTrack(){
         //关闭轨迹
+        this.selectTimeArea = '';
+        this.searchInputVal = '';
         this.vehicle_track.setPath(['','']);
         this.showTrack = true;
         this.hasShowTrack = false;
@@ -440,10 +446,11 @@
         this.hasShowTrack = false;
       },
       hiddenMobileDialog(){
+        this.selectTimeArea = '';
+        this.searchInputVal = '';
         this.showMobileDialog = false;
         this.vehicle_track.setPath(['','']);
         this.hasShowTrack = false;
-        
       },
       toTimeString(dt) {
         return dt.toTimeString().split(' ')[0]
