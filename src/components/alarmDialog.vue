@@ -2,33 +2,56 @@
     <div class="popDialog">
        <div>
          <el-dialog
-           title="告警详情"
+           :title="showTitle"
            :visible.sync="dialogVisible"
            :close-on-click-modal="false" :modal-append-to-body="false" :show-close="false">
            <div class="close_btn" @click="closeDialog"><img src="../img/closeBtn.png" alt=""></div>
            <!--车牌号-->
-           <div class="dialog_con" >
+           <!--告警弹窗内容-->
+           <div class="dialog_con" v-show="alarmCon">
              <div>
-               车牌号: <span>浙H19415</span>
+               车牌号: <span>{{ detailAlarm.plate_no}}</span>
              </div>
              <div>
-               告警类型: <span>超速告警</span>
+               告警类型: <span>{{detailAlarm.type}}</span>
              </div>
              <div>
-               违章地点: <span>ZQ0168</span>
+               违章地点: <span>{{detailAlarm.location}}</span>
              </div>
              <div>
-               违章时间: <span>2019-04-15 10:34:29</span>
+               违章时间: <span>{{detailAlarm.time}}</span>
              </div>
              <div>
                违章程度: <span>超速100%以上（55km/h）</span>
              </div>
              <div>违章描述：</div>
              <div>
-               <span>浙H19415于2019年4月15日上午10点34分29秒在柯城区双林路由南向北路段被ZQ0168号基站通过雷达测速手段，测得区间55km/h，超速100%以上。</span>
+               <!--<span>浙H19415于2019年4月15日上午10点34分29秒在柯城区双林路由南向北路段被ZQ0168号基站通过雷达测速手段，测得区间55km/h，超速100%以上。</span>-->
+               <span>{{detailAlarm.description}}</span>
              </div>
              <div>
                违章轨迹: <button class="show_btn" @click="showTrackMap">查看轨迹</button>
+             </div>
+           </div>
+
+           <!--事故弹窗内容-->
+           <div class="dialog_con" v-show="accidentCon">
+             <div>
+               车牌号: <span>{{ detailAlarm.plate_no}}</span>
+             </div>
+             <div>
+               事故类型: <span>{{detailAlarm.type}}</span>
+             </div>
+             <div>
+               事故地点: <span>{{detailAlarm.location}}</span>
+             </div>
+             <div>
+               事故时间: <span>{{detailAlarm.time}}</span>
+             </div>
+             <div>事故描述：</div>
+             <div>
+               <!--<span>浙H19415于2019年4月15日上午10点34分29秒在柯城区双林路由南向北路段被ZQ0168号基站通过雷达测速手段，测得区间55km/h，超速100%以上。</span>-->
+               <span>{{detailAlarm.description}}</span>
              </div>
            </div>
 
@@ -40,10 +63,24 @@
 <script>
     export default {
       name: "alarmDialog",
+      props:['detailType','detailAlarm'],
       data(){
           return{
-            dialogVisible:true
+            dialogVisible:true,
+            showTitle:'',
+            alarmCon:false,
+            accidentCon:false,
           }
+      },
+      mounted(){
+        console.log('shh');
+        if(this.detailType==1){
+          this.alarmCon = true;
+          this.showTitle = '告警详情---'+this.detailAlarm['plate_no'];
+        }else{
+          this.accidentCon = true;
+          this.showTitle = '事故详情---'+this.detailAlarm['plate_no'];
+        }
       },
       methods:{
         closeDialog(){

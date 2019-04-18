@@ -68,30 +68,32 @@
         </div>
         <!--时间-->
         <div class="map_alarmTime">
-          <div>2019/04/15 14:15:00</div>
+          <div>{{(accident_data.length > 0) && ((new Date).toISOString().split('T')[0] + ' ' + accident_data[0].time)}}</div>
         </div>
         <div class="map_alarmLine">
           <div class="map_alarmLineWrap">
-            <div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}">
+
+            <div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}" :style="{transform: 'translateY(' + offset1 + 'rem)'}">
               <div class="map_alarms" v-for="(item,key) in accident_data" :key="item.id">
                 <!--左边信息-->
-                <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}" @click="openAlarmDialog">
+
+                <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}" @click="openAlarmDialog(item,'2')">
                   <div class="left alarm_time"><span>{{item.time}}</span><i></i></div>
                   <div class="right alarm_con">
                     <i></i>
-                    <div>车牌号:{{item.mobileId}}</div>
-                    <div>基站:{{item.mobileSite}}</div>
-                    <div class="text_overflow">类型:{{item.alarmType}}</div>
+                    <div>车牌号:{{item.plate_no}}</div>
+                    <div>基站:{{item.device_id}}</div>
+                    <div class="text_overflow">类型:{{item.type}}</div>
                   </div>
                 </div>
                 <!--右边信息-->
-                <div class="alarm_info alarm_right" :class="{showLeft:item.id%2==0}" @click="openAlarmDialog">
+                <div class="alarm_info alarm_right" :class="{showLeft:item.id%2==0}" @click="openAlarmDialog(item,'2')">
                   <div class="right alarm_time"><i></i><span>{{item.time}}</span></div>
                   <div class="left alarm_con">
                     <i></i>
-                    <div>车牌号:{{item.mobileId}}</div>
-                    <div>基站:{{item.mobileSite}}</div>
-                    <div class="text_overflow">类型:{{item.alarmType}}</div>
+                    <div>车牌号:{{item.plate_no}}</div>
+                    <div>基站:{{item.device_id}}</div>
+                    <div class="text_overflow">类型:{{item.type}}</div>
                   </div>
                 </div>
               </div>
@@ -202,7 +204,7 @@
     </div>
 
     <!--告警详情弹窗-->
-    <alarmDialog v-if="showAlarmDialog" @closeDia="hiddenDialog" @toshowTrack="toShowTrack"></alarmDialog>
+    <alarmDialog v-if="showAlarmDialog" @closeDia="hiddenDialog" @toshowTrack="toShowTrack" :detailAlarm="detailAlarm" :detailType="detailType"></alarmDialog>
     <!--车辆信息弹窗-->
     <mobileInfo v-if="showMobileDialog" @closeMobileDia="hiddenMobileDialog" @searchTrack="toSearchTrack"></mobileInfo>
 
@@ -217,7 +219,7 @@
   import alarmDialog from '../components/alarmDialog'
   import mobileInfo from '../components/mobileInfo'
   import {getBaseStation, getTrack, getTrafficFlow} from "../api/remConfig";
-  import { gen_mock_event } from '../data/accident-data'
+  import {gen_mock_event} from '../data/accident-data'
   export default {
     name: "test",
     components:{
@@ -225,10 +227,14 @@
     },
     data() {
       return {
+        detailAlarm:'',//具体事故详情
+        detailType:'',
         showTrack:true,//显示轨迹的页面，其他模块按钮都隐藏
         selectDialog:0,//看是打开告警窗口还是信息查询窗口 默认0是告警窗口
         map:null,
         vehicle_track: null,
+        offset1: -5.7,
+        offset2: -5.7,
         heat_map_points: [],
         base_station_markers: [],
         base_stations: [],
@@ -379,8 +385,10 @@
       toTimeString(dt) {
         return dt.toTimeString().split(' ')[0]
       },
-      openAlarmDialog(){
+      openAlarmDialog(item,type){
         this.showAlarmDialog = true;
+        this.detailAlarm = item;
+        this.detailType = type;
       },
       searchEnterInput(){
         this.showMobileDialog = true;
@@ -911,17 +919,16 @@
         }
 
         .map_alarmsWrap {
-          position: relative;
-          height: 100%;
-          /*position: absolute;*/
-          /*bottom: 0;*/
-          /*width: 100%;*/
-          /*transition: all .2s;*/
+          position: absolute;
+          bottom: 0;
+          width: 100%;
+          transition: all .2s;
           .map_alarms {
             /*height:1.2rem;*/
             height: 0.8rem;
           }
         }
+
         .animation_alarms {
           margin-top: 0.8rem;
           transition: all 1s;
