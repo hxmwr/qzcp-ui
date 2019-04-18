@@ -55,7 +55,7 @@
 <script>
   export default {
     name: "mobileInfo",
-    props:['detailMobileInfo'],
+    props:['detailMobileInfo','selectTimeArea'],
     data(){
       return{
         dialogVisible:true,
@@ -66,6 +66,9 @@
     mounted(){
       if(this.detailMobileInfo){
         this.emptyShow = false;
+        if(this.selectTimeArea){
+          this.dataArea = [new Date(this.selectTimeArea['start_time']),new Date(this.selectTimeArea['end_time'])];
+        }
       }else{
         this.emptyShow = true;
       }
