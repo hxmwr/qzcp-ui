@@ -42,7 +42,7 @@
                     <i></i>
                     <div>车牌号:{{item.plate_no}}</div>
                     <div>基站:{{item.device_id}}</div>
-                    <div class="text_overflow">类型:超速</div>
+                    <div class="text_overflow">类型:{{item.type}}</div>
                   </div>
                 </div>
                 <!--右边信息-->
@@ -52,7 +52,7 @@
                     <i></i>
                     <div>车牌号:{{item.plate_no}}</div>
                     <div>基站:{{item.device_id}}</div>
-                    <div class="text_overflow">类型:超速</div>
+                    <div class="text_overflow">类型:{{item.type}}</div>
                   </div>
                 </div>
               </div>
