@@ -45,7 +45,7 @@
                 </div>
                 <!--右边信息-->
                 <div class="alarm_info alarm_right" :class="{showLeft:item.id%2==0}" @click="openAlarmDialog">
-                  <div class="right alarm_time"><i></i><span>{{item.time}}</span></div>
+                  <div class="right alarm_time"><i></i><span>{{toTimeString(new Date)}}</span></div>
                   <div class="left alarm_con">
                     <i></i>
                     <div>车牌号:{{item.mobileId}}</div>
@@ -217,6 +217,7 @@
   import alarmDialog from '../components/alarmDialog'
   import mobileInfo from '../components/mobileInfo'
   import {getBaseStation, getTrack, getTrafficFlow} from "../api/remConfig";
+  import { gen_mock_event } from '../data/accident-data'
   export default {
     name: "test",
     components:{
@@ -246,31 +247,8 @@
         showAlarmDialog:false,//告警详情对话框
         showMobileDialog:false,//车辆信息对话框
         searchInputVal:'',//搜索
-        alarmData: [{
-          id: 0,
-          time: '14:37:00',
-          mobileId: '浙H20190606',
-          mobileSite: 'ZQ0067',
-          alarmType: '超速50%'
-        }, {
-          id: 1,
-          time: '14:37:01',
-          mobileId: '浙H20190606',
-          mobileSite: 'ZQ0067',
-          alarmType: '超速50%'
-        }, {
-          id: 2,
-          time: '14:37:02',
-          mobileId: '浙H20190606',
-          mobileSite: 'ZQ0067',
-          alarmType: '超速50%'
-        }, {
-          id: 3,
-          time: '14:37:03',
-          mobileId: '浙H20190606',
-          mobileSite: 'ZQ0067',
-          alarmType: '超速50%'
-        }]
+        alarmData: [],
+        accident_data: []
       }
     },
     mounted() {
@@ -314,7 +292,29 @@
           max: 100
         })
       })
-      this.showVehicleTrack(1)
+      this.showVehicleTrack(1);
+
+      // 事故滚动列表
+      var index = 0;
+      const fn = () => {
+        console.log(index)
+        let e = gen_mock_event();
+        e.id = index++;
+        e.time = this.toTimeString(new Date);
+        this.accident_data.unshift(e);
+        this.offset1 += 0.8;
+        setTimeout(fn, Math.floor(2 + Math.random() * 4) * 1000)
+      };
+      fn();
+
+      // 告警滚动列表
+      var ws = new WebSocket('ws://172.16.0.34:8889');
+      ws.onmessage = (e)=>{
+        console.log(e);
+      };
+      // ws.on('message', r => {
+      //   console.log(r)
+      // })
     },
     watch: {
       base_stations: function (new_data, old_data) {
@@ -374,6 +374,9 @@
       },
       hiddenMobileDialog(){
         this.showMobileDialog = false;
+      },
+      toTimeString(dt) {
+        return dt.toTimeString().split(' ')[0]
       },
       openAlarmDialog(){
         this.showAlarmDialog = true;
@@ -484,6 +487,7 @@
             opacity: [0, 0.8]
           });
           me.heatMap = heatmap
+          //设置数据集：该数据为北京部分“公园”数据
           // heatmap.setDataSet({
           //   data: points,
           //   max: 100
@@ -906,9 +910,10 @@
         }
 
         .map_alarmsWrap {
-          position: relative;
-          height: 100%;
-
+          position: absolute;
+          bottom: 0;
+          width: 100%;
+          transition: all .2s;
           .map_alarms {
             /*height:1.2rem;*/
             height: 0.8rem;
@@ -1339,7 +1344,6 @@
         color:#666;
       }
       .el-icon-search:before{
-        cursor: pointer;
         position:absolute;
         content:'';
         width:0.33rem;
