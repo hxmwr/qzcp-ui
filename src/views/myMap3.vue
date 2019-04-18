@@ -34,7 +34,7 @@
             <div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}">
               <div class="map_alarms" v-for="(item,key) in alarmData" :key="item.id">
                 <!--左边信息-->
-                <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}">
+                <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}" @click="openAlarmDialog">
                   <div class="left alarm_time"><span>{{item.time}}</span><i></i></div>
                   <div class="right alarm_con">
                     <i></i>
@@ -200,14 +200,22 @@
          </div>
        </div>
     </div>
+
+    <!--告警详情弹窗-->
+    <alarmDialog :showDialog="showAlarmDialog"></alarmDialog>
   </div>
 </template>
 
 <script>
+  import alarmDialog from '../components/alarmDialog'
   export default {
     name: "test",
+    components:{
+      alarmDialog
+    },
     data(){
       return{
+        showAlarmDialog:false,//告警详情对话框
         showAnimation:false, //滚动动画
         alarmInterval:null, //滚动定时器
         alarmTimeout:null,
@@ -265,6 +273,9 @@
       this.getSiteTotal(); // 基站总数 环形图
     },
     methods:{
+      openAlarmDialog(){
+        this.showAlarmDialog = true;
+      },
       searchEnterInput(){
         console.log('search');
       },
