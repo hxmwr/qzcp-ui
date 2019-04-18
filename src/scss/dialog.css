@@ -1,0 +1,40 @@
+.popDialog /deep/ .el-dialog {
+  width: 436px;
+  margin-top: 30vh !important;
+  box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.3);
+  border-radius: 20px; }
+  .popDialog /deep/ .el-dialog .el-dialog__header {
+    text-align: center;
+    padding: 0;
+    height: 70px;
+    line-height: 70px;
+    background: #fff;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 2px solid #EDECEC; }
+    .popDialog /deep/ .el-dialog .el-dialog__header .el-dialog__title {
+      font-size: 20px;
+      color: #333333;
+      font-family: 'pingfangMedium'; }
+    .popDialog /deep/ .el-dialog .el-dialog__header .el-dialog__headerbtn {
+      width: 16px;
+      height: 18px; }
+      .popDialog /deep/ .el-dialog .el-dialog__header .el-dialog__headerbtn i {
+        position: absolute;
+        top: 0;
+        left: 0; }
+  .popDialog /deep/ .el-dialog .el-dialog__body {
+    padding: 30px 40px 20px;
+    text-align: left; }
+    .popDialog /deep/ .el-dialog .el-dialog__body .dialog_con div {
+      font-size: 16px;
+      color: #666666;
+      margin-bottom: 8px; }
+      .popDialog /deep/ .el-dialog .el-dialog__body .dialog_con div span {
+        color: #333;
+        font-family: 'pingfangMedium'; }
+
+/*# sourceMappingURL=dialog.css.map */

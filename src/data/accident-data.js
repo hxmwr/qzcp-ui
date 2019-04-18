@@ -101,4 +101,4 @@ const gen_mock_event = (function() {
   return fn;
 })()
 
-export default gen_mock_event
+export {gen_mock_event }
