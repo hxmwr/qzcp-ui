@@ -7,7 +7,7 @@
       <!--搜索框-->
       <div class="map_searchWrap" v-if="false"><i></i></div>
       <!--展开的搜索框-->
-      <el-input class="searchInput" v-show="showTrack" v-model="searchInputVal" placeholder="请输入车牌号/告警ID"
+      <el-input class="searchInput" v-show="showTrack" v-model="searchInputVal" placeholder="请输入车牌号"
                 @keyup.enter.native="searchEnterInput">
         <i slot="suffix" class="el-input__icon el-icon-search" @click="searchEnterInput"></i>
       </el-input>
@@ -36,9 +36,9 @@
             <div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}" :style="{transform: 'translateY(' + offset2 + 'rem)', background: 'red'}">
               <div class="map_alarms" v-for="(item,key) in alarmData" :key="item.id">
                 <!--左边信息-->
-                <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}" @click="openAlarmDialog(item,'1')">
+                <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}">
                   <div class="left alarm_time"><span>{{item.time}}</span><i></i></div>
-                  <div class="right alarm_con">
+                  <div class="right alarm_con" @click="openAlarmDialog(item,'1')">
                     <i></i>
                     <div>车牌号:{{item.plate_no}}</div>
                     <div>基站:{{item.device_id}}</div>
@@ -46,9 +46,9 @@
                   </div>
                 </div>
                 <!--右边信息-->
-                <div class="alarm_info alarm_right" :class="{showLeft:item.id%2==0}" @click="openAlarmDialog(openAlarmDialog(item,'1'))">
+                <div class="alarm_info alarm_right" :class="{showLeft:item.id%2==0}">
                   <div class="right alarm_time"><i></i><span>{{toTimeString(new Date)}}</span></div>
-                  <div class="left alarm_con">
+                  <div class="left alarm_con" @click="openAlarmDialog(item,'1')">
                     <i></i>
                     <div>车牌号:{{item.plate_no}}</div>
                     <div>基站:{{item.device_id}}</div>
@@ -82,9 +82,9 @@
               <div class="map_alarms" v-for="(item,key) in accident_data" :key="item.id">
                 <!--左边信息-->
 
-                <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}" @click="openAlarmDialog(item,'2')">
+                <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}">
                   <div class="left alarm_time"><span>{{item.time}}</span><i></i></div>
-                  <div class="right alarm_con">
+                  <div class="right alarm_con"  @click="openAlarmDialog(item,'2')">
                     <i></i>
                     <div>车牌号:{{item.plate_no}}</div>
                     <div>基站:{{item.device_id}}</div>
@@ -92,9 +92,9 @@
                   </div>
                 </div>
                 <!--右边信息-->
-                <div class="alarm_info alarm_right" :class="{showLeft:item.id%2==0}" @click="openAlarmDialog(item,'2')">
+                <div class="alarm_info alarm_right" :class="{showLeft:item.id%2==0}">
                   <div class="right alarm_time"><i></i><span>{{item.time}}</span></div>
-                  <div class="left alarm_con">
+                  <div class="left alarm_con"  @click="openAlarmDialog(item,'2')">
                     <i></i>
                     <div>车牌号:{{item.plate_no}}</div>
                     <div>基站:{{item.device_id}}</div>
@@ -234,6 +234,7 @@
     },
     data() {
       return {
+        hasShowTrack:false,//是否已经显示轨迹
         detailAlarm:'',//具体事故详情
         detailType:'',
         showTrack:true,//显示轨迹的页面，其他模块按钮都隐藏
@@ -305,17 +306,15 @@
           max: 100
         })
       })
-      this.showVehicleTrack(1);
+      // this.showVehicleTrack(1);
 
       // 事故滚动列表
       var index = 0;
       const fn = () => {
-        console.log(index)
         let e = gen_mock_event();
         e.id = index++;
         e.time = this.toTimeString(new Date);
         this.accident_data.unshift(e);
-        console.log(this.accident_data);
         this.offset1 += 0.8;
         if (this.accident_data.length > 50) {
           this.accident_data = this.accident_data.slice(0, -40)
@@ -390,6 +389,24 @@
         this.showTrack = false;
         this.showAlarmDialog = false;
         this.selectDialog = 0;
+        if(!this.hasShowTrack){
+          this.setAlarmTrack();
+        }else{
+          return false;
+        }
+      },
+      setAlarmTrack(){
+        this.hasShowTrack = true;
+        this.vehicle_track.setPath(this.get_random_point());
+      },
+      get_random_point() {
+        let len = this.base_stations.length;
+        let points = [];
+        for (let i=0;i<len;i++) {
+          let d = this.base_stations[Math.floor(Math.random() * len)]
+          points.push([d.longitude, d.latitude])
+        }
+        return points;
       },
       toSearchTrack() {
         //显示轨迹   车辆所有信息窗口过来的
@@ -399,7 +416,10 @@
       },
       closeTrack(){
         //关闭轨迹
+        console.log('关闭');
+        this.vehicle_track.setPath(['','']);
         this.showTrack = true;
+        this.hasShowTrack = false;
       },
       hiddenDialog(){
         this.showAlarmDialog = false;
@@ -1004,6 +1024,7 @@
           }
 
           .alarm_con {
+            cursor: pointer;
             position: absolute;
             width: 1.7rem;
             height: 0.68rem;
