@@ -331,10 +331,10 @@
       ws.onmessage = (e) => {
         let data = JSON.parse(e.data)
         data.id = index2++;
-        data.type = '超速'
+        data.type = '过车'
         data.time = this.toTimeString(new Date);
         if (data.velocity && data.velocity > 7) {
-          data.type = '过车'
+          data.type = '超速'
         }
         this.alarmData.unshift(data)
         this.offset2 += 0.8
