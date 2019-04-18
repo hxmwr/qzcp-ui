@@ -722,8 +722,8 @@
               data: [
                 {value: 335, name: '超速'},
                 {value: 310, name: '逆行'},
-                {value: 274, name: '布控'},
-                {value: 235, name: '事故'}
+                {value: 234, name: '布控'},
+                {value: 275, name: '事故'}
               ].sort(function (a, b) {
                 return a.value - b.value;
               }),
@@ -838,11 +838,12 @@
                 }
               },
               data: [
-                {value: 335, name: '直接访问'},
-                {value: 310, name: '邮件营销'},
-                {value: 234, name: '联盟广告'},
-                {value: 135, name: '视频广告'},
-                {value: 1548, name: '搜索引擎'}
+                {value: 503, name: '衢江区'},
+                {value: 632, name: '柯城区'},
+                {value: 260, name: '龙游'},
+                {value: 255, name: '常山'},
+                {value: 310, name: '江山'},
+                {value: 222, name: '开化'}
               ]
             }
           ]
