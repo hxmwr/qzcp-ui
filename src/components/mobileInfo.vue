@@ -7,22 +7,22 @@
         :close-on-click-modal="false" :modal-append-to-body="false" :show-close="false">
         <div class="close_btn" @click="closeDialog"><img src="../img/closeBtn.png" alt=""></div>
         <!--车牌号-->
-        <div class="dialog_con" >
+        <div class="dialog_con" v-show="!emptyShow">
           <div class="flex info_icon">
             <i></i>
             <div>
-              <p>浙H19415</p>
-              <div>牛小盾</div>
+              <p>{{detailMobileInfo.plate_no}}</p>
+              <div>{{detailMobileInfo.name}}</div>
             </div>
           </div>
           <div>
-            车辆类型: <span>私人用车</span>
+            车辆类型: <span>{{detailMobileInfo.type}}</span>
           </div>
           <div>
-            联系方式: <span>18010002000</span>
+            联系方式: <span>{{detailMobileInfo.mobile}}</span>
           </div>
           <div>
-            注册地: <span>18010002000</span>
+            注册地: <span>{{detailMobileInfo.location}}</span>
           </div>
           <div class="split_line"></div>
           <div>
@@ -34,6 +34,7 @@
               <el-date-picker
                 v-model="dataArea"
                 type="datetimerange"
+                value-format="yyyy-MM-dd HH:mm:ss"
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期" popper-class="dateSel_obj">
@@ -41,6 +42,10 @@
               <div class="mobile_dataNext" @click="searchTrack"></div>
             </div>
           </div>
+        </div>
+
+        <div class="show_empty" v-show="emptyShow">
+          未搜索到相关信息。
         </div>
       </el-dialog>
     </div>
@@ -50,10 +55,19 @@
 <script>
   export default {
     name: "mobileInfo",
+    props:['detailMobileInfo'],
     data(){
       return{
         dialogVisible:true,
-        dataArea:''
+        dataArea:'',
+        emptyShow:false,
+      }
+    },
+    mounted(){
+      if(this.detailMobileInfo){
+        this.emptyShow = false;
+      }else{
+        this.emptyShow = true;
       }
     },
     methods:{
@@ -61,7 +75,9 @@
         this.$emit('closeMobileDia');
       },
       searchTrack(){
-        this.$emit('searchTrack');
+        if(this.dataArea.length!=0){
+          this.$emit('searchTrack',{"start_time":this.dataArea[0],"end_time":this.dataArea[1],"vehicle_id":this.detailMobileInfo['id'],"flag":1});
+        }
       }
     }
   }
@@ -70,6 +86,10 @@
 <style scoped lang="scss">
   @import '~@/scss/dialog.scss';
   .popDialog{
+    .show_empty{
+      font-size:25px;
+      padding-bottom:40px;
+    }
     .dialog_con{
       .split_line{
         width:100%;

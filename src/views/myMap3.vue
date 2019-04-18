@@ -211,7 +211,7 @@
     <!--告警详情弹窗-->
     <alarmDialog v-if="showAlarmDialog" @closeDia="hiddenDialog" @toshowTrack="toShowTrack" :detailAlarm="detailAlarm" :detailType="detailType"></alarmDialog>
     <!--车辆信息弹窗-->
-    <mobileInfo v-if="showMobileDialog" @closeMobileDia="hiddenMobileDialog" @searchTrack="toSearchTrack"></mobileInfo>
+    <mobileInfo v-if="showMobileDialog" @closeMobileDia="hiddenMobileDialog" :detailMobileInfo="detailMobileInfo" @searchTrack="toSearchTrack"></mobileInfo>
 
      <!--关闭轨迹大按钮  右上角-->
      <div class="track_closeBtn" v-show="!showTrack" @click="closeTrack"></div>
@@ -223,7 +223,7 @@
 <script>
   import alarmDialog from '../components/alarmDialog'
   import mobileInfo from '../components/mobileInfo'
-  import {getBaseStation, getTrack, getTrafficFlow} from "../api/remConfig";
+  import {getBaseStation, getTrack, getTrafficFlow,searchInfo,getTrackByTime} from "../api/remConfig";
   import {gen_mock_event} from '../data/accident-data'
   import {gen_mock_alert, gen_alert_desc} from '../data/alarm-data'
 
@@ -236,6 +236,7 @@
       return {
         hasShowTrack:false,//是否已经显示轨迹
         detailAlarm:'',//具体事故详情
+        detailMobileInfo:'',// 搜索车辆信息详情
         detailType:'',
         showTrack:true,//显示轨迹的页面，其他模块按钮都隐藏
         selectDialog:0,//看是打开告警窗口还是信息查询窗口 默认0是告警窗口
@@ -403,29 +404,46 @@
         let len = this.base_stations.length;
         let points = [];
         for (let i=0;i<len;i++) {
-          let d = this.base_stations[Math.floor(Math.random() * len)]
+          let d = this.base_stations[Math.floor(Math.random() * len)];
           points.push([d.longitude, d.latitude])
         }
         return points;
       },
-      toSearchTrack() {
+      toSearchTrack(data) {
         //显示轨迹   车辆所有信息窗口过来的
         this.showTrack = false;
         this.showMobileDialog = false;
         this.selectDialog = 1;
+        getTrackByTime(data).then(refs=>{
+          console.log(refs);
+          if(refs.data.result.length>0){
+            if(!this.hasShowTrack){
+              this.hasShowTrack = true;
+              this.vehicle_track.setPath(refs.data.result.map(e => [e.longitude, e.latitude]));
+            }else{
+              return false;
+            }
+          }
+        }).catch(err=>{
+          console.log(err);
+        })
       },
       closeTrack(){
         //关闭轨迹
-        console.log('关闭');
         this.vehicle_track.setPath(['','']);
         this.showTrack = true;
         this.hasShowTrack = false;
       },
       hiddenDialog(){
         this.showAlarmDialog = false;
+        this.vehicle_track.setPath(['','']);
+        this.hasShowTrack = false;
       },
       hiddenMobileDialog(){
         this.showMobileDialog = false;
+        this.vehicle_track.setPath(['','']);
+        this.hasShowTrack = false;
+        
       },
       toTimeString(dt) {
         return dt.toTimeString().split(' ')[0]
@@ -436,7 +454,17 @@
         this.detailType = type;
       },
       searchEnterInput(){
-        this.showMobileDialog = true;
+        console.log(this.searchInputVal);
+        if(this.searchInputVal){
+          searchInfo({"key_word":this.searchInputVal}).then(refs=>{
+            console.log(refs);
+            // refs.data.profile
+            this.showMobileDialog = true;
+            this.detailMobileInfo = refs.data.profile;
+          }).catch(err=>{
+            console.log(err);
+          });
+        }
       },
       fullScreenChange(){
         var isFullscreen = document.fullscreenEnabled ||
