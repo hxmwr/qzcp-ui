@@ -33,5 +33,10 @@ export const getTrack = (data) => {
 
 // 搜索
 export const searchInfo = (data)=>{
-  return axios.post(`${base}/search`,data);
+  return axios.get(`${base}/search`,{params: data});
+};
+
+// 车辆信息，根据时间段选择轨迹
+export const getTrackByTime = (data)=>{
+  return axios.post(`${base}/points`,data);
 }
