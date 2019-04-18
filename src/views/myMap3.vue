@@ -73,7 +73,7 @@
         <div class="map_alarmLine">
           <div class="map_alarmLineWrap">
             <div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}">
-              <div class="map_alarms" v-for="(item,key) in alarmData" :key="item.id">
+              <div class="map_alarms" v-for="(item,key) in accident_data" :key="item.id">
                 <!--左边信息-->
                 <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}" @click="openAlarmDialog">
                   <div class="left alarm_time"><span>{{item.time}}</span><i></i></div>
@@ -302,6 +302,7 @@
         e.id = index++;
         e.time = this.toTimeString(new Date);
         this.accident_data.unshift(e);
+        console.log(this.accident_data);
         this.offset1 += 0.8;
         setTimeout(fn, Math.floor(2 + Math.random() * 4) * 1000)
       };
@@ -910,16 +911,17 @@
         }
 
         .map_alarmsWrap {
-          position: absolute;
-          bottom: 0;
-          width: 100%;
-          transition: all .2s;
+          position: relative;
+          height: 100%;
+          /*position: absolute;*/
+          /*bottom: 0;*/
+          /*width: 100%;*/
+          /*transition: all .2s;*/
           .map_alarms {
             /*height:1.2rem;*/
             height: 0.8rem;
           }
         }
-
         .animation_alarms {
           margin-top: 0.8rem;
           transition: all 1s;
@@ -1344,6 +1346,7 @@
         color:#666;
       }
       .el-icon-search:before{
+        cursor: pointer;
         position:absolute;
         content:'';
         width:0.33rem;
