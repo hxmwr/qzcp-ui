@@ -24,3 +24,7 @@ export const getBaseStation = () => {
 export const getTrafficFlow = (data) => {
   return axios.post(`${base}/points`, data);
 };
+
+export const getTrack = (data) => {
+  return axios.post(`${base}/points`, data);
+};
