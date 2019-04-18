@@ -3,12 +3,16 @@
     <div id="myMap"></div>
     <!--顶部-->
     <div class="map_top flex flex_center">
-      <i></i><span>衢州市非机动车"芯车牌"管理系统</span>
+      <i class="logo"></i><span>衢州市非机动车"芯车牌"管理系统</span>
       <!--搜索框-->
-      <div class="map_searchWrap"><i></i></div>
+      <div class="map_searchWrap" v-if="false"><i></i></div>
+      <!--展开的搜索框-->
+      <el-input class="searchInput"  v-model="searchInputVal" placeholder="请输入车牌号/事故id查询" @keyup.enter.native="searchEnterInput">
+        <i slot="suffix" class="el-input__icon el-icon-search" @click="searchEnterInput"></i>
+      </el-input>
       <!--右边两按钮-->
       <div class="map_list"></div>
-      <div class="map_fullScreen"></div>
+      <div class="map_fullScreen" @click="launchFullScreen"></div>
     </div>
     <!--左边模块警告信息-->
     <!--左边模块收起图标-->
@@ -30,8 +34,8 @@
             <div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}">
               <div class="map_alarms" v-for="(item,key) in alarmData" :key="item.id">
                 <!--左边信息-->
-                <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}">
-                  <div class="left alarm_time"><span>{{toTimeString(new Date)}}</span><i></i></div>
+                <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}" @click="openAlarmDialog">
+                  <div class="left alarm_time"><span>{{item.time}}</span><i></i></div>
                   <div class="right alarm_con">
                     <i></i>
                     <div>车牌号:{{item.mobileId}}</div>
@@ -196,14 +200,21 @@
         </div>
       </div>
     </div>
+
+    <!--告警详情弹窗-->
+    <alarmDialog :showDialog="showAlarmDialog"></alarmDialog>
   </div>
 </template>
 
 <script>
+  import alarmDialog from '../components/alarmDialog'
   import {getBaseStation, getTrack, getTrafficFlow} from "../api/remConfig";
   import gen_mock_event from '../data/accident-data'
   export default {
     name: "test",
+    components:{
+      alarmDialog
+    },
     data() {
       return {
         vehicle_track: null,
@@ -229,7 +240,7 @@
       }
     },
     mounted() {
-      const me = this
+      const me = this;
       this.getMap();
       // this.setAnimation();
       this.map_activeNum = this.$echarts.init(document.getElementById('map_activeNum'));
@@ -307,6 +318,51 @@
     methods: {
       toTimeString(dt) {
         return dt.toTimeString().split(' ')[0]
+      },
+      openAlarmDialog(){
+        this.showAlarmDialog = true;
+      },
+      searchEnterInput(){
+        console.log('search');
+      },
+      fullScreenChange(){
+        var isFullscreen = document.fullscreenEnabled ||
+          window.fullScreen ||
+          document.webkitIsFullScreen ||
+          document.msFullscreenEnabled;
+        if(!isFullscreen){
+          this.goFullScreen = 0;
+        }
+      },
+      launchFullScreen(){
+        if(this.goFullScreen == 0){
+          this.goFullScreen = 1;
+          var element = document.documentElement;
+          if(element.requestFullscreen) {
+            element.requestFullscreen();
+          } else if(element.mozRequestFullScreen) {
+            element.mozRequestFullScreen();
+          } else if(element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen();
+          } else if(element.msRequestFullscreen) {
+            element.msRequestFullscreen();
+          }
+        }else{
+          this.goFullScreen = 0;
+          if(document.exitFullscreen){
+            document.exitFullscreen();
+          } else if(document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+          } else if(document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          }else if(document.msExitFullscreen){
+            document.msExiFullscreen();
+          }
+        }
+        document.addEventListener('fullscreenchange',this.fullScreenChange);
+        document.addEventListener('webkitfullscreenchange',this.fullScreenChange);
+        document.addEventListener('mozfullscreenchange',this.fullScreenChange);
+        document.addEventListener('MSFullscreenChange',this.fullScreenChange);
       },
       openLeft() {
         //点击左边按钮展开
@@ -656,16 +712,15 @@
 </script>
 
 <style scoped lang="scss">
-  .myMapWrap {
-    width: 100%;
-    height: 100vh;
-    position: relative;
 
-    #myMap {
-      width: 100%;
-      height: 100vh;
+  .myMapWrap{
+    width:100%;
+    height:100vh;
+    overflow: hidden;
+    #myMap{
+      width:100%;
+      height:100vh;
     }
-
     /*顶部信息*/
     .map_top {
       position: absolute;
@@ -674,9 +729,8 @@
       width: 100%;
       height: 0.8rem;
       /*background:rgba(0,0,0,.1);*/
-      background: linear-gradient(rgba(216, 216, 216, 1), rgba(255, 255, 255, 0));
-
-      i {
+       background:linear-gradient(rgba(216,216,216,1), rgba(255,255,255,0));
+      .logo{
         display: inline-block;
         width: 0.528rem;
         height: 0.6rem;
@@ -1200,7 +1254,32 @@
     }
   }
 
-  .showLeft {
+  /*展开的搜索框*/
+  .myMapWrap /deep/ .map_top{
+    .el-input{
+      position:absolute;
+      top:50%;left:0.2rem;
+      width:2.5rem;
+      height:0.4rem;
+      margin-top:-0.2rem;
+      .el-input__inner{
+        height:0.4rem;
+        font-size:0.14rem;
+        padding:0 0.15rem 0 0.3rem;
+      }
+      .el-icon-search:before{
+        position:absolute;
+        content:'';
+        width:0.25rem;
+        height:0.25rem;
+        top:50%;left:50%;
+        margin-top:-0.12rem;margin-left:-0.175rem;
+        background:url("../img/search.png") no-repeat center;
+        background-size:100% 100%;
+      }
+    }
+  }
+  .showLeft{
     display: none;
   }
 
