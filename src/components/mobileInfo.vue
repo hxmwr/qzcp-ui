@@ -7,7 +7,7 @@
         :close-on-click-modal="false" :modal-append-to-body="false" :show-close="false">
         <div class="close_btn" @click="closeDialog"><img src="../img/closeBtn.png" alt=""></div>
         <!--车牌号-->
-        <div class="dialog_con" v-show="!emptyShow">
+        <div class="dialog_con" v-if="!emptyShow">
           <div class="flex info_icon">
             <i></i>
             <div>
@@ -44,7 +44,7 @@
           </div>
         </div>
 
-        <div class="show_empty" v-show="emptyShow">
+        <div class="show_empty" v-if="emptyShow">
           未搜索到相关信息。
         </div>
       </el-dialog>
@@ -60,7 +60,7 @@
       return{
         dialogVisible:true,
         dataArea:'',
-        emptyShow:false,
+        emptyShow:true,
       }
     },
     mounted(){
