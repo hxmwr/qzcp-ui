@@ -335,7 +335,7 @@
 
       // 告警滚动列表
       var index2 = 0
-      var ws = new WebSocket('ws://127.0.0.1:8889');
+      var ws = new WebSocket('ws://192.168.199.88:8889');
       ws.onmessage = (e) => {
         let data = JSON.parse(e.data)
         data.id = index2++;
@@ -422,7 +422,7 @@
         this.showTrack = false;
         this.showAlarmDialog = false;
         this.selectDialog = 0;
-        if(!this.hasShowTrack){
+        if(!this.hasShowTrack) {
           this.setAlarmTrack();
         }else{
           return false;
