@@ -155,7 +155,7 @@
             <div class="flex flex_align">
               <div id="map_alarmTotal" style="width:1.7rem;height:1.3rem;"></div>
               <div class="map_dataDetail">
-                <div>超速告警总数: <span>190415</span></div>
+                <div>超速告警总数: <span>149735</span></div>
                 <div>逆行告警总数: <span>145788</span></div>
                 <div>布控告警总数: <span>859</span></div>
                 <div>事故告警总数: <span>3088</span></div>
@@ -217,6 +217,12 @@
      <div class="track_closeBtn" v-show="!showTrack" @click="closeTrack"></div>
      <!--查询信息查询轨迹后缩放成icon-->
      <div class="track_infoIcon" v-show="!showTrack" @click="showInfoDialog"></div>
+
+    <!--天气日期时间等-->
+    <div class="map_weather flex flex_align flex_between">
+      <span><span class="map_weatherStatus">{{showWeather.weather}}</span><span>{{showWeather.temperature}}℃</span></span>
+      <span>{{Dates.year}}年{{Dates.month}}月{{Dates.date}}日{{Dates.hour}}:{{Dates.minute}}</span>
+    </div>
   </div>
 </template>
 
@@ -234,6 +240,15 @@
     },
     data() {
       return {
+        showWeather:{'temperature':'22','weather':'阴'},//天气情况
+        Dates:{
+          year:'',
+          month:'',
+          date:'',
+          hour:'',
+          minute:''
+        },//日期
+        timeInterval:null,// 时间定时器
         infoWindow:'',//地图上的信息窗体
         selectTimeArea:'', //所有车辆查询时间段
         hasShowTrack:false,//是否已经显示轨迹
@@ -270,7 +285,8 @@
     },
     mounted() {
       const me = this;
-      this.getMap();
+      this.getTime(); //得到时间
+      this.getMap(); //创建地图
       // this.setAnimation();
       this.map_activeNum = this.$echarts.init(document.getElementById('map_activeNum'));
       this.getMapActiveNum();//车辆活跃总数 折线图
@@ -291,7 +307,7 @@
 
       getTrafficFlow({flag: 2}).then(r => {
         //热力图
-        console.log(r.data.result)
+        // console.log(r.data.result)
         this.heat_map_points = [];
         r.data.result.forEach(e => {
           for (let i = 0; i < this.base_stations.length; i++) {
@@ -361,6 +377,9 @@
       // };
       // fn2();
     },
+    destroyed(){
+      clearInterval(this.timeInterval)
+    },
     watch: {
       base_stations: function (new_data, old_data) {
         var vm = this;
@@ -381,7 +400,7 @@
             position: new AMap.LngLat(e.longitude, e.latitude),   // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9],
             // icon:startIcon,
             // offset: new AMap.Pixel(-20, -25),
-            title: '衢州3'
+            title: e.id
           });
           this.map.add(marker);
           this.base_station_markers.push(marker);
@@ -396,6 +415,35 @@
       }
     },
     methods: {
+      getTime(){
+        var self = this;
+        // 得到天气
+        AMap.plugin('AMap.Weather', function() {
+          //创建天气查询实例
+          var weather = new AMap.Weather();
+          //执行实时天气信息查询
+          weather.getLive('衢州市', function(err, data) {
+            // console.log(data);
+            self.showWeather = data;
+          });
+        });
+        //得到时间
+        this.timeInterval = setInterval(function(){
+          self.getTime_realTime()
+        },1000);
+      },
+      getTime_realTime(){
+        var nowDate = new Date();
+        this.Dates.year = nowDate.getFullYear();
+        var now_Month = nowDate.getMonth()+1;
+        this.Dates.month = now_Month<10 ? '0'+now_Month : now_Month;
+        var now_Date = nowDate.getDate();
+        this.Dates.date = now_Date<10? '0'+now_Date : now_Date;
+        var now_hour = nowDate.getHours();
+        this.Dates.hour = now_hour<10 ? '0' + now_hour : now_hour;
+        var now_minute = nowDate.getMinutes();
+        this.Dates.minute = now_minute < 10 ? '0' + now_minute : now_minute;
+      },
       showInfoDialog() {
         //重新打开告警信息等窗口
         if (this.selectDialog == 0) {
@@ -717,13 +765,13 @@
             // "axisLabel":{
             //   interval: 0
             // },
-            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+            data: ['上午', '中午','下午','晚上']
           },
           yAxis: {
             type: 'value'
           },
           series: [{
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
+            data: [82000, 120000,250300,335900],
             type: 'line',
             areaStyle: {}
           }]
@@ -806,20 +854,21 @@
         let options = {
           grid: {
             left: '0.1%',
-            right: '1%',
+            right: '0%',
             bottom: '0.3%',
             top: '10%',
             containLabel: true
           },
           xAxis: {
             type: 'category',
-            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+            boundaryGap: false,
+            data: ['1-3','3-5','5-7']
           },
           yAxis: {
             type: 'value'
           },
           series: [{
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
+            data: [42,38,32],
             type: 'line',
             smooth: true
           }]
@@ -897,7 +946,6 @@
 </script>
 
 <style scoped lang="scss">
-
   .myMapWrap{
     width:100%;
     height:100vh;
@@ -1463,6 +1511,27 @@
        background-size:100% 100%;
        cursor: pointer;
      }
+
+    /*天气时间等栏位*/
+    .map_weather{
+      position:absolute;
+      bottom:0.2rem;
+      right:0.2rem;
+      width:2.7rem;
+      height:0.3rem;
+      box-sizing: border-box;
+      padding:0 0.25rem;
+      background: rgba(255,255,255,0.80);
+      box-shadow: inset 0 0.01rem 0.03rem 0 rgba(0,0,0,0.30);
+      border-radius: 0.18rem;
+      .map_weatherStatus{
+        margin-right:0.1rem;
+      }
+      span{
+        font-size:0.14rem;
+        color:#333333;
+      }
+    }
   }
 
   /*展开的搜索框*/
@@ -1503,6 +1572,9 @@
        .map_statistics{
          width:4.3rem;
        }
+       .map_weather{
+          width:3rem;
+        }
      }
   }
 </style>
