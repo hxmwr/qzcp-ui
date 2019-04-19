@@ -331,15 +331,15 @@
       var index2 = 0
       var ws = new WebSocket('ws://192.168.199.88:8889');
       ws.onmessage = (e) => {
-        let data = JSON.parse(e.data)
+        let data = JSON.parse(e.data);
         data.id = index2++;
-        data.type = '过车'
+        data.type = '过车';
         data.time = this.toTimeString(new Date);
         if (data.velocity && data.velocity > 7) {
-          data.type = '超速'
+          data.type = '超速';
         }
-        this.alarmData.unshift(data)
-        this.offset2 += 0.8
+        this.alarmData.unshift(data);
+        this.offset2 += 0.8;
         if (this.alarmData.length > 15) {
             this.alarmData = this.alarmData.slice(0, -5);
             this.offset2 -= (0.8 * 5);
@@ -377,7 +377,6 @@
           // imageOffset: new AMap.Pixel(-5,8)
         });
         new_data.forEach(e => {
-          console.log('e',e);
           let marker = new AMap.Marker({
             position: new AMap.LngLat(e.longitude, e.latitude),   // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9],
             // icon:startIcon,
@@ -407,13 +406,23 @@
           this.showMobileDialog = true;
         }
       },
-      toShowTrack() {
+      toShowTrack(data) {
         //显示轨迹   告警窗口过来的
         this.showTrack = false;
         this.showAlarmDialog = false;
         this.selectDialog = 0;
         if(!this.hasShowTrack){
-          this.setAlarmTrack();
+          // this.setAlarmTrack();
+          getTrackByTime(data).then(refs=>{
+            console.log(refs);
+            if(refs.data.result.length>0){
+              this.vehicle_track.setPath(['','']);
+              this.hasShowTrack = true;
+              this.vehicle_track.setPath(refs.data.result.map(e => [e.longitude, e.latitude]));
+            }
+          }).catch(err=>{
+            console.log(err);
+          })
         }else{
           return false;
         }
@@ -482,10 +491,8 @@
         this.detailType = type;
       },
       searchEnterInput(){
-        console.log(this.searchInputVal);
         if(this.searchInputVal){
           searchInfo({"key_word":this.searchInputVal}).then(refs=>{
-            console.log(refs);
             // refs.data.profile
             this.showMobileDialog = true;
             this.detailMobileInfo = refs.data.profile;
