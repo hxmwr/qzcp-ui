@@ -234,6 +234,7 @@
     },
     data() {
       return {
+        infoWindow:'',//地图上的信息窗体
         selectTimeArea:'', //所有车辆查询时间段
         hasShowTrack:false,//是否已经显示轨迹
         detailAlarm:'',//具体事故详情
@@ -362,7 +363,8 @@
     },
     watch: {
       base_stations: function (new_data, old_data) {
-        this.map.remove(this.base_station_markers)
+        var vm = this;
+        this.map.remove(this.base_station_markers);
         this.base_station_markers = [];
         var startIcon = new AMap.Icon({
           // 图标尺寸
@@ -375,6 +377,7 @@
           // imageOffset: new AMap.Pixel(-5,8)
         });
         new_data.forEach(e => {
+          console.log('e',e);
           let marker = new AMap.Marker({
             position: new AMap.LngLat(e.longitude, e.latitude),   // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9],
             // icon:startIcon,
@@ -383,6 +386,13 @@
           });
           this.map.add(marker);
           this.base_station_markers.push(marker);
+
+          // 添加信息窗体
+          AMap.event.addListener(marker, 'click', function () {
+            let infoCon = '<div style="font-size:14px;font-family: pingfangMedium;color:#333333;">'+e.id+'</div><div style="font-size:14px;color:#666">'+e.desc+'</div>'
+            vm.infoWindow.setContent(infoCon);
+            vm.infoWindow.open(vm.map, marker.getPosition());
+          });
         })
       }
     },
@@ -567,6 +577,15 @@
           center: [118.86631, 28.97504] //初始化地图中心点
         });
         this.map = map;
+
+        // 信息窗体
+        this.infoWindow  = new AMap.InfoWindow({
+          // isCustom: true,  //使用自定义窗体
+          content: '',
+          offset: new AMap.Pixel(1, -35)
+        });
+
+
         //***************************************** 热力图
         if (!isSupportCanvas()) {
           alert('热力图仅对支持canvas的浏览器适用,您所使用的浏览器不能使用热力图功能,请换个浏览器试试~')
@@ -1314,7 +1333,7 @@
       top: 0.9rem;
       right: 0;
       z-index: 1100;
-      width: 4rem;
+      width: 4.1rem;
       height: 8.43rem;
       padding-left: 0.2rem;
       box-sizing: border-box;
@@ -1472,5 +1491,11 @@
     display: none;
   }
 
-
+  @media only screen and (max-width: 1367px){
+     .myMapWrap{
+       .map_statistics{
+         width:4.3rem;
+       }
+     }
+  }
 </style>
