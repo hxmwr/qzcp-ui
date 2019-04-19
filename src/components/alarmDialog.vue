@@ -16,13 +16,10 @@
                告警类型: <span>{{detailAlarm.type}}</span>
              </div>
              <div>
-               违章地点: <span>{{detailAlarm.location}}</span>
+               告警地点: <span>{{detailAlarm.location}}</span>
              </div>
              <div>
-               违章时间: <span>{{detailAlarm.time}}</span>
-             </div>
-             <div>
-               违章程度: <span>超速100%以上（55km/h）</span>
+               告警时间: <span>{{detailAlarm.time}}</span>
              </div>
              <div>违章描述：</div>
              <div>

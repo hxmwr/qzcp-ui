@@ -28,7 +28,7 @@
         </div>
         <!--时间-->
         <div class="map_alarmTime">
-          <div>{{(alarmData.length > 0) && ((new Date).toISOString().split('T')[0] + ' ' +
+          <div>{{(alarmData.length === 0)?'':((new Date).toISOString().split('T')[0] + ' ' +
             alarmData[0].time)}}</div>
         </div>
         <div class="map_alarmLine">
@@ -480,7 +480,6 @@
             this.showMobileDialog = true;
             this.detailMobileInfo = refs.data.profile;
           }).catch(err=>{
-            console.log(err);
           });
         }
       },
