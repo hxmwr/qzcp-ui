@@ -407,7 +407,7 @@
         }
       },
       toShowTrack(data) {
-        //显示轨迹   告警窗口过来的
+        //显示轨迹   告警窗口过来的  需要字段vehicle_id，flat:1
         this.showTrack = false;
         this.showAlarmDialog = false;
         this.selectDialog = 0;
@@ -441,7 +441,7 @@
         return points;
       },
       toSearchTrack(data) {
-        //显示轨迹   车辆所有信息窗口过来的
+        //显示轨迹   车辆所有信息窗口过来的  需要字段vehicle_id，flat:1,start_time,end_time
         this.showTrack = false;
         this.showMobileDialog = false;
         this.selectDialog = 1;
