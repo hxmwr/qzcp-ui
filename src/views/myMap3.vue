@@ -33,7 +33,7 @@
         </div>
         <div class="map_alarmLine">
           <div class="map_alarmLineWrap">
-            <div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}" :style="{transform: 'translateY(' + offset2 + 'rem)', background: 'red'}">
+            <div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}" :style="{transform: 'translateY(' + offset2 + 'rem)', background: 'red', transition: transition2?'all .2s':'none'}">
               <div class="map_alarms" v-for="(item,key) in alarmData" :key="item.id">
                 <!--左边信息-->
                 <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}">
@@ -78,7 +78,7 @@
           <div class="map_alarmLineWrap">
 
             <div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}"
-                 :style="{transform: 'translateY(' + offset1 + 'rem)', background: 'red'}">
+                 :style="{transform: 'translateY(' + offset1 + 'rem)', background: 'red', transition: transition1?'all .2s':'none'}">
               <div class="map_alarms" v-for="(item,key) in accident_data" :key="item.id">
                 <!--左边信息-->
 
@@ -245,6 +245,8 @@
         vehicle_track: null,
         offset1: -5.7,
         offset2: -5.7,
+        transition2: true,
+        transition1: true,
         heat_map_points: [],
         base_station_markers: [],
         base_stations: [],
@@ -318,9 +320,13 @@
         e.time = this.toTimeString(new Date);
         this.accident_data.unshift(e);
         this.offset1 += 0.8;
-        if (this.accident_data.length > 50) {
-          this.accident_data = this.accident_data.slice(0, -40);
-          this.offset1 -= (0.8 * 40);
+        if (this.accident_data.length > 1000) {
+          this.accident_data = this.accident_data.slice(0, -990);
+          this.offset1 -= (0.8 * 990);
+          // this.transition1 = false
+          // document.querySelector('.map_rightTitle').offsetHeight
+          // // this.transition1 = true
+          // setTimeout(() => this.transition1 = true, 0)
         }
         setTimeout(fn, Math.floor(2 + Math.random() * 4) * 1000)
       };
@@ -339,9 +345,12 @@
         }
         this.alarmData.unshift(data)
         this.offset2 += 0.8
-        if (this.alarmData.length > 15) {
-            this.alarmData = this.alarmData.slice(0, -5);
-            this.offset2 -= (0.8 * 5);
+        if (this.alarmData.length > 1000) {
+            this.alarmData = this.alarmData.slice(0, -990);
+            this.offset2 -= (0.8 * 990);
+            // this.transition2 = false
+            // document.querySelector('.map_rightTitle').offsetHeight
+            // this.transition2 = true
         }
 
       };
