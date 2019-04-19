@@ -90,7 +90,7 @@
         },
         showTrackMap(){
           //点击查看轨迹，隐藏界面上所有元素
-          this.$emit('toshowTrack');
+          this.$emit('toshowTrack',{"vehicle_id":this.detailAlarm['vehicle_id'],"flag":1});
         }
       }
     }
