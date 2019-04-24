@@ -4,6 +4,7 @@ import Router from 'vue-router'
 import myMap from '@/views/myMap'
 import myMap2 from '@/views/myMap2'
 import myMap3 from '@/views/myMap3'
+import myMap4 from '@/views/myMap4'
 
 Vue.use(Router)
 
@@ -21,8 +22,8 @@ export default new Router({
     // }
     {
       path: '/',
-      name: 'myMap3',
-      component: myMap3
+      name: 'myMap4',
+      component: myMap4
     }
   ]
 })

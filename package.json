@@ -10,11 +10,15 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "ajv": "^6.10.0",
     "axios": "^0.18.0",
     "echarts": "^4.2.1",
     "element-ui": "^2.7.2",
+    "leaflet": "^1.4.0",
     "vue": "^2.5.2",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "vue2-leaflet": "^2.1.0",
+    "vue2-leaflet-heatmap": "^1.0.5"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

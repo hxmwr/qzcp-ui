@@ -47,7 +47,7 @@
                 </div>
                 <!--右边信息-->
                 <div class="alarm_info alarm_right" :class="{showLeft:item.id%2==0}">
-                  <div class="right alarm_time"><i></i><span>{{toTimeString(new Date)}}</span></div>
+                  <div class="right alarm_time"><i></i><span>{{item.time}}</span></div>
                   <div class="left alarm_con" @click="openAlarmDialog(item,'1')">
                     <i></i>
                     <div>车牌号:{{item.plate_no}}</div>
