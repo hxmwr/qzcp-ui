@@ -13,6 +13,7 @@
         <l-popup>{{item.desc}}</l-popup>
       </l-marker>
       <l-polyline
+        ref="polyline"
         :lat-lngs="polyline.latlngs"
         :color="polyline.color">
       </l-polyline>
@@ -100,7 +101,7 @@
 
                 <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}">
                   <div class="left alarm_time"><span>{{item.time}}</span><i></i></div>
-                  <div class="right alarm_con"  @click="openAlarmDialog(item,'2')">
+                  <div class="right alarm_con" @click="openAlarmDialog(item,'2')">
                     <i></i>
                     <div>车牌号:{{item.plate_no}}</div>
                     <div>基站:{{item.device_id}}</div>
@@ -110,7 +111,7 @@
                 <!--右边信息-->
                 <div class="alarm_info alarm_right" :class="{showLeft:item.id%2==0}">
                   <div class="right alarm_time"><i></i><span>{{item.time}}</span></div>
-                  <div class="left alarm_con"  @click="openAlarmDialog(item,'2')">
+                  <div class="left alarm_con" @click="openAlarmDialog(item,'2')">
                     <i></i>
                     <div>车牌号:{{item.plate_no}}</div>
                     <div>基站:{{item.device_id}}</div>
@@ -123,7 +124,7 @@
         </div>
       </div>
       <!--收缩箭头栏-->
-      <div class="map_shrikArrow" >
+      <div class="map_shrikArrow">
         <span @click="shrinkLeft"><i></i></span>
       </div>
       <!--告警详情按钮-->
@@ -245,17 +246,19 @@
 <script>
   import alarmDialog from '../components/alarmDialog'
   import mobileInfo from '../components/mobileInfo'
-  import {getBaseStation, getTrack, getTrafficFlow,searchInfo,getTrackByTime} from "../api/remConfig";
+  import {getBaseStation, getTrack, getTrafficFlow, searchInfo, getTrackByTime} from "../api/remConfig";
   import {gen_mock_event} from '../data/accident-data'
   import {gen_mock_alert, gen_alert_desc} from '../data/alarm-data'
   import heatMap from '../components/heatmap'
   import L from 'leaflet'
+  import polyline_snake_anim from '../components/polyline.snake'
 
-  heatMap(L);
+  polyline_snake_anim()
+  heatMap(L)
   export default {
     name: "test",
-    components:{
-      alarmDialog,mobileInfo
+    components: {
+      alarmDialog, mobileInfo
     },
     data() {
       return {
@@ -352,7 +355,6 @@
       getBaseStation().then(function (r) {
         //得到基站值
         me.base_stations = r.data.data
-        console.log(r);
       });
 
       getTrafficFlow({flag: 2}).then(r => {
@@ -410,11 +412,11 @@
         this.alarmData.unshift(data)
         this.offset2 += 0.8
         if (this.alarmData.length > 1000) {
-            this.alarmData = this.alarmData.slice(0, -990);
-            this.offset2 -= (0.8 * 990);
-            // this.transition2 = false
-            // document.querySelector('.map_rightTitle').offsetHeight
-            // this.transition2 = true
+          this.alarmData = this.alarmData.slice(0, -990);
+          this.offset2 -= (0.8 * 990);
+          // this.transition2 = false
+          // document.querySelector('.map_rightTitle').offsetHeight
+          // this.transition2 = true
         }
 
       };
@@ -433,7 +435,7 @@
       // };
       // fn2();
     },
-    destroyed(){
+    destroyed() {
       clearInterval(this.timeInterval)
     },
     watch: {
@@ -480,32 +482,32 @@
       boundsUpdated(bounds) {
         this.bounds = bounds;
       },
-      getTime(){
+      getTime() {
         var self = this;
         // 得到天气
-        AMap.plugin('AMap.Weather', function() {
+        AMap.plugin('AMap.Weather', function () {
           //创建天气查询实例
           var weather = new AMap.Weather();
           //执行实时天气信息查询
-          weather.getLive('衢州市', function(err, data) {
+          weather.getLive('衢州市', function (err, data) {
             // console.log(data);
             self.showWeather = data;
           });
         });
         //得到时间
-        this.timeInterval = setInterval(function(){
+        this.timeInterval = setInterval(function () {
           self.getTime_realTime()
-        },1000);
+        }, 1000);
       },
-      getTime_realTime(){
+      getTime_realTime() {
         var nowDate = new Date();
         this.Dates.year = nowDate.getFullYear();
-        var now_Month = nowDate.getMonth()+1;
-        this.Dates.month = now_Month<10 ? '0'+now_Month : now_Month;
+        var now_Month = nowDate.getMonth() + 1;
+        this.Dates.month = now_Month < 10 ? '0' + now_Month : now_Month;
         var now_Date = nowDate.getDate();
-        this.Dates.date = now_Date<10? '0'+now_Date : now_Date;
+        this.Dates.date = now_Date < 10 ? '0' + now_Date : now_Date;
         var now_hour = nowDate.getHours();
-        this.Dates.hour = now_hour<10 ? '0' + now_hour : now_hour;
+        this.Dates.hour = now_hour < 10 ? '0' + now_hour : now_hour;
         var now_minute = nowDate.getMinutes();
         this.Dates.minute = now_minute < 10 ? '0' + now_minute : now_minute;
       },
@@ -524,44 +526,46 @@
         this.showTrack = false;
         this.showAlarmDialog = false;
         this.selectDialog = 0;
-        if(!this.hasShowTrack){
+        if (!this.hasShowTrack) {
           // this.setAlarmTrack();
-          getTrackByTime(data).then(refs=>{
+          getTrackByTime(data).then(refs => {
             console.log(refs);
             this.polyline.latlngs = refs.data.result.map(e => [e.latitude, e.longitude]);
-            if(refs.data.result.length>0){
-              this.vehicle_track.setPath(['','']);
+            if (refs.data.result.length > 0) {
+              this.vehicle_track.setPath(['', '']);
               this.hasShowTrack = true;
               let lineArr = refs.data.result.map(e => [e.longitude, e.latitude]);
               this.vehicle_track.setPath(lineArr);
-              this.bycleMarker =new AMap.Marker({
+              this.bycleMarker = new AMap.Marker({
                 map: this.map,
-                position: [refs.data.result[0].longitude,refs.data.result[0].latitude],
+                position: [refs.data.result[0].longitude, refs.data.result[0].latitude],
                 icon: "../../static/bycle.png",
                 offset: new AMap.Pixel(-26, -26),
                 autoRotation: true,
-                angle:-90,
+                angle: -90,
               });
-              this.bycleMarker.moveAlong(lineArr,500,function(k){return k},true);
-              this.bycleMarker.on('moving', (e)=> {
+              this.bycleMarker.moveAlong(lineArr, 500, function (k) {
+                return k
+              }, true);
+              this.bycleMarker.on('moving', (e) => {
                 this.passedPolyline.setPath(e.passedPath);
               });
             }
-          }).catch(err=>{
+          }).catch(err => {
             console.log(err);
           })
-        }else{
+        } else {
           return false;
         }
       },
-      setAlarmTrack(){
+      setAlarmTrack() {
         this.hasShowTrack = true;
         this.vehicle_track.setPath(this.get_random_point());
       },
       get_random_point() {
         let len = this.base_stations.length;
         let points = [];
-        for (let i=0;i<len;i++) {
+        for (let i = 0; i < len; i++) {
           let d = this.base_stations[Math.floor(Math.random() * len)];
           points.push([d.longitude, d.latitude])
         }
@@ -573,10 +577,21 @@
         this.showMobileDialog = false;
         this.selectDialog = 1;
         this.selectTimeArea = data;
-        getTrackByTime(data).then(refs=>{
-          console.log(refs);
-          if(refs.data.result.length>0){
-            this.polyline.latlngs = refs.data.result.map(e => [e.latitude, e.longitude]);
+        getTrackByTime(data).then(refs => {
+          if (refs.data.result.length > 0) {
+            let tmp = refs.data.result.map(e => [e.latitude, e.longitude]);
+            let points = []
+            if (tmp.length == 0) return
+            points.push(tmp[0])
+            for (let i = 1; i < tmp.length; i++) {
+              if (tmp[i][0] != tmp[i - 1][0] && tmp[i][1] != tmp[i - 1][1]) {
+                points.push(tmp[i])
+              }
+            }
+            this.polyline.latlngs = points;
+            setTimeout(() => {
+              this.$refs.polyline.mapObject.snakeIn()
+            }, 0)
             // this.vehicle_track.setPath(['','']);
             // let lineArr = refs.data.result.map(e => [e.longitude, e.latitude])
             // this.vehicle_track.setPath(lineArr);
@@ -597,91 +612,91 @@
           console.log(err);
         })
       },
-      closeTrack(){
+      closeTrack() {
         //关闭轨迹
         this.selectTimeArea = '';
         this.searchInputVal = '';
-        this.vehicle_track.setPath(['','']);
+        this.vehicle_track.setPath(['', '']);
         this.showTrack = true;
         this.hasShowTrack = false;
         this.bycleMarker.stopMove();
-        this.passedPolyline.setPath('','');
+        this.passedPolyline.setPath('', '');
         this.bycleMarker.hide();
       },
-      hiddenDialog(){
+      hiddenDialog() {
         this.showAlarmDialog = false;
-        this.vehicle_track.setPath(['','']);
+        this.vehicle_track.setPath(['', '']);
         this.hasShowTrack = false;
         this.bycleMarker.stopMove();
-        this.passedPolyline.setPath('','');
+        this.passedPolyline.setPath('', '');
         this.bycleMarker.hide();
       },
-      hiddenMobileDialog(){
+      hiddenMobileDialog() {
         this.selectTimeArea = '';
         this.searchInputVal = '';
         this.showMobileDialog = false;
-        this.vehicle_track.setPath(['','']);
+        this.vehicle_track.setPath(['', '']);
         this.hasShowTrack = false;
         this.bycleMarker.stopMove();
-        this.passedPolyline.setPath('','');
+        this.passedPolyline.setPath('', '');
         this.bycleMarker.hide();
       },
       toTimeString(dt) {
         return dt.toTimeString().split(' ')[0]
       },
-      openAlarmDialog(item,type){
+      openAlarmDialog(item, type) {
         this.showAlarmDialog = true;
         this.detailAlarm = item;
         this.detailType = type;
       },
-      searchEnterInput(){
-        if(this.searchInputVal){
-          searchInfo({"key_word":this.searchInputVal}).then(refs=>{
+      searchEnterInput() {
+        if (this.searchInputVal) {
+          searchInfo({"key_word": this.searchInputVal}).then(refs => {
             // refs.data.profile
             this.showMobileDialog = true;
             this.detailMobileInfo = refs.data.profile;
-          }).catch(err=>{
+          }).catch(err => {
           });
         }
       },
-      fullScreenChange(){
+      fullScreenChange() {
         var isFullscreen = document.fullscreenEnabled ||
           window.fullScreen ||
           document.webkitIsFullScreen ||
           document.msFullscreenEnabled;
-        if(!isFullscreen){
+        if (!isFullscreen) {
           this.goFullScreen = 0;
         }
       },
-      launchFullScreen(){
-        if(this.goFullScreen == 0){
+      launchFullScreen() {
+        if (this.goFullScreen == 0) {
           this.goFullScreen = 1;
           var element = document.documentElement;
-          if(element.requestFullscreen) {
+          if (element.requestFullscreen) {
             element.requestFullscreen();
-          } else if(element.mozRequestFullScreen) {
+          } else if (element.mozRequestFullScreen) {
             element.mozRequestFullScreen();
-          } else if(element.webkitRequestFullscreen) {
+          } else if (element.webkitRequestFullscreen) {
             element.webkitRequestFullscreen();
-          } else if(element.msRequestFullscreen) {
+          } else if (element.msRequestFullscreen) {
             element.msRequestFullscreen();
           }
-        }else{
+        } else {
           this.goFullScreen = 0;
-          if(document.exitFullscreen){
+          if (document.exitFullscreen) {
             document.exitFullscreen();
-          } else if(document.mozCancelFullScreen) {
+          } else if (document.mozCancelFullScreen) {
             document.mozCancelFullScreen();
-          } else if(document.webkitExitFullscreen) {
+          } else if (document.webkitExitFullscreen) {
             document.webkitExitFullscreen();
-          }else if(document.msExitFullscreen){
+          } else if (document.msExitFullscreen) {
             document.msExiFullscreen();
           }
         }
-        document.addEventListener('fullscreenchange',this.fullScreenChange);
-        document.addEventListener('webkitfullscreenchange',this.fullScreenChange);
-        document.addEventListener('mozfullscreenchange',this.fullScreenChange);
-        document.addEventListener('MSFullscreenChange',this.fullScreenChange);
+        document.addEventListener('fullscreenchange', this.fullScreenChange);
+        document.addEventListener('webkitfullscreenchange', this.fullScreenChange);
+        document.addEventListener('mozfullscreenchange', this.fullScreenChange);
+        document.addEventListener('MSFullscreenChange', this.fullScreenChange);
       },
       openLeft() {
         //点击左边按钮展开
@@ -867,13 +882,13 @@
             // "axisLabel":{
             //   interval: 0
             // },
-            data: ['上午', '中午','下午','晚上']
+            data: ['上午', '中午', '下午', '晚上']
           },
           yAxis: {
             type: 'value'
           },
           series: [{
-            data: [82000, 120000,250300,335900],
+            data: [82000, 120000, 250300, 335900],
             type: 'line',
             areaStyle: {}
           }]
@@ -964,13 +979,13 @@
           xAxis: {
             type: 'category',
             boundaryGap: false,
-            data: ['1-3','3-5','5-7']
+            data: ['1-3', '3-5', '5-7']
           },
           yAxis: {
             type: 'value'
           },
           series: [{
-            data: [42,38,32],
+            data: [42, 38, 32],
             type: 'line',
             smooth: true
           }]
@@ -1048,15 +1063,17 @@
 </script>
 
 <style scoped lang="scss">
-  .myMapWrap{
-    width:100%;
-    height:100vh;
+  .myMapWrap {
+    width: 100%;
+    height: 100vh;
     overflow: hidden;
-    position:relative;
-    #myMap{
-      width:100%;
-      height:100vh;
+    position: relative;
+
+    #myMap {
+      width: 100%;
+      height: 100vh;
     }
+
     /*顶部信息*/
     .map_top {
       position: absolute;
@@ -1064,13 +1081,16 @@
       left: 0;
       width: 100%;
       height: 0.8rem;
-      z-index:9999;
+      z-index: 9999;
+
       .searchInput {
         z-index: 9999;
       }
+
       /*background:rgba(0,0,0,.1);*/
-       background:linear-gradient(rgba(216,216,216,1), rgba(255,255,255,0));
-      .logo{
+      background: linear-gradient(rgba(216, 216, 216, 1), rgba(255, 255, 255, 0));
+
+      .logo {
         display: inline-block;
         width: 0.528rem;
         height: 0.6rem;
@@ -1132,13 +1152,15 @@
         right: 0.26rem;
         cursor: pointer;
       }
-      .fullScreen{
+
+      .fullScreen {
         background: url("../img/fullscreen.png") no-repeat center;
         background-size: 100% 100%;
       }
-      .quitFullScreen{
-        background:url('../img/quitFullscreen.png') no-repeat center;
-        background-size:100% 100%;
+
+      .quitFullScreen {
+        background: url('../img/quitFullscreen.png') no-repeat center;
+        background-size: 100% 100%;
       }
     }
 
@@ -1155,6 +1177,7 @@
       border-radius: 0.1rem;
       cursor: pointer;
       z-index: 999;
+
       i {
         position: absolute;
         width: 0.35rem;
@@ -1209,6 +1232,7 @@
           bottom: 0;
           width: 100%;
           transition: all .2s;
+
           .map_alarms {
             /*height:1.2rem;*/
             height: 0.8rem;
@@ -1436,7 +1460,8 @@
         width: 100%;
         background: #FCFCFC;
         border-bottom-right-radius: 0.2rem;
-        box-shadow: 0 0.04rem 0.04rem 0 rgba(0,0,0,0.30);
+        box-shadow: 0 0.04rem 0.04rem 0 rgba(0, 0, 0, 0.30);
+
         span {
           position: absolute;
           width: 0.4rem;
@@ -1444,6 +1469,7 @@
           bottom: 0.02rem;
           right: 0;
           cursor: pointer;
+
           i {
             position: absolute;
             width: 0.14rem;
@@ -1481,6 +1507,7 @@
       border-radius: 0.1rem;
       cursor: pointer;
       z-index: 999;
+
       i {
         position: absolute;
         width: 0.34rem;
@@ -1587,6 +1614,7 @@
         bottom: 0.02rem;
         left: 0;
         cursor: pointer;
+
         i {
           position: absolute;
           width: 0.14rem;
@@ -1600,50 +1628,53 @@
     }
 
     /*关闭轨迹按钮*/
-    .track_closeBtn{
-      position:absolute;
-      top:0.8rem;
-      right:0.2rem;
-      width:0.34rem;
-      height:0.34rem;
-      background:url("../img/bigClose.png") no-repeat center;
-      background-size:100% 100%;
+    .track_closeBtn {
+      position: absolute;
+      top: 0.8rem;
+      right: 0.2rem;
+      width: 0.34rem;
+      height: 0.34rem;
+      background: url("../img/bigClose.png") no-repeat center;
+      background-size: 100% 100%;
       cursor: pointer;
       z-index: 999;
     }
+
     /*轨迹查询后缩放的icon*/
-     .track_infoIcon{
-       position:absolute;
-       bottom:1rem;
-       left:50%;
-       margin-left:-0.25rem;
-       width:0.5rem;
-       height:0.5rem;
-       background:url("../img/trackIcon.png") no-repeat center;
-       background-size:100% 100%;
-       cursor: pointer;
-       z-index: 999;
-     }
+    .track_infoIcon {
+      position: absolute;
+      bottom: 1rem;
+      left: 50%;
+      margin-left: -0.25rem;
+      width: 0.5rem;
+      height: 0.5rem;
+      background: url("../img/trackIcon.png") no-repeat center;
+      background-size: 100% 100%;
+      cursor: pointer;
+      z-index: 999;
+    }
 
     /*天气时间等栏位*/
-    .map_weather{
-      position:absolute;
-      bottom:0.2rem;
-      right:0.2rem;
-      width:2.7rem;
-      height:0.3rem;
+    .map_weather {
+      position: absolute;
+      bottom: 0.2rem;
+      right: 0.2rem;
+      width: 2.7rem;
+      height: 0.3rem;
       box-sizing: border-box;
-      padding:0 0.25rem;
-      background: rgba(255,255,255,0.80);
-      box-shadow: inset 0 0.01rem 0.03rem 0 rgba(0,0,0,0.30);
+      padding: 0 0.25rem;
+      background: rgba(255, 255, 255, 0.80);
+      box-shadow: inset 0 0.01rem 0.03rem 0 rgba(0, 0, 0, 0.30);
       border-radius: 0.18rem;
       z-index: 999;
-      .map_weatherStatus{
-        margin-right:0.1rem;
+
+      .map_weatherStatus {
+        margin-right: 0.1rem;
       }
-      span{
-        font-size:0.14rem;
-        color:#333333;
+
+      span {
+        font-size: 0.14rem;
+        color: #333333;
       }
     }
   }
@@ -1664,34 +1695,40 @@
         padding: 0 0.55rem 0 0.3rem;
         color: #666;
       }
-      .el-icon-search:before{
+
+      .el-icon-search:before {
         cursor: pointer;
-        position:absolute;
-        content:'';
-        width:0.33rem;
-        height:0.33rem;
-        top:50%;left:50%;
-        margin-top:-0.165rem;margin-left:-0.35rem;
-        background:url("../img/search.png") no-repeat center;
-        background-size:100% 100%;
+        position: absolute;
+        content: '';
+        width: 0.33rem;
+        height: 0.33rem;
+        top: 50%;
+        left: 50%;
+        margin-top: -0.165rem;
+        margin-left: -0.35rem;
+        background: url("../img/search.png") no-repeat center;
+        background-size: 100% 100%;
       }
     }
-    .el-input__suffix{
-      right:0.01rem;
+
+    .el-input__suffix {
+      right: 0.01rem;
     }
   }
-  .showLeft{
+
+  .showLeft {
     display: none;
   }
 
-  @media only screen and (max-width: 1367px){
-     .myMapWrap{
-       .map_statistics{
-         width:4.3rem;
-       }
-       .map_weather{
-          width:3rem;
-        }
-     }
+  @media only screen and (max-width: 1367px) {
+    .myMapWrap {
+      .map_statistics {
+        width: 4.3rem;
+      }
+
+      .map_weather {
+        width: 3rem;
+      }
+    }
   }
 </style>
