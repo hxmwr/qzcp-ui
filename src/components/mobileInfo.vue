@@ -16,9 +16,6 @@
             </div>
           </div>
           <div>
-            车主: <span>{{detailMobileInfo.name}}</span>
-          </div>
-          <div>
             <!--车辆类型: <span>{{detailMobileInfo.type}}</span>-->
             车辆类型：<span>普通电动车</span>
           </div>
