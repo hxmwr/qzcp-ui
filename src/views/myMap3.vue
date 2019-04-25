@@ -259,7 +259,7 @@
     },
     data() {
       return {
-        url: 'http://127.0.0.1:4040/map/{z}/{x}/{y}.png',
+        url: 'http://'+ locaion.host.split(':')[0] +':4040/map/{z}/{x}/{y}.png',
         center: [28.966173, 118.84945],
         zoom: 15,
         bounds: null,
