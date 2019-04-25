@@ -16,8 +16,7 @@
         :lat-lngs="polyline.latlngs"
         :color="polyline.color">
       </l-polyline>
-      <l-heat-map :lat-lng="latlngs" :max="10" :radius="15"></l-heat-map>
-
+      <l-heat-map :lat-lng="latlngs" :radius="60" :min-opacity=".75" :max-zoom="10" :blur="60"></l-heat-map>
     </l-map>
   </div>
 </template>
@@ -36,7 +35,7 @@
           latlngs: [[28.966173, 118.84945], [28.986173, 118.84945], [28.966173, 118.94945], [28.968173, 118.84445]],
           color: 'green'
         },
-        latlngs: [[28.966173, 118.84945, 1], [28.966173, 118.84945, 0.5]]
+        latlngs: [[28.966173, 118.84945, 0.7], [28.966173, 118.84945, 0.5]]
       }
     },
     mounted() {

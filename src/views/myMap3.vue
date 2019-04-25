@@ -979,7 +979,7 @@
         display: inline-block;
         width: 0.528rem;
         height: 0.6rem;
-        background: url("../img/logo.png") no-repeat center;
+        background: url("../img/jinghui.png") no-repeat center;
         background-size: 100% 100%;
       }
 
