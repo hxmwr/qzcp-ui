@@ -17,6 +17,7 @@
           <div><span>编号:</span>{{item.id}}</div>
           <div><span>位置:</span>{{item.desc}}</div>
           <div><span>设备型号:</span>NRFQZ01</div>
+          <div><span>当前状态:</span>{{item.status?'在线':'离线'}}</div>
           <div><img src="../../static/bycle.png" alt=""></div>
         </l-popup>
       </l-marker>
@@ -339,9 +340,10 @@
       this.dufaultMarkIcon = new L.Icon.Default();
       this.customMarkIcon =  L.icon({
         iconUrl: '../../static/bs-offline.png',
-        iconSize: [25,41],
-        iconAnchor: [22, 94],
-        popupAnchor: [-3, -76]
+        iconSize:    [25, 41],
+        iconAnchor:  [12, 41],
+        popupAnchor: [1, -34],
+        tooltipAnchor: [16, -28],
       });
       this.map = this.$refs.myMap.mapObject;
       this.heatMap = L.heatLayer(this.heatPoints, {radius: 10}).addTo(this.map);
