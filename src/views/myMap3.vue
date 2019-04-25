@@ -47,7 +47,7 @@
                 </div>
                 <!--右边信息-->
                 <div class="alarm_info alarm_right" :class="{showLeft:item.id%2==0}">
-                  <div class="right alarm_time"><i></i><span>{{toTimeString(new Date)}}</span></div>
+                  <div class="right alarm_time"><i></i><span>{{item.time}}</span></div>
                   <div class="left alarm_con" @click="openAlarmDialog(item,'1')">
                     <i></i>
                     <div>车牌号:{{item.plate_no}}</div>
@@ -354,7 +354,8 @@
 
       // 告警滚动列表
       var index2 = 0
-      var ws = new WebSocket('ws://192.168.199.88:8889');
+      var host = location.host.split(':')[0] + ':8889'
+      var ws = new WebSocket('ws://' + host);
       ws.onmessage = (e) => {
         let data = JSON.parse(e.data);
         data.id = index2++;
@@ -671,7 +672,7 @@
         var map = new AMap.Map('myMap', {
           resizeEnable: true, //是否监控地图容器尺寸变化
           zoom: 15, //初始化地图层级
-          center: [118.86631, 28.97504] //初始化地图中心点
+          center: [118.84945,28.966173] //初始化地图中心点
         });
         this.map = map;
 
@@ -1017,7 +1018,7 @@
         display: inline-block;
         width: 0.528rem;
         height: 0.6rem;
-        background: url("../img/logo.png") no-repeat center;
+        background: url("../img/jinghui.png") no-repeat center;
         background-size: 100% 100%;
       }
 
