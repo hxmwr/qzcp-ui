@@ -13,7 +13,7 @@
       </el-input>
       <!--右边两按钮-->
       <div class="map_list" v-show="showTrack"></div>
-      <div class="map_fullScreen" @click="launchFullScreen" v-show="showTrack"></div>
+      <div class="map_fullScreen" @click="launchFullScreen" v-show="showTrack" :class="{fullScreen:goFullScreen==0,quitFullScreen:goFullScreen==1}"></div>
     </div>
     <!--左边模块警告信息-->
     <!--左边模块收起图标-->
@@ -107,8 +107,8 @@
         </div>
       </div>
       <!--收缩箭头栏-->
-      <div class="map_shrikArrow" @click="shrinkLeft">
-        <span><i></i></span>
+      <div class="map_shrikArrow" >
+        <span @click="shrinkLeft"><i></i></span>
       </div>
       <!--告警详情按钮-->
       <div class="map_alarmListIcon">
@@ -240,6 +240,7 @@
     },
     data() {
       return {
+        goFullScreen:0,
         showWeather:{'temperature':'22','weather':'阴'},//天气情况
         Dates:{
           year:'',
@@ -1035,9 +1036,15 @@
         top: 50%;
         margin-top: -0.17rem;
         right: 0.26rem;
+        cursor: pointer;
+      }
+      .fullScreen{
         background: url("../img/fullscreen.png") no-repeat center;
         background-size: 100% 100%;
-        cursor: pointer;
+      }
+      .quitFullScreen{
+        background:url('../img/quitFullscreen.png') no-repeat center;
+        background-size:100% 100%;
       }
     }
 
@@ -1335,15 +1342,14 @@
         width: 100%;
         background: #FCFCFC;
         border-bottom-right-radius: 0.2rem;
-        cursor: pointer;
-
+        box-shadow: 0 0.04rem 0.04rem 0 rgba(0,0,0,0.30);
         span {
           position: absolute;
           width: 0.4rem;
           height: 0.2rem;
           bottom: 0.02rem;
           right: 0;
-
+          cursor: pointer;
           i {
             position: absolute;
             width: 0.14rem;
@@ -1486,7 +1492,7 @@
         height: 0.3rem;
         bottom: 0.02rem;
         left: 0;
-
+        cursor: pointer;
         i {
           position: absolute;
           width: 0.14rem;
@@ -1558,7 +1564,7 @@
       .el-input__inner {
         height: 0.5rem;
         font-size: 0.18rem;
-        padding: 0 0.15rem 0 0.3rem;
+        padding: 0 0.55rem 0 0.3rem;
         color: #666;
       }
       .el-icon-search:before{
@@ -1572,6 +1578,9 @@
         background:url("../img/search.png") no-repeat center;
         background-size:100% 100%;
       }
+    }
+    .el-input__suffix{
+      right:0.01rem;
     }
   }
   .showLeft{
