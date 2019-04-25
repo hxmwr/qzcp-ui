@@ -268,7 +268,7 @@
         bounds: null,
         polyline: {
           latlngs: [],
-          color: 'green'
+          color: '#017AFF'
         },
         latlngs: [[28.966173, 118.84945, 0.7], [28.966173, 118.84945, 0.5]],
         heatPoints: [
