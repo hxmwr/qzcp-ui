@@ -339,7 +339,7 @@
       this.dufaultMarkIcon = new L.Icon.Default();
       this.customMarkIcon =  L.icon({
         iconUrl: '../../static/bs-offline.png',
-        iconSize: [50,81],
+        iconSize: [25,41],
         iconAnchor: [22, 94],
         popupAnchor: [-3, -76]
       });
