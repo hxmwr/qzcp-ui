@@ -6,7 +6,7 @@
       :maxZoom="17"
       :minZoom="13"
       :center="center"
-      :zoomControl="false"
+      :zoomControl="undefined"
       @update:zoom="zoomUpdated"
       @update:center="centerUpdated"
       @update:bounds="boundsUpdated"
@@ -19,7 +19,7 @@
           <div><span>位置:</span>{{item.desc}}</div>
           <div><span>设备型号:</span>NRFQZ01</div>
           <div><span>当前状态:</span>{{item.status?'在线':'离线'}}</div>
-          <div><img src="../../static/bycle.png" alt=""></div>
+          <div><img style="width: 100%" src="../../static/bs.jpeg" alt=""></div>
         </l-popup>
       </l-marker>
       <l-polyline
