@@ -67,7 +67,8 @@
       if(this.detailMobileInfo){
         this.emptyShow = false;
         if(this.selectTimeArea){
-          this.dataArea = [new Date(this.selectTimeArea['start_time']),new Date(this.selectTimeArea['end_time'])];
+          // this.dataArea = [new Date(this.selectTimeArea['start_time']),new Date(this.selectTimeArea['end_time'])];
+          this.dataArea = [this.selectTimeArea['start_time'],this.selectTimeArea['end_time']];
         }
       }else{
         this.emptyShow = true;

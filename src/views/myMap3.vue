@@ -540,6 +540,8 @@
         this.selectTimeArea = data;
         getTrackByTime(data).then(refs => {
           if (refs.data.result.length > 0) {
+            this.polyline.latlngs = [];
+            console.log('hhhh');
             let tmp = refs.data.result.map(e => [e.latitude, e.longitude]);
             let points = []
             if (tmp.length == 0) return
