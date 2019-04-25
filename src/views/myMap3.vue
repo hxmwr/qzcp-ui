@@ -6,6 +6,7 @@
       :maxZoom="17"
       :minZoom="13"
       :center="center"
+      :zoomControl="false"
       @update:zoom="zoomUpdated"
       @update:center="centerUpdated"
       @update:bounds="boundsUpdated"
