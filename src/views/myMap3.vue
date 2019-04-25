@@ -240,6 +240,8 @@
     },
     data() {
       return {
+        passedPolyline:null,
+        bycleMarker:null, //电动自行车标识图
         goFullScreen:0,
         showWeather:{'temperature':'22','weather':'阴'},//天气情况
         Dates:{
@@ -477,7 +479,20 @@
             if(refs.data.result.length>0){
               this.vehicle_track.setPath(['','']);
               this.hasShowTrack = true;
-              this.vehicle_track.setPath(refs.data.result.map(e => [e.longitude, e.latitude]));
+              let lineArr = refs.data.result.map(e => [e.longitude, e.latitude]);
+              this.vehicle_track.setPath(lineArr);
+              this.bycleMarker =new AMap.Marker({
+                map: this.map,
+                position: [refs.data.result[0].longitude,refs.data.result[0].latitude],
+                icon: "../../static/bycle.png",
+                offset: new AMap.Pixel(-26, -26),
+                autoRotation: true,
+                angle:-90,
+              });
+              this.bycleMarker.moveAlong(lineArr,500,function(k){return k},true);
+              this.bycleMarker.on('moving', (e)=> {
+                this.passedPolyline.setPath(e.passedPath);
+              });
             }
           }).catch(err=>{
             console.log(err);
@@ -509,13 +524,20 @@
           console.log(refs);
           if(refs.data.result.length>0){
             this.vehicle_track.setPath(['','']);
-            this.vehicle_track.setPath(refs.data.result.map(e => [e.longitude, e.latitude]));
-            // if(!this.hasShowTrack){
-            //   this.hasShowTrack = true;
-            //   this.vehicle_track.setPath(refs.data.result.map(e => [e.longitude, e.latitude]));
-            // }else{
-            //   return false;
-            // }
+            let lineArr = refs.data.result.map(e => [e.longitude, e.latitude])
+            this.vehicle_track.setPath(lineArr);
+            this.bycleMarker =new AMap.Marker({
+              map: this.map,
+              position: [refs.data.result[0].longitude,refs.data.result[0].latitude],
+              icon: "../../static/bycle.png",
+              offset: new AMap.Pixel(-26, -26),
+              autoRotation: true,
+              angle:-90,
+            });
+            this.bycleMarker.moveAlong(lineArr,500,function(k){return k},true);
+            this.bycleMarker.on('moving', (e)=> {
+              this.passedPolyline.setPath(e.passedPath);
+            });
           }
         }).catch(err=>{
           console.log(err);
@@ -528,11 +550,17 @@
         this.vehicle_track.setPath(['','']);
         this.showTrack = true;
         this.hasShowTrack = false;
+        this.bycleMarker.stopMove();
+        this.passedPolyline.setPath('','');
+        this.bycleMarker.hide();
       },
       hiddenDialog(){
         this.showAlarmDialog = false;
         this.vehicle_track.setPath(['','']);
         this.hasShowTrack = false;
+        this.bycleMarker.stopMove();
+        this.passedPolyline.setPath('','');
+        this.bycleMarker.hide();
       },
       hiddenMobileDialog(){
         this.selectTimeArea = '';
@@ -540,6 +568,9 @@
         this.showMobileDialog = false;
         this.vehicle_track.setPath(['','']);
         this.hasShowTrack = false;
+        this.bycleMarker.stopMove();
+        this.passedPolyline.setPath('','');
+        this.bycleMarker.hide();
       },
       toTimeString(dt) {
         return dt.toTimeString().split(' ')[0]
@@ -728,12 +759,11 @@
         ];
 
         var polyline_track = new AMap.Polyline({
-          isOutline: true,
-          outlineColor: '#ffeeff',
+          isOutline: false,
           borderWeight: 3,
-          strokeColor: "#3366FF",
+          strokeColor: "#017AFF",
           strokeOpacity: 1,
-          strokeWeight: 6,
+          strokeWeight: 3.5,
           // 折线样式还支持 'dashed'
           strokeStyle: "solid",
           // strokeStyle是dashed时有效
@@ -745,6 +775,14 @@
 
         polyline_track.setMap(map);
         this.vehicle_track = polyline_track;
+        this.passedPolyline = new AMap.Polyline({
+          map: this.map,
+          // path: lineArr,
+          strokeColor: "#AF5",  //线颜色
+          // strokeOpacity: 1,     //线透明度
+          strokeWeight: 3.5,      //线宽
+          // strokeStyle: "solid"  //线样式
+        });
         // 缩放地图到合适的视野级别
         // map.setFitView([ polyline_track ])
       },
