@@ -253,7 +253,7 @@
   import L from 'leaflet'
   import polyline_snake_anim from '../components/polyline.snake'
 
-  polyline_snake_anim()
+  polyline_snake_anim();
   heatMap(L)
   export default {
     name: "test",
@@ -438,40 +438,6 @@
     destroyed() {
       clearInterval(this.timeInterval)
     },
-    watch: {
-      // base_stations: function (new_data, old_data) {
-      //   var vm = this;
-      //   this.map.remove(this.base_station_markers);
-      //   this.base_station_markers = [];
-      //   var startIcon = new AMap.Icon({
-      //     // 图标尺寸
-      //     size: new AMap.Size(45, 45),
-      //     // 图标的取图地址
-      //     image: '../../static/site.gif',
-      //     // // 图标所用图片大小
-      //     imageSize: new AMap.Size(45, 45),
-      //     // // 图标取图偏移量
-      //     // imageOffset: new AMap.Pixel(-5,8)
-      //   });
-      //   new_data.forEach(e => {
-      //     let marker = new AMap.Marker({
-      //       position: new AMap.LngLat(e.longitude, e.latitude),   // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9],
-      //       // icon:startIcon,
-      //       // offset: new AMap.Pixel(-20, -25),
-      //       title: e.id
-      //     });
-      //     this.map.add(marker);
-      //     this.base_station_markers.push(marker);
-      //
-      //     // 添加信息窗体
-      //     AMap.event.addListener(marker, 'click', function () {
-      //       let infoCon = '<div style="font-size:14px;font-family: pingfangMedium;color:#333333;">'+e.id+'</div><div style="font-size:14px;color:#666">'+e.desc+'</div>'
-      //       vm.infoWindow.setContent(infoCon);
-      //       vm.infoWindow.open(vm.map, marker.getPosition());
-      //     });
-      //   })
-      // }
-    },
     methods: {
       zoomUpdated(zoom) {
         this.zoom = zoom;
@@ -530,26 +496,21 @@
           // this.setAlarmTrack();
           getTrackByTime(data).then(refs => {
             console.log(refs);
-            this.polyline.latlngs = refs.data.result.map(e => [e.latitude, e.longitude]);
+            // this.polyline.latlngs = refs.data.result.map(e => [e.latitude, e.longitude]);
             if (refs.data.result.length > 0) {
-              this.vehicle_track.setPath(['', '']);
-              this.hasShowTrack = true;
-              let lineArr = refs.data.result.map(e => [e.longitude, e.latitude]);
-              this.vehicle_track.setPath(lineArr);
-              this.bycleMarker = new AMap.Marker({
-                map: this.map,
-                position: [refs.data.result[0].longitude, refs.data.result[0].latitude],
-                icon: "../../static/bycle.png",
-                offset: new AMap.Pixel(-26, -26),
-                autoRotation: true,
-                angle: -90,
-              });
-              this.bycleMarker.moveAlong(lineArr, 500, function (k) {
-                return k
-              }, true);
-              this.bycleMarker.on('moving', (e) => {
-                this.passedPolyline.setPath(e.passedPath);
-              });
+              let tmp = refs.data.result.map(e => [e.latitude, e.longitude]);
+              let points = []
+              if (tmp.length == 0) return
+              points.push(tmp[0])
+              for (let i = 1; i < tmp.length; i++) {
+                if (tmp[i][0] != tmp[i - 1][0] && tmp[i][1] != tmp[i - 1][1]) {
+                  points.push(tmp[i])
+                }
+              }
+              this.polyline.latlngs = points;
+              setTimeout(() => {
+                this.$refs.polyline.mapObject.snakeIn()
+              }, 0);
             }
           }).catch(err => {
             console.log(err);
@@ -592,21 +553,6 @@
             setTimeout(() => {
               this.$refs.polyline.mapObject.snakeIn()
             }, 0)
-            // this.vehicle_track.setPath(['','']);
-            // let lineArr = refs.data.result.map(e => [e.longitude, e.latitude])
-            // this.vehicle_track.setPath(lineArr);
-            // this.bycleMarker =new AMap.Marker({
-            //   map: this.map,
-            //   position: [refs.data.result[0].longitude,refs.data.result[0].latitude],
-            //   icon: "../../static/bycle.png",
-            //   offset: new AMap.Pixel(-26, -26),
-            //   autoRotation: true,
-            //   angle:-90,
-            // });
-            // this.bycleMarker.moveAlong(lineArr,500,function(k){return k},true);
-            // this.bycleMarker.on('moving', (e)=> {
-            //   this.passedPolyline.setPath(e.passedPath);
-            // });
           }
         }).catch(err=>{
           console.log(err);
@@ -616,30 +562,20 @@
         //关闭轨迹
         this.selectTimeArea = '';
         this.searchInputVal = '';
-        this.vehicle_track.setPath(['', '']);
         this.showTrack = true;
         this.hasShowTrack = false;
-        this.bycleMarker.stopMove();
-        this.passedPolyline.setPath('', '');
-        this.bycleMarker.hide();
+        this.polyline.latlngs =[];
       },
       hiddenDialog() {
         this.showAlarmDialog = false;
-        this.vehicle_track.setPath(['', '']);
         this.hasShowTrack = false;
-        this.bycleMarker.stopMove();
-        this.passedPolyline.setPath('', '');
-        this.bycleMarker.hide();
       },
       hiddenMobileDialog() {
         this.selectTimeArea = '';
         this.searchInputVal = '';
         this.showMobileDialog = false;
-        this.vehicle_track.setPath(['', '']);
         this.hasShowTrack = false;
-        this.bycleMarker.stopMove();
-        this.passedPolyline.setPath('', '');
-        this.bycleMarker.hide();
+        this.polyline.latlngs =[];
       },
       toTimeString(dt) {
         return dt.toTimeString().split(' ')[0]
