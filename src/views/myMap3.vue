@@ -9,7 +9,7 @@
       @update:bounds="boundsUpdated"
     >
       <l-tile-layer :url="url"></l-tile-layer>
-      <l-marker v-for="(item, key) in base_stations" :lat-lng="[item.latitude, item.longitude]" :key="item.id">
+      <l-marker v-for="(item, key) in base_stations" :lat-lng="[item.latitude, item.longitude]" :icon="item.status?dufaultMarkIcon:customMarkIcon" :key="item.id">
         <l-popup>{{item.desc}}</l-popup>
       </l-marker>
       <l-polyline
@@ -251,7 +251,7 @@
   import heatMap from '../components/heatmap'
   import L from 'leaflet'
 
-  heatMap(L)
+  heatMap(L);
   export default {
     name: "test",
     components:{
@@ -259,7 +259,10 @@
     },
     data() {
       return {
-        url: 'http://'+ location.host.split(':')[0] +':4040/map/{z}/{x}/{y}.png',
+        dufaultMarkIcon:null,
+        customMarkIcon:null,
+        // url: 'http://'+ location.host.split(':')[0] +':4040/map/{z}/{x}/{y}.png',
+        url: 'http://172.16.0.34:4040/map/{z}/{x}/{y}.png',
         center: [28.966173, 118.84945],
         zoom: 15,
         bounds: null,
@@ -322,6 +325,13 @@
     },
     mounted() {
       const me = this;
+      this.dufaultMarkIcon = new L.Icon.Default();
+      this.customMarkIcon =  L.icon({
+        iconUrl: '../../static/bycle.png',
+        iconSize: [52,40],
+        iconAnchor: [22, 94],
+        popupAnchor: [-3, -76]
+      });
       this.map = this.$refs.myMap.mapObject;
       this.heatMap = L.heatLayer(this.heatPoints, {radius: 10}).addTo(this.map);
       this.getTime(); //得到时间
@@ -342,6 +352,7 @@
       getBaseStation().then(function (r) {
         //得到基站值
         me.base_stations = r.data.data
+        console.log(r);
       });
 
       getTrafficFlow({flag: 2}).then(r => {
