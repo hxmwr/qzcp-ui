@@ -22,8 +22,8 @@ export default new Router({
     // }
     {
       path: '/',
-      name: 'myMap4',
-      component: myMap4
+      name: 'myMap3',
+      component: myMap3
     }
   ]
 })

@@ -1,6 +1,22 @@
 <template>
   <div class="myMapWrap">
-    <div id="myMap"></div>
+    <l-map
+      ref="myMap"
+      :zoom="zoom"
+      :center="center"
+      @update:zoom="zoomUpdated"
+      @update:center="centerUpdated"
+      @update:bounds="boundsUpdated"
+    >
+      <l-tile-layer :url="url"></l-tile-layer>
+      <l-marker v-for="(item, key) in base_stations" :lat-lng="[item.latitude, item.longitude]" :key="item.id">
+        <l-popup>{{item.desc}}</l-popup>
+      </l-marker>
+      <l-polyline
+        :lat-lngs="polyline.latlngs"
+        :color="polyline.color">
+      </l-polyline>
+    </l-map>
     <!--顶部-->
     <div class="map_top flex flex_center">
       <i class="logo"></i><span>衢州市非机动车"芯车牌"管理系统</span>
@@ -232,7 +248,10 @@
   import {getBaseStation, getTrack, getTrafficFlow,searchInfo,getTrackByTime} from "../api/remConfig";
   import {gen_mock_event} from '../data/accident-data'
   import {gen_mock_alert, gen_alert_desc} from '../data/alarm-data'
+  import heatMap from '../components/heatmap'
+  import L from 'leaflet'
 
+  heatMap(L)
   export default {
     name: "test",
     components:{
@@ -240,6 +259,19 @@
     },
     data() {
       return {
+        url: 'http://127.0.0.1:4040/map/{z}/{x}/{y}.png',
+        center: [28.966173, 118.84945],
+        zoom: 15,
+        bounds: null,
+        polyline: {
+          latlngs: [[28.966173, 118.84945], [28.986173, 118.84945], [28.966173, 118.94945], [28.968173, 118.84445]],
+          color: 'green'
+        },
+        latlngs: [[28.966173, 118.84945, 0.7], [28.966173, 118.84945, 0.5]],
+        heatPoints: [
+          [28.966173, 118.84945, 100], // lat, lng, intensity
+          [28.976173, 118.94945, 20],
+        ],
         goFullScreen:0,
         showWeather:{'temperature':'22','weather':'阴'},//天气情况
         Dates:{
@@ -288,8 +320,10 @@
     },
     mounted() {
       const me = this;
+      this.map = this.$refs.myMap.mapObject;
+      this.heatMap = L.heatLayer(this.heatPoints, {radius: 10}).addTo(this.map);
       this.getTime(); //得到时间
-      this.getMap(); //创建地图
+      // this.getMap(); //创建地图
       // this.setAnimation();
       this.map_activeNum = this.$echarts.init(document.getElementById('map_activeNum'));
       this.getMapActiveNum();//车辆活跃总数 折线图
@@ -315,18 +349,15 @@
         r.data.result.forEach(e => {
           for (let i = 0; i < this.base_stations.length; i++) {
             if (this.base_stations[i].id == e[0]) {
-              this.heat_map_points.push({
-                lng: this.base_stations[i].longitude,
-                lat: this.base_stations[i].latitude,
-                count: e[1]
-              })
+              this.heat_map_points.push([
+                this.base_stations[i].longitude,
+                this.base_stations[i].latitude,
+                e[1]
+              ])
             }
           }
         })
-        this.heatMap.setDataSet({
-          data: this.heat_map_points,
-          max: 100
-        })
+        this.heatMap.setLatLngs(this.heat_map_points)
       })
       // this.showVehicleTrack(1);
 
@@ -393,40 +424,49 @@
       clearInterval(this.timeInterval)
     },
     watch: {
-      base_stations: function (new_data, old_data) {
-        var vm = this;
-        this.map.remove(this.base_station_markers);
-        this.base_station_markers = [];
-        var startIcon = new AMap.Icon({
-          // 图标尺寸
-          size: new AMap.Size(45, 45),
-          // 图标的取图地址
-          image: '../../static/site.gif',
-          // // 图标所用图片大小
-          imageSize: new AMap.Size(45, 45),
-          // // 图标取图偏移量
-          // imageOffset: new AMap.Pixel(-5,8)
-        });
-        new_data.forEach(e => {
-          let marker = new AMap.Marker({
-            position: new AMap.LngLat(e.longitude, e.latitude),   // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9],
-            // icon:startIcon,
-            // offset: new AMap.Pixel(-20, -25),
-            title: e.id
-          });
-          this.map.add(marker);
-          this.base_station_markers.push(marker);
-
-          // 添加信息窗体
-          AMap.event.addListener(marker, 'click', function () {
-            let infoCon = '<div style="font-size:14px;font-family: pingfangMedium;color:#333333;">'+e.id+'</div><div style="font-size:14px;color:#666">'+e.desc+'</div>'
-            vm.infoWindow.setContent(infoCon);
-            vm.infoWindow.open(vm.map, marker.getPosition());
-          });
-        })
-      }
+      // base_stations: function (new_data, old_data) {
+      //   var vm = this;
+      //   this.map.remove(this.base_station_markers);
+      //   this.base_station_markers = [];
+      //   var startIcon = new AMap.Icon({
+      //     // 图标尺寸
+      //     size: new AMap.Size(45, 45),
+      //     // 图标的取图地址
+      //     image: '../../static/site.gif',
+      //     // // 图标所用图片大小
+      //     imageSize: new AMap.Size(45, 45),
+      //     // // 图标取图偏移量
+      //     // imageOffset: new AMap.Pixel(-5,8)
+      //   });
+      //   new_data.forEach(e => {
+      //     let marker = new AMap.Marker({
+      //       position: new AMap.LngLat(e.longitude, e.latitude),   // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9],
+      //       // icon:startIcon,
+      //       // offset: new AMap.Pixel(-20, -25),
+      //       title: e.id
+      //     });
+      //     this.map.add(marker);
+      //     this.base_station_markers.push(marker);
+      //
+      //     // 添加信息窗体
+      //     AMap.event.addListener(marker, 'click', function () {
+      //       let infoCon = '<div style="font-size:14px;font-family: pingfangMedium;color:#333333;">'+e.id+'</div><div style="font-size:14px;color:#666">'+e.desc+'</div>'
+      //       vm.infoWindow.setContent(infoCon);
+      //       vm.infoWindow.open(vm.map, marker.getPosition());
+      //     });
+      //   })
+      // }
     },
     methods: {
+      zoomUpdated(zoom) {
+        this.zoom = zoom;
+      },
+      centerUpdated(center) {
+        this.center = center;
+      },
+      boundsUpdated(bounds) {
+        this.bounds = bounds;
+      },
       getTime(){
         var self = this;
         // 得到天气
@@ -475,11 +515,12 @@
           // this.setAlarmTrack();
           getTrackByTime(data).then(refs=>{
             console.log(refs);
-            if(refs.data.result.length>0){
-              this.vehicle_track.setPath(['','']);
-              this.hasShowTrack = true;
-              this.vehicle_track.setPath(refs.data.result.map(e => [e.longitude, e.latitude]));
-            }
+            // if(refs.data.result.length>0){
+            //   this.vehicle_track.setPath(['','']);
+            //   this.hasShowTrack = true;
+            //   this.vehicle_track.setPath(refs.data.result.map(e => [e.longitude, e.latitude]));
+            // }
+            this.polyline.latlngs = refs.data.result.map(e => [e.longitude, e.latitude])
           }).catch(err=>{
             console.log(err);
           })
@@ -638,19 +679,18 @@
         }, 2000);
       },
       getMap() {
-        var map = new AMap.Map('myMap', {
-          resizeEnable: true, //是否监控地图容器尺寸变化
-          zoom: 15, //初始化地图层级
-          center: [118.84945,28.966173] //初始化地图中心点
-        });
-        this.map = map;
+        // var map = new AMap.Map('myMap', {
+        //   resizeEnable: true, //是否监控地图容器尺寸变化
+        //   zoom: 15, //初始化地图层级
+        //   center: [118.84945,28.966173] //初始化地图中心点
+        // });
 
         // 信息窗体
-        this.infoWindow  = new AMap.InfoWindow({
-          // isCustom: true,  //使用自定义窗体
-          content: '',
-          offset: new AMap.Pixel(1, -35)
-        });
+        // this.infoWindow  = new AMap.InfoWindow({
+        //   // isCustom: true,  //使用自定义窗体
+        //   content: '',
+        //   offset: new AMap.Pixel(1, -35)
+        // });
 
 
         //***************************************** 热力图
@@ -659,34 +699,34 @@
         }
         var me = this;
         var heatmap;
-        map.plugin(["AMap.Heatmap"], function () {
-          var points = [
-            {"lng": 118.860129, "lat": 28.974408, "count": 50},
-            {"lng": 118.858117, "lat": 28.974156, "count": 51},
-            {"lng": 118.859267, "lat": 28.974156, "count": 15},
-            {"lng": 118.860273, "lat": 28.974282, "count": 40},
-            {"lng": 118.855674, "lat": 28.973903, "count": 100}];
-          //初始化heatmap对象
-          heatmap = new AMap.Heatmap(map, {
-            radius: 25, //给定半径
-            opacity: [0, 0.8]
-            /*,
-            gradient:{
-                0.5: 'blue',
-                0.65: 'rgb(117,211,248)',
-                0.7: 'rgb(0, 255, 0)',
-                0.9: '#ffea00',
-                1.0: 'red'
-            }
-             */
-          });
-          me.heatMap = heatmap
-          //设置数据集：该数据为北京部分“公园”数据
-          // heatmap.setDataSet({
-          //   data: points,
-          //   max: 100
-          // });
-        });
+        // map.plugin(["AMap.Heatmap"], function () {
+        //   var points = [
+        //     {"lng": 118.860129, "lat": 28.974408, "count": 50},
+        //     {"lng": 118.858117, "lat": 28.974156, "count": 51},
+        //     {"lng": 118.859267, "lat": 28.974156, "count": 15},
+        //     {"lng": 118.860273, "lat": 28.974282, "count": 40},
+        //     {"lng": 118.855674, "lat": 28.973903, "count": 100}];
+        //   //初始化heatmap对象
+        //   // heatmap = new AMap.Heatmap(map, {
+        //   //   radius: 25, //给定半径
+        //   //   opacity: [0, 0.8]
+        //   //   /*,
+        //   //   gradient:{
+        //   //       0.5: 'blue',
+        //   //       0.65: 'rgb(117,211,248)',
+        //   //       0.7: 'rgb(0, 255, 0)',
+        //   //       0.9: '#ffea00',
+        //   //       1.0: 'red'
+        //   //   }
+        //   //    */
+        //   // });
+        //   // me.heatMap = heatmap
+        //   //设置数据集：该数据为北京部分“公园”数据
+        //   // heatmap.setDataSet({
+        //   //   data: points,
+        //   //   max: 100
+        //   // });
+        // });
 
         //判断浏览区是否支持canvas
         function isSupportCanvas() {
@@ -974,6 +1014,9 @@
       left: 0;
       width: 100%;
       height: 0.8rem;
+      .searchInput {
+        z-index: 9999;
+      }
       /*background:rgba(0,0,0,.1);*/
        background:linear-gradient(rgba(216,216,216,1), rgba(255,255,255,0));
       .logo{
