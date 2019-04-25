@@ -10,7 +10,13 @@
     >
       <l-tile-layer :url="url"></l-tile-layer>
       <l-marker v-for="(item, key) in base_stations" :lat-lng="[item.latitude, item.longitude]" :icon="item.status?dufaultMarkIcon:customMarkIcon" :key="item.id">
-        <l-popup>{{item.desc}}</l-popup>
+        <!--<l-popup>{{item.desc}}</l-popup>-->
+        <l-popup>
+          <div><span>编号:</span>{{item.id}}</div>
+          <div><span>位置:</span>{{item.desc}}</div>
+          <div><span>设备信号:</span>dddd</div>
+          <div><img src="../../static/bycle.png" alt=""></div>
+        </l-popup>
       </l-marker>
       <l-polyline
         ref="polyline"
