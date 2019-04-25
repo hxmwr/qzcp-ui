@@ -119,13 +119,10 @@ L.Polyline.include({
   },
 
   _snakeEnd: function() {
-
     this.setLatLngs(this._snakeLatLngs);
     this._snaking = false;
     this.fire('snakeend');
-
   }
-
 });
 
 

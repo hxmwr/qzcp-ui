@@ -3,6 +3,8 @@
     <l-map
       ref="myMap"
       :zoom="zoom"
+      :maxZoom="17"
+      :minZoom="13"
       :center="center"
       @update:zoom="zoomUpdated"
       @update:center="centerUpdated"
@@ -14,7 +16,7 @@
         <l-popup>
           <div><span>编号:</span>{{item.id}}</div>
           <div><span>位置:</span>{{item.desc}}</div>
-          <div><span>设备信号:</span>dddd</div>
+          <div><span>设备型号:</span>NRFQZ01</div>
           <div><img src="../../static/bycle.png" alt=""></div>
         </l-popup>
       </l-marker>
@@ -270,8 +272,8 @@
       return {
         dufaultMarkIcon:null,
         customMarkIcon:null,
-        // url: 'http://'+ location.host.split(':')[0] +':4040/map/{z}/{x}/{y}.png',
-        url: 'http://172.16.0.34:4040/map/{z}/{x}/{y}.png',
+        url: 'http://'+ location.host.split(':')[0] +':4040/map/{z}/{x}/{y}.png',
+        // url: 'http://172.16.0.34:4040/map/{z}/{x}/{y}.png',
         center: [28.966173, 118.84945],
         zoom: 15,
         bounds: null,
@@ -343,7 +345,7 @@
       });
       this.map = this.$refs.myMap.mapObject;
       this.heatMap = L.heatLayer(this.heatPoints, {radius: 10}).addTo(this.map);
-      this.getTime(); //得到时间
+      // this.getTime(); //得到时间
       // this.getMap(); //创建地图
       // this.setAnimation();
       this.map_activeNum = this.$echarts.init(document.getElementById('map_activeNum'));
@@ -454,23 +456,23 @@
       boundsUpdated(bounds) {
         this.bounds = bounds;
       },
-      getTime() {
-        var self = this;
-        // 得到天气
-        AMap.plugin('AMap.Weather', function () {
-          //创建天气查询实例
-          var weather = new AMap.Weather();
-          //执行实时天气信息查询
-          weather.getLive('衢州市', function (err, data) {
-            // console.log(data);
-            self.showWeather = data;
-          });
-        });
-        //得到时间
-        this.timeInterval = setInterval(function () {
-          self.getTime_realTime()
-        }, 1000);
-      },
+      // getTime() {
+      //   var self = this;
+      //   // 得到天气
+      //   AMap.plugin('AMap.Weather', function () {
+      //     //创建天气查询实例
+      //     var weather = new AMap.Weather();
+      //     //执行实时天气信息查询
+      //     weather.getLive('衢州市', function (err, data) {
+      //       // console.log(data);
+      //       self.showWeather = data;
+      //     });
+      //   });
+      //   //得到时间
+      //   this.timeInterval = setInterval(function () {
+      //     self.getTime_realTime()
+      //   }, 1000);
+      // },
       getTime_realTime() {
         var nowDate = new Date();
         this.Dates.year = nowDate.getFullYear();
@@ -740,28 +742,28 @@
 
         // 布点基站
         // 创建一个 Icon
-        var startIcon = new AMap.Icon({
-          // 图标尺寸
-          size: new AMap.Size(100, 134),
-          // 图标的取图地址
-          image: 'http://lbsyun.baidu.com/jsdemo/img/fox.gif',
-          // image:'https://webapi.amap.com/theme/v1.3/markers/n/mark_bs.png',
-          // // 图标所用图片大小
-          imageSize: new AMap.Size(135, 100),
-          // // 图标取图偏移量
-          imageOffset: new AMap.Pixel(-47, -13)
-        });
-        let maker1 = new AMap.Marker({
-          position: new AMap.LngLat(118.867388, 28.975262),   // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
-          icon: startIcon,
-          animation: 'AMAP_ANIMATION_BOUNCE',
-          offset: new AMap.Pixel(-13, -30),
-          title: '衢州1'
-        });
-        let maker2 = new AMap.Marker({
-          position: new AMap.LngLat(118.880323, 28.970332),   // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
-          title: '衢州2'
-        });
+        // var startIcon = new AMap.Icon({
+        //   // 图标尺寸
+        //   size: new AMap.Size(100, 134),
+        //   // 图标的取图地址
+        //   image: 'http://lbsyun.baidu.com/jsdemo/img/fox.gif',
+        //   // image:'https://webapi.amap.com/theme/v1.3/markers/n/mark_bs.png',
+        //   // // 图标所用图片大小
+        //   imageSize: new AMap.Size(135, 100),
+        //   // // 图标取图偏移量
+        //   imageOffset: new AMap.Pixel(-47, -13)
+        // });
+        // let maker1 = new AMap.Marker({
+        //   position: new AMap.LngLat(118.867388, 28.975262),   // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
+        //   icon: startIcon,
+        //   animation: 'AMAP_ANIMATION_BOUNCE',
+        //   offset: new AMap.Pixel(-13, -30),
+        //   title: '衢州1'
+        // });
+        // let maker2 = new AMap.Marker({
+        //   position: new AMap.LngLat(118.880323, 28.970332),   // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
+        //   title: '衢州2'
+        // });
         // map.add([maker1, maker2]);
 
         // 轨迹
@@ -770,31 +772,31 @@
           [118.880323, 28.970332]
         ];
 
-        var polyline_track = new AMap.Polyline({
-          isOutline: false,
-          borderWeight: 3,
-          strokeColor: "#017AFF",
-          strokeOpacity: 1,
-          strokeWeight: 3.5,
-          // 折线样式还支持 'dashed'
-          strokeStyle: "solid",
-          // strokeStyle是dashed时有效
-          strokeDasharray: [10, 5],
-          lineJoin: 'round',
-          lineCap: 'round',
-          zIndex: 50,
-        });
+        // var polyline_track = new AMap.Polyline({
+        //   isOutline: false,
+        //   borderWeight: 3,
+        //   strokeColor: "#017AFF",
+        //   strokeOpacity: 1,
+        //   strokeWeight: 3.5,
+        //   // 折线样式还支持 'dashed'
+        //   strokeStyle: "solid",
+        //   // strokeStyle是dashed时有效
+        //   strokeDasharray: [10, 5],
+        //   lineJoin: 'round',
+        //   lineCap: 'round',
+        //   zIndex: 50,
+        // });
 
-        polyline_track.setMap(map);
-        this.vehicle_track = polyline_track;
-        this.passedPolyline = new AMap.Polyline({
-          map: this.map,
-          // path: lineArr,
-          strokeColor: "#AF5",  //线颜色
-          // strokeOpacity: 1,     //线透明度
-          strokeWeight: 3.5,      //线宽
-          // strokeStyle: "solid"  //线样式
-        });
+        // polyline_track.setMap(map);
+        // this.vehicle_track = polyline_track;
+        // this.passedPolyline = new AMap.Polyline({
+        //   map: this.map,
+        //   // path: lineArr,
+        //   strokeColor: "#AF5",  //线颜色
+        //   // strokeOpacity: 1,     //线透明度
+        //   strokeWeight: 3.5,      //线宽
+        //   // strokeStyle: "solid"  //线样式
+        // });
         // 缩放地图到合适的视野级别
         // map.setFitView([ polyline_track ])
       },
