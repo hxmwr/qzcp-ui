@@ -517,7 +517,7 @@
           // this.setAlarmTrack();
           getTrackByTime(data).then(refs=>{
             console.log(refs);
-            this.polyline.latlngs = refs.data.result.map(e => [e.longitude, e.latitude]);
+            this.polyline.latlngs = refs.data.result.map(e => [e.latitude, e.longitude]);
             if(refs.data.result.length>0){
               this.vehicle_track.setPath(['','']);
               this.hasShowTrack = true;
@@ -565,7 +565,7 @@
         getTrackByTime(data).then(refs=>{
           console.log(refs);
           if(refs.data.result.length>0){
-            this.polyline.latlngs = refs.data.result.map(e => [e.longitude, e.latitude]);
+            this.polyline.latlngs = refs.data.result.map(e => [e.latitude, e.longitude]);
             // this.vehicle_track.setPath(['','']);
             // let lineArr = refs.data.result.map(e => [e.longitude, e.latitude])
             // this.vehicle_track.setPath(lineArr);
