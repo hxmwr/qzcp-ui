@@ -132,7 +132,7 @@
     </div>
 
     <!--右边模块统计部分-->
-    <!--左边模块收起图标-->
+    <!--右边模块收起图标-->
     <div class="map_rightShrikIcon" v-show="showTrack" @click="openRight"><i></i></div>
     <!--右边模块展开部分-->
     <div class="map_statistics" v-show="showTrack" :class="{fadeOutRight:shrink_right,fadeInRight:open_right}">
@@ -264,7 +264,7 @@
         zoom: 15,
         bounds: null,
         polyline: {
-          latlngs: [[28.966173, 118.84945], [28.986173, 118.84945], [28.966173, 118.94945], [28.968173, 118.84445]],
+          latlngs: [],
           color: 'green'
         },
         latlngs: [[28.966173, 118.84945, 0.7], [28.966173, 118.84945, 0.5]],
@@ -272,6 +272,8 @@
           [28.966173, 118.84945, 100], // lat, lng, intensity
           [28.976173, 118.94945, 20],
         ],
+        passedPolyline:null,
+        bycleMarker:null, //电动自行车标识图
         goFullScreen:0,
         showWeather:{'temperature':'22','weather':'阴'},//天气情况
         Dates:{
@@ -515,12 +517,25 @@
           // this.setAlarmTrack();
           getTrackByTime(data).then(refs=>{
             console.log(refs);
-            // if(refs.data.result.length>0){
-            //   this.vehicle_track.setPath(['','']);
-            //   this.hasShowTrack = true;
-            //   this.vehicle_track.setPath(refs.data.result.map(e => [e.longitude, e.latitude]));
-            // }
-            this.polyline.latlngs = refs.data.result.map(e => [e.longitude, e.latitude])
+            this.polyline.latlngs = refs.data.result.map(e => [e.longitude, e.latitude]);
+            if(refs.data.result.length>0){
+              this.vehicle_track.setPath(['','']);
+              this.hasShowTrack = true;
+              let lineArr = refs.data.result.map(e => [e.longitude, e.latitude]);
+              this.vehicle_track.setPath(lineArr);
+              this.bycleMarker =new AMap.Marker({
+                map: this.map,
+                position: [refs.data.result[0].longitude,refs.data.result[0].latitude],
+                icon: "../../static/bycle.png",
+                offset: new AMap.Pixel(-26, -26),
+                autoRotation: true,
+                angle:-90,
+              });
+              this.bycleMarker.moveAlong(lineArr,500,function(k){return k},true);
+              this.bycleMarker.on('moving', (e)=> {
+                this.passedPolyline.setPath(e.passedPath);
+              });
+            }
           }).catch(err=>{
             console.log(err);
           })
@@ -550,14 +565,22 @@
         getTrackByTime(data).then(refs=>{
           console.log(refs);
           if(refs.data.result.length>0){
-            this.vehicle_track.setPath(['','']);
-            this.vehicle_track.setPath(refs.data.result.map(e => [e.longitude, e.latitude]));
-            // if(!this.hasShowTrack){
-            //   this.hasShowTrack = true;
-            //   this.vehicle_track.setPath(refs.data.result.map(e => [e.longitude, e.latitude]));
-            // }else{
-            //   return false;
-            // }
+            this.polyline.latlngs = refs.data.result.map(e => [e.longitude, e.latitude]);
+            // this.vehicle_track.setPath(['','']);
+            // let lineArr = refs.data.result.map(e => [e.longitude, e.latitude])
+            // this.vehicle_track.setPath(lineArr);
+            // this.bycleMarker =new AMap.Marker({
+            //   map: this.map,
+            //   position: [refs.data.result[0].longitude,refs.data.result[0].latitude],
+            //   icon: "../../static/bycle.png",
+            //   offset: new AMap.Pixel(-26, -26),
+            //   autoRotation: true,
+            //   angle:-90,
+            // });
+            // this.bycleMarker.moveAlong(lineArr,500,function(k){return k},true);
+            // this.bycleMarker.on('moving', (e)=> {
+            //   this.passedPolyline.setPath(e.passedPath);
+            // });
           }
         }).catch(err=>{
           console.log(err);
@@ -570,11 +593,17 @@
         this.vehicle_track.setPath(['','']);
         this.showTrack = true;
         this.hasShowTrack = false;
+        this.bycleMarker.stopMove();
+        this.passedPolyline.setPath('','');
+        this.bycleMarker.hide();
       },
       hiddenDialog(){
         this.showAlarmDialog = false;
         this.vehicle_track.setPath(['','']);
         this.hasShowTrack = false;
+        this.bycleMarker.stopMove();
+        this.passedPolyline.setPath('','');
+        this.bycleMarker.hide();
       },
       hiddenMobileDialog(){
         this.selectTimeArea = '';
@@ -582,6 +611,9 @@
         this.showMobileDialog = false;
         this.vehicle_track.setPath(['','']);
         this.hasShowTrack = false;
+        this.bycleMarker.stopMove();
+        this.passedPolyline.setPath('','');
+        this.bycleMarker.hide();
       },
       toTimeString(dt) {
         return dt.toTimeString().split(' ')[0]
@@ -769,12 +801,11 @@
         ];
 
         var polyline_track = new AMap.Polyline({
-          isOutline: true,
-          outlineColor: '#ffeeff',
+          isOutline: false,
           borderWeight: 3,
-          strokeColor: "#3366FF",
+          strokeColor: "#017AFF",
           strokeOpacity: 1,
-          strokeWeight: 6,
+          strokeWeight: 3.5,
           // 折线样式还支持 'dashed'
           strokeStyle: "solid",
           // strokeStyle是dashed时有效
@@ -786,6 +817,14 @@
 
         polyline_track.setMap(map);
         this.vehicle_track = polyline_track;
+        this.passedPolyline = new AMap.Polyline({
+          map: this.map,
+          // path: lineArr,
+          strokeColor: "#AF5",  //线颜色
+          // strokeOpacity: 1,     //线透明度
+          strokeWeight: 3.5,      //线宽
+          // strokeStyle: "solid"  //线样式
+        });
         // 缩放地图到合适的视野级别
         // map.setFitView([ polyline_track ])
       },
@@ -1014,6 +1053,7 @@
       left: 0;
       width: 100%;
       height: 0.8rem;
+      z-index:9999;
       .searchInput {
         z-index: 9999;
       }
@@ -1103,7 +1143,7 @@
       box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.50);
       border-radius: 0.1rem;
       cursor: pointer;
-
+      z-index: 999;
       i {
         position: absolute;
         width: 0.35rem;
@@ -1429,7 +1469,7 @@
       box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.50);
       border-radius: 0.1rem;
       cursor: pointer;
-
+      z-index: 999;
       i {
         position: absolute;
         width: 0.34rem;
@@ -1558,6 +1598,7 @@
       background:url("../img/bigClose.png") no-repeat center;
       background-size:100% 100%;
       cursor: pointer;
+      z-index: 999;
     }
     /*轨迹查询后缩放的icon*/
      .track_infoIcon{
@@ -1570,6 +1611,7 @@
        background:url("../img/trackIcon.png") no-repeat center;
        background-size:100% 100%;
        cursor: pointer;
+       z-index: 999;
      }
 
     /*天气时间等栏位*/
@@ -1584,6 +1626,7 @@
       background: rgba(255,255,255,0.80);
       box-shadow: inset 0 0.01rem 0.03rem 0 rgba(0,0,0,0.30);
       border-radius: 0.18rem;
+      z-index: 999;
       .map_weatherStatus{
         margin-right:0.1rem;
       }

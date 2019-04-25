@@ -16,6 +16,7 @@
         :lat-lngs="polyline.latlngs"
         :color="polyline.color">
       </l-polyline>
+      <l-heat-map :lat-lng="latlngs" :radius="60" :min-opacity=".75" :max-zoom="10" :blur="60"></l-heat-map>
     </l-map>
     <button @click="showHeat" style="position: fixed;bottom: 0;z-index: 9999;">click</button>
   </div>
@@ -29,8 +30,8 @@
   export default {
     data() {
       return {
+        url: 'http://172.16.0.34:4040/map/{z}/{x}/{y}.png',
         map: null,
-        url: 'http://127.0.0.1:4040/map/{z}/{x}/{y}.png',
         center: [28.966173, 118.84945],
         zoom: 15,
         bounds: null,
