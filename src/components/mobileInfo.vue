@@ -16,13 +16,18 @@
             </div>
           </div>
           <div>
-            车辆类型: <span>{{detailMobileInfo.type}}</span>
+            车主: <span>{{detailMobileInfo.name}}</span>
+          </div>
+          <div>
+            <!--车辆类型: <span>{{detailMobileInfo.type}}</span>-->
+            车辆类型：<span>普通电动车</span>
           </div>
           <div>
             联系方式: <span>{{detailMobileInfo.mobile}}</span>
           </div>
           <div>
-            注册地: <span>{{detailMobileInfo.location}}</span>
+            <!--注册地: <span>{{detailMobileInfo.location}}</span>-->
+            注册地：<span>柯城区</span>
           </div>
           <div class="split_line"></div>
           <div>
