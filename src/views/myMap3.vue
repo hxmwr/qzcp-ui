@@ -533,12 +533,15 @@
             // this.polyline.latlngs = refs.data.result.map(e => [e.latitude, e.longitude]);
             if (refs.data.result.length > 0) {
               let tmp = refs.data.result.map(e => [e.latitude, e.longitude]);
-              let points = []
-              if (tmp.length == 0) return
-              points.push(tmp[0])
+              let tmpSpeed = refs.data.result.map(e =>{return {"time":e.time, "lat":e.latitude,"lng":e.longitude,"deviceId":e.device_id}});
+              let points = [],pointSpeed=[];
+              if (tmp.length == 0) return;
+              points.push(tmp[0]);
+              pointSpeed.push(tmpSpeed[0]);
               for (let i = 1; i < tmp.length; i++) {
                 if (tmp[i][0] != tmp[i - 1][0] && tmp[i][1] != tmp[i - 1][1]) {
-                  points.push(tmp[i])
+                  points.push(tmp[i]);
+                  pointSpeed.push(tmpSpeed[i]);
                 }
               }
               this.polyline.latlngs = points;
@@ -546,6 +549,14 @@
                 this.$refs.polyline.mapObject._snaking = false
                 this.$refs.polyline.mapObject.snakeIn()
               }, 0);
+              //显示速度
+              this.speedArea = [];
+              for(let i=0;i<pointSpeed.length-1;i++){
+                let dist = this.distance(pointSpeed[i].lat,pointSpeed[i].lng,pointSpeed[i+1].lat,pointSpeed[i+1].lng,'K');
+                let testDistTime = new Date(pointSpeed[i+1].time).getTime() - new Date(pointSpeed[i].time).getTime();
+                let speedAreas = (dist*1000 / (testDistTime/1000)).toFixed(3);
+                this.speedArea.push({siteName1:pointSpeed[i].deviceId,siteName2:pointSpeed[i+1].deviceId,speed:speedAreas});
+              }
             }
           }).catch(err => {
             console.log(err);
@@ -600,14 +611,11 @@
             //  let testDistTime = new Date(this.testSpeed[1].time).getTime() - new Date(this.testSpeed[0].time).getTime();
             //   this.testSpeedArea = (dist*1000 / (testDistTime/1000)).toFixed(3);
             this.speedArea = [];
-            console.log('pointSpeed:',pointSpeed);
             for(let i=0;i<pointSpeed.length-1;i++){
               let dist = this.distance(pointSpeed[i].lat,pointSpeed[i].lng,pointSpeed[i+1].lat,pointSpeed[i+1].lng,'K');
-              console.log('dist:',dist);
               let testDistTime = new Date(pointSpeed[i+1].time).getTime() - new Date(pointSpeed[i].time).getTime();
               let speedAreas = (dist*1000 / (testDistTime/1000)).toFixed(3);
               this.speedArea.push({siteName1:pointSpeed[i].deviceId,siteName2:pointSpeed[i+1].deviceId,speed:speedAreas});
-              console.log(this.speedArea);
             }
           }
         }).catch(err => {
