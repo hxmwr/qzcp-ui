@@ -19,13 +19,16 @@
           <div><span>位置:</span>{{item.desc}}</div>
           <div><span>设备型号:</span>NRFQZ01</div>
           <div><span>当前状态:</span>{{item.status?'在线':'离线'}}</div>
-          <div><img style="width: 100%" src="../../static/bs.jpeg" alt=""></div>
+          <div><img style="width: 250px;margin-top: 10px;" :src="'../../static/point' + item.id + '.png'" alt=""></div>
         </l-popup>
       </l-marker>
       <l-polyline
         ref="polyline"
         :lat-lngs="polyline.latlngs"
         :color="polyline.color">
+        <l-popup>
+          hello
+        </l-popup>
       </l-polyline>
     </l-map>
     <!--顶部-->
@@ -347,6 +350,7 @@
         tooltipAnchor: [16, -28],
       });
       this.map = this.$refs.myMap.mapObject;
+      this.map.removeControl(this.map.zoomControl)
       this.heatMap = L.heatLayer(this.heatPoints, {radius: 10}).addTo(this.map);
       // this.getTime(); //得到时间
       // this.getMap(); //创建地图
