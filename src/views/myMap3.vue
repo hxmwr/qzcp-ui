@@ -12,7 +12,8 @@
       @update:bounds="boundsUpdated"
     >
       <l-tile-layer :url="url"></l-tile-layer>
-      <l-marker v-for="(item, key) in base_stations" :lat-lng="[item.latitude, item.longitude]" :icon="item.status?dufaultMarkIcon:customMarkIcon" :key="item.id">
+      <l-marker v-for="(item, key) in base_stations" :lat-lng="[item.latitude, item.longitude]"
+                :icon="item.status?dufaultMarkIcon:customMarkIcon" :key="item.id">
         <!--<l-popup>{{item.desc}}</l-popup>-->
         <l-popup>
           <div><span>编号:</span>{{item.id}}</div>
@@ -26,6 +27,14 @@
         ref="polyline"
         :lat-lngs="polyline.latlngs"
         :color="polyline.color">
+        <l-popup>
+          <div>
+            <div v-for="(item,key) in speedArea" :key="key">
+              <div>区间基站{{item.siteName1}}---基站{{item.siteName2}}:</div>
+              <div>{{item.speed}}m/s</div>
+            </div>
+          </div>
+        </l-popup>
       </l-polyline>
     </l-map>
     <!--顶部-->
@@ -40,7 +49,8 @@
       </el-input>
       <!--右边两按钮-->
       <div class="map_list" v-show="showTrack"></div>
-      <div class="map_fullScreen" @click="launchFullScreen" v-show="showTrack" :class="{fullScreen:goFullScreen==0,quitFullScreen:goFullScreen==1}"></div>
+      <div class="map_fullScreen" @click="launchFullScreen" v-show="showTrack"
+           :class="{fullScreen:goFullScreen==0,quitFullScreen:goFullScreen==1}"></div>
     </div>
     <!--左边模块警告信息-->
     <!--左边模块收起图标-->
@@ -56,11 +66,13 @@
         <!--时间-->
         <div class="map_alarmTime">
           <div>{{(alarmData.length === 0)?'':((new Date).toISOString().split('T')[0] + ' ' +
-            alarmData[0].time)}}</div>
+            alarmData[0].time)}}
+          </div>
         </div>
         <div class="map_alarmLine">
           <div class="map_alarmLineWrap">
-            <div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}" :style="{transform: 'translateY(' + offset2 + 'rem)', background: 'red', transition: transition2?'all .2s':'none'}">
+            <div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}"
+                 :style="{transform: 'translateY(' + offset2 + 'rem)', background: 'red', transition: transition2?'all .2s':'none'}">
               <div class="map_alarms" v-for="(item,key) in alarmData" :key="item.id">
                 <!--左边信息-->
                 <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}">
@@ -236,20 +248,22 @@
     </div>
 
     <!--告警详情弹窗-->
-    <alarmDialog v-if="showAlarmDialog" @closeDia="hiddenDialog" @toshowTrack="toShowTrack" :detailAlarm="detailAlarm" :detailType="detailType"></alarmDialog>
+    <alarmDialog v-if="showAlarmDialog" @closeDia="hiddenDialog" @toshowTrack="toShowTrack" :detailAlarm="detailAlarm"
+                 :detailType="detailType"></alarmDialog>
     <!--车辆信息弹窗-->
-    <mobileInfo v-if="showMobileDialog" :selectTimeArea="selectTimeArea" @closeMobileDia="hiddenMobileDialog" :detailMobileInfo="detailMobileInfo" @searchTrack="toSearchTrack"></mobileInfo>
+    <mobileInfo v-if="showMobileDialog" :selectTimeArea="selectTimeArea" @closeMobileDia="hiddenMobileDialog"
+                :detailMobileInfo="detailMobileInfo" @searchTrack="toSearchTrack"></mobileInfo>
 
-     <!--关闭轨迹大按钮  右上角-->
-     <div class="track_closeBtn" v-show="!showTrack" @click="closeTrack"></div>
-     <!--查询信息查询轨迹后缩放成icon-->
-     <div class="track_infoIcon" v-show="!showTrack" @click="showInfoDialog"></div>
+    <!--关闭轨迹大按钮  右上角-->
+    <div class="track_closeBtn" v-show="!showTrack" @click="closeTrack"></div>
+    <!--查询信息查询轨迹后缩放成icon-->
+    <div class="track_infoIcon" v-show="!showTrack" @click="showInfoDialog"></div>
 
     <!--天气日期时间等-->
-    <div class="map_weather flex flex_align flex_between">
-      <span><span class="map_weatherStatus">{{showWeather.weather}}</span><span>{{showWeather.temperature}}℃</span></span>
-      <span>{{Dates.year}}年{{Dates.month}}月{{Dates.date}}日{{Dates.hour}}:{{Dates.minute}}</span>
-    </div>
+    <!--<div class="map_weather flex flex_align flex_between">-->
+    <!--<span><span class="map_weatherStatus">{{showWeather.weather}}</span><span>{{showWeather.temperature}}℃</span></span>-->
+    <!--<span>{{Dates.year}}年{{Dates.month}}月{{Dates.date}}日{{Dates.hour}}:{{Dates.minute}}</span>-->
+    <!--</div>-->
   </div>
 </template>
 
@@ -272,10 +286,19 @@
     },
     data() {
       return {
-        dufaultMarkIcon:null,
-        customMarkIcon:null,
-        url: 'http://'+ location.host.split(':')[0] +':4040/map/{z}/{x}/{y}.png',
-        // url: 'http://172.16.0.34:4040/map/{z}/{x}/{y}.png',
+        testSpeed: [{
+          time: '2019-04-18T00:00:01.390000128Z', lat: '28.969353', lng: '118.857255',device_id:'1'
+        }, {
+          time: '2019-04-18T18:05:51.500999936Z', lat: '28.976684', lng: '118.886719',device_id:'2'
+        },{
+          time: '2019-04-18T20:05:51.500999936Z', lat: '28.990712', lng: '118.863291',device_id:'3'
+        }], //测试速度的数据
+        testSpeedArea:'',
+        speedArea:[],
+        dufaultMarkIcon: null,
+        customMarkIcon: null,
+        // url: 'http://'+ location.host.split(':')[0] +':4040/map/{z}/{x}/{y}.png',
+        url: 'http://172.16.0.34:4040/map/{z}/{x}/{y}.png',
         center: [28.966173, 118.84945],
         zoom: 15,
         bounds: null,
@@ -288,27 +311,27 @@
           [28.966173, 118.84945, 100], // lat, lng, intensity
           [28.976173, 118.94945, 20],
         ],
-        passedPolyline:null,
-        bycleMarker:null, //电动自行车标识图
-        goFullScreen:0,
-        showWeather:{'temperature':'22','weather':'阴'},//天气情况
-        Dates:{
-          year:'',
-          month:'',
-          date:'',
-          hour:'',
-          minute:''
+        passedPolyline: null,
+        bycleMarker: null, //电动自行车标识图
+        goFullScreen: 0,
+        showWeather: {'temperature': '22', 'weather': '阴'},//天气情况
+        Dates: {
+          year: '',
+          month: '',
+          date: '',
+          hour: '',
+          minute: ''
         },//日期
-        timeInterval:null,// 时间定时器
-        infoWindow:'',//地图上的信息窗体
-        selectTimeArea:'', //所有车辆查询时间段
-        hasShowTrack:false,//是否已经显示轨迹
-        detailAlarm:'',//具体事故详情
-        detailMobileInfo:'',// 搜索车辆信息详情
-        detailType:'',
-        showTrack:true,//显示轨迹的页面，其他模块按钮都隐藏
-        selectDialog:0,//看是打开告警窗口还是信息查询窗口 默认0是告警窗口
-        map:null,
+        timeInterval: null,// 时间定时器
+        infoWindow: '',//地图上的信息窗体
+        selectTimeArea: '', //所有车辆查询时间段
+        hasShowTrack: false,//是否已经显示轨迹
+        detailAlarm: '',//具体事故详情
+        detailMobileInfo: '',// 搜索车辆信息详情
+        detailType: '',
+        showTrack: true,//显示轨迹的页面，其他模块按钮都隐藏
+        selectDialog: 0,//看是打开告警窗口还是信息查询窗口 默认0是告警窗口
+        map: null,
         vehicle_track: null,
         offset1: -5.7,
         offset2: -5.7,
@@ -339,10 +362,10 @@
     mounted() {
       const me = this;
       this.dufaultMarkIcon = new L.Icon.Default();
-      this.customMarkIcon =  L.icon({
+      this.customMarkIcon = L.icon({
         iconUrl: '../../static/bs-offline.png',
-        iconSize:    [25, 41],
-        iconAnchor:  [12, 41],
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
         popupAnchor: [1, -34],
         tooltipAnchor: [16, -28],
       });
@@ -552,24 +575,67 @@
         getTrackByTime(data).then(refs => {
           if (refs.data.result.length > 0) {
             this.polyline.latlngs = [];
-            console.log('hhhh');
             let tmp = refs.data.result.map(e => [e.latitude, e.longitude]);
-            let points = []
-            if (tmp.length == 0) return
-            points.push(tmp[0])
+            let tmpSpeed = refs.data.result.map(e =>{return {"time":e.time, "lat":e.latitude,"lng":e.longitude,"deviceId":e.device_id}});
+            let points = [],pointSpeed=[];
+            if (tmp.length == 0) return;
+            points.push(tmp[0]);
+            pointSpeed.push(tmpSpeed[0]);
             for (let i = 1; i < tmp.length; i++) {
               if (tmp[i][0] != tmp[i - 1][0] && tmp[i][1] != tmp[i - 1][1]) {
-                points.push(tmp[i])
+                points.push(tmp[i]);
+                pointSpeed.push(tmpSpeed[i]);
               }
             }
             this.polyline.latlngs = points;
             setTimeout(() => {
               this.$refs.polyline.mapObject.snakeIn()
-            }, 0)
+            }, 0);
+
+            //测试速度
+            //  let dist = this.distance(this.testSpeed[0].lat,this.testSpeed[0].lng,this.testSpeed[1].lat,this.testSpeed[1].lng,'K');
+            //  console.log('dist:',dist);
+            //  let testDistTime = new Date(this.testSpeed[1].time).getTime() - new Date(this.testSpeed[0].time).getTime();
+            //   this.testSpeedArea = (dist*1000 / (testDistTime/1000)).toFixed(3);
+            this.speedArea = [];
+            console.log('pointSpeed:',pointSpeed);
+            for(let i=0;i<pointSpeed.length-1;i++){
+              let dist = this.distance(pointSpeed[i].lat,pointSpeed[i].lng,pointSpeed[i+1].lat,pointSpeed[i+1].lng,'K');
+              console.log('dist:',dist);
+              let testDistTime = new Date(pointSpeed[i+1].time).getTime() - new Date(pointSpeed[i].time).getTime();
+              let speedAreas = (dist*1000 / (testDistTime/1000)).toFixed(3);
+              this.speedArea.push({siteName1:pointSpeed[i].deviceId,siteName2:pointSpeed[i+1].deviceId,speed:speedAreas});
+              console.log(this.speedArea);
+            }
           }
-        }).catch(err=>{
+        }).catch(err => {
           console.log(err);
         })
+      },
+      distance(lat1, lon1, lat2, lon2, unit) {
+        if ((lat1 == lat2) && (lon1 == lon2)) {
+          return 0;
+        }
+        else {
+          var radlat1 = Math.PI * lat1 / 180;
+          var radlat2 = Math.PI * lat2 / 180;
+          var theta = lon1 - lon2;
+          var radtheta = Math.PI * theta / 180;
+          var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+          if (dist > 1) {
+            dist = 1;
+          }
+          dist = Math.acos(dist);
+          dist = dist * 180 / Math.PI;
+          dist = dist * 60 * 1.1515;
+          if (unit == "K") {
+            dist = dist * 1.609344
+          }
+          if (unit == "N") {
+            dist = dist * 0.8684
+          }
+          return dist;
+        }
       },
       closeTrack() {
         //关闭轨迹
@@ -577,7 +643,7 @@
         this.searchInputVal = '';
         this.showTrack = true;
         this.hasShowTrack = false;
-        this.polyline.latlngs =[];
+        this.polyline.latlngs = [];
       },
       hiddenDialog() {
         this.showAlarmDialog = false;
@@ -588,7 +654,7 @@
         this.searchInputVal = '';
         this.showMobileDialog = false;
         this.hasShowTrack = false;
-        this.polyline.latlngs =[];
+        this.polyline.latlngs = [];
       },
       toTimeString(dt) {
         return dt.toTimeString().split(' ')[0]
