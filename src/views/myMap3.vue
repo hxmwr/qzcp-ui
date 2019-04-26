@@ -520,6 +520,7 @@
               }
               this.polyline.latlngs = points;
               setTimeout(() => {
+                this.$refs.polyline.mapObject._snaking = false
                 this.$refs.polyline.mapObject.snakeIn()
               }, 0);
             }
@@ -564,6 +565,7 @@
             }
             this.polyline.latlngs = points;
             setTimeout(() => {
+              this.$refs.polyline.mapObject._snaking = false
               this.$refs.polyline.mapObject.snakeIn()
             }, 0)
           }
