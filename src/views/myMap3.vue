@@ -20,6 +20,7 @@
           <div><span>位置:</span>{{item.desc}}</div>
           <div><span>设备型号:</span>NRFQZ01</div>
           <div><span>当前状态:</span>{{item.status?'在线':'离线'}}</div>
+          <div><span>上报次数:</span>{{getReportCountById(item.id)}}</div>
           <div><img style="width: 250px;margin-top: 10px;" :src="'../../static/point' + item.id + '.png'" alt=""></div>
         </l-popup>
       </l-marker>
@@ -36,6 +37,9 @@
           </div>
         </l-popup>
       </l-polyline>
+      <l-moving-marker
+        :lat-lng="a"
+      ></l-moving-marker>
     </l-map>
     <!--顶部-->
     <div class="map_top flex flex_center">
@@ -286,6 +290,7 @@
     },
     data() {
       return {
+        report_count: [], // 基站上报次数
         testSpeed: [{
           time: '2019-04-18T00:00:01.390000128Z', lat: '28.969353', lng: '118.857255',device_id:'1'
         }, {
@@ -297,8 +302,8 @@
         speedArea:[],
         dufaultMarkIcon: null,
         customMarkIcon: null,
-        // url: 'http://'+ location.host.split(':')[0] +':4040/map/{z}/{x}/{y}.png',
-        url: 'http://172.16.0.34:4040/map/{z}/{x}/{y}.png',
+        url: 'http://'+ location.host.split(':')[0] +':4040/map/{z}/{x}/{y}.png',
+        // url: 'http://172.16.0.34:4040/map/{z}/{x}/{y}.png',
         center: [28.966173, 118.84945],
         zoom: 15,
         bounds: null,
@@ -392,9 +397,30 @@
         me.base_stations = r.data.data
       });
 
+      // 定时更新基站流量数据
+      setInterval(() => {
+        getTrafficFlow({flag: 2, start_time: '2000-01-01 00:00:00'}).then(r => {
+          //热力图
+          this.report_count = r.data.result;
+          this.heat_map_points = [];
+          r.data.result.forEach(e => {
+            for (let i = 0; i < this.base_stations.length; i++) {
+              if (this.base_stations[i].id == e[0]) {
+                this.heat_map_points.push([
+                  this.base_stations[i].longitude,
+                  this.base_stations[i].latitude,
+                  e[1]
+                ])
+              }
+            }
+          });
+          this.heatMap.setLatLngs(this.heat_map_points)
+        });
+      }, 10000);
+
       getTrafficFlow({flag: 2}).then(r => {
         //热力图
-        // console.log(r.data.result)
+        this.report_count = r.data.result;
         this.heat_map_points = [];
         r.data.result.forEach(e => {
           for (let i = 0; i < this.base_stations.length; i++) {
@@ -444,6 +470,12 @@
         if (data.velocity && data.velocity > 7) {
           data.type = '超速';
         }
+        if (data.is_reverse) {
+          data.type = '逆行'
+        }
+        if (data.is_wrong_lane) {
+          data.type = '上机动车道'
+        }
         this.alarmData.unshift(data)
         this.offset2 += 0.8
         if (this.alarmData.length > 1000) {
@@ -482,6 +514,14 @@
       },
       boundsUpdated(bounds) {
         this.bounds = bounds;
+      },
+      getReportCountById(id) {
+        for (let i=0; i < this.report_count.length; i++) {
+          if (this.report_count[i][0] == id) {
+            return this.report_count[i][1];
+          }
+        }
+        return 0
       },
       // getTime() {
       //   var self = this;

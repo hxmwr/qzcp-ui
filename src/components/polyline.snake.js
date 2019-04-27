@@ -180,11 +180,11 @@ L.LayerGroup.include({
     this.addLayer(currentLayer);
     if ('snakeIn' in currentLayer) {
       currentLayer.once('snakeend', function(){
-        setTimeout(this._snakeNext.bind(this), this.options.snakingPause);
+        setTimeout(this._snakeNext.bind(this), 500);
       }, this);
       currentLayer.snakeIn();
     } else {
-      setTimeout(this._snakeNext.bind(this), this.options.snakingPause);
+      setTimeout(this._snakeNext.bind(this), 500);
     }
 
 

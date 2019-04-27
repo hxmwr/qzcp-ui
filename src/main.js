@@ -16,6 +16,7 @@ Vue.prototype.$axios = axios;
 Vue.config.productionTip = false;
 
 import { LMap, LTileLayer, LMarker, LPopup, LPolyline } from 'vue2-leaflet';
+import LMovingMarker from 'vue2-leaflet-movingmarker'
 import { Icon } from 'leaflet'
 
 import 'leaflet/dist/leaflet.css'
@@ -25,6 +26,8 @@ Vue.component('l-tile-layer', LTileLayer);
 Vue.component('l-marker', LMarker);
 Vue.component('l-popup', LPopup)
 Vue.component('l-polyline', LPolyline)
+Vue.component('l-moving-marker', LMovingMarker)
+
 
 delete Icon.Default.prototype._getIconUrl;
 
