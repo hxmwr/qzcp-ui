@@ -165,8 +165,6 @@ L.LayerGroup.include({
 
 
   _snakeNext: function() {
-
-
     if (this._snakingLayersDone >= this._snakingLayers.length) {
       this.fire('snakeend');
       this._snaking = false;

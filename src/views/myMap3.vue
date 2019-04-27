@@ -25,8 +25,10 @@
         </l-popup>
       </l-marker>
       <l-polyline
+        v-if="polyline.latlngs.length > 0"
         ref="polyline"
         :lat-lngs="polyline.latlngs"
+        @snake="onSnake"
         :color="polyline.color">
         <l-popup>
           <div>
@@ -37,9 +39,7 @@
           </div>
         </l-popup>
       </l-polyline>
-      <!--<l-moving-marker-->
-        <!--:lat-lng="a"-->
-      <!--&gt;</l-moving-marker>-->
+      <l-marker v-if="polyline.latlngs.length > 0" :lat-lng="animMarkerLatlng" :icon="bycleIcon"></l-marker>
     </l-map>
     <!--顶部-->
     <div class="map_top flex flex_center">
@@ -290,6 +290,7 @@
     },
     data() {
       return {
+        animMarkerLatlng: {lat: '0', lng: '0'},
         report_count: [], // 基站上报次数
         testSpeed: [{
           time: '2019-04-18T00:00:01.390000128Z', lat: '28.969353', lng: '118.857255',device_id:'1'
@@ -302,6 +303,7 @@
         speedArea:[],
         dufaultMarkIcon: null,
         customMarkIcon: null,
+        bycleIcon: null,
         url: 'http://'+ location.host.split(':')[0] +':4040/map/{z}/{x}/{y}.png',
         // url: 'http://172.16.0.34:4040/map/{z}/{x}/{y}.png',
         center: [28.966173, 118.84945],
@@ -374,6 +376,15 @@
         popupAnchor: [1, -34],
         tooltipAnchor: [16, -28],
       });
+
+      this.bycleIcon = L.icon({
+        iconUrl: '../../static/bycle.png',
+        iconSize: [26, 20],
+        // iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        tooltipAnchor: [16, -28],
+      });
+
       this.map = this.$refs.myMap.mapObject;
       this.map.removeControl(this.map.zoomControl)
       this.heatMap = L.heatLayer(this.heatPoints, {radius: 10}).addTo(this.map);
@@ -506,6 +517,11 @@
       clearInterval(this.timeInterval)
     },
     methods: {
+      onSnake() {
+        if (this.$refs.polyline) {
+          this.animMarkerLatlng = this.$refs.polyline.mapObject._latlngs[0][this.$refs.polyline.mapObject._latlngs[0].length - 1]
+        }
+      },
       zoomUpdated(zoom) {
         this.zoom = zoom;
       },
