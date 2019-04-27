@@ -37,9 +37,9 @@
           </div>
         </l-popup>
       </l-polyline>
-      <l-moving-marker
-        :lat-lng="a"
-      ></l-moving-marker>
+      <!--<l-moving-marker-->
+        <!--:lat-lng="a"-->
+      <!--&gt;</l-moving-marker>-->
     </l-map>
     <!--顶部-->
     <div class="map_top flex flex_center">
