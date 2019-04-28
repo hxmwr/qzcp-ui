@@ -31,15 +31,16 @@
         @snake="onSnake"
         :color="polyline.color">
         <l-popup>
-          <div>
-            <div v-for="(item,key) in speedArea" :key="key">
-              <div>区间基站{{item.siteName1}}---基站{{item.siteName2}}:</div>
-              <div>{{item.speed}}m/s</div>
+          <div style="max-height: 600px; overflow-y: scroll">
+            <div v-for="(item,key) in speedArea" :key="key" style="width: 100%;">
+              <div>基站{{item.siteName1}}->基站{{item.siteName2}} | {{item.time.toLocaleString()}} | {{item.speed}}m/s</div>
             </div>
           </div>
         </l-popup>
       </l-polyline>
-      <l-marker v-if="polyline.latlngs.length > 0" :lat-lng="animMarkerLatlng" :icon="bycleIcon"></l-marker>
+      <l-marker ref="markerVehicle" v-if="polyline.latlngs.length > 0" :lat-lng="animMarkerLatlng" :icon="bycleIcon">
+        <!--<l-popup @ready="$refs.markerVehicle.mapObject.openPopup">hellos</l-popup>-->
+      </l-marker>
     </l-map>
     <!--顶部-->
     <div class="map_top flex flex_center">
@@ -612,7 +613,7 @@
                 let dist = this.distance(pointSpeed[i].lat,pointSpeed[i].lng,pointSpeed[i+1].lat,pointSpeed[i+1].lng,'K');
                 let testDistTime = new Date(pointSpeed[i+1].time).getTime() - new Date(pointSpeed[i].time).getTime();
                 let speedAreas = (dist*1000 / (testDistTime/1000)).toFixed(3);
-                this.speedArea.push({siteName1:pointSpeed[i].deviceId,siteName2:pointSpeed[i+1].deviceId,speed:speedAreas});
+                this.speedArea.push({siteName1:pointSpeed[i].deviceId,siteName2:pointSpeed[i+1].deviceId,speed:speedAreas, time: new Date(pointSpeed[i + 1].time)});
               }
             }
           }).catch(err => {
@@ -672,7 +673,7 @@
               let dist = this.distance(pointSpeed[i].lat,pointSpeed[i].lng,pointSpeed[i+1].lat,pointSpeed[i+1].lng,'K');
               let testDistTime = new Date(pointSpeed[i+1].time).getTime() - new Date(pointSpeed[i].time).getTime();
               let speedAreas = (dist*1000 / (testDistTime/1000)).toFixed(3);
-              this.speedArea.push({siteName1:pointSpeed[i].deviceId,siteName2:pointSpeed[i+1].deviceId,speed:speedAreas});
+              this.speedArea.push({siteName1:pointSpeed[i].deviceId,siteName2:pointSpeed[i+1].deviceId,speed:speedAreas, time: new Date(pointSpeed[i + 1].time)});
             }
           }
         }).catch(err => {
