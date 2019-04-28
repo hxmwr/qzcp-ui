@@ -53,7 +53,7 @@
         <i slot="suffix" class="el-input__icon el-icon-search" @click="searchEnterInput"></i>
       </el-input>
       <!--右边两按钮-->
-      <div class="map_list" v-show="showTrack"></div>
+      <div class="map_list" v-show="showTrack" @click="showInfoList"></div>
       <div class="map_fullScreen" @click="launchFullScreen" v-show="showTrack"
            :class="{fullScreen:goFullScreen==0,quitFullScreen:goFullScreen==1}"></div>
     </div>
@@ -269,10 +269,14 @@
     <!--<span><span class="map_weatherStatus">{{showWeather.weather}}</span><span>{{showWeather.temperature}}℃</span></span>-->
     <!--<span>{{Dates.year}}年{{Dates.month}}月{{Dates.date}}日{{Dates.hour}}:{{Dates.minute}}</span>-->
     <!--</div>-->
+
+    <!--车辆信息列表页面-->
+    <infoListDialog v-show="infoListShow" class="infoListWrap" @closeInfoList="closeInfoList"></infoListDialog>
   </div>
 </template>
 
 <script>
+  import infoListDialog from '../components/infoList'
   import alarmDialog from '../components/alarmDialog'
   import mobileInfo from '../components/mobileInfo'
   import {getBaseStation, getTrack, getTrafficFlow, searchInfo, getTrackByTime} from "../api/remConfig";
@@ -281,16 +285,18 @@
   import heatMap from '../components/heatmap'
   import L from 'leaflet'
   import polyline_snake_anim from '../components/polyline.snake'
+  // require('leaflet-routing-machine');
 
   polyline_snake_anim();
   heatMap(L)
   export default {
     name: "test",
     components: {
-      alarmDialog, mobileInfo
+      alarmDialog, mobileInfo,infoListDialog
     },
     data() {
       return {
+        infoListShow:false,//车辆信息列表显示判断
         animMarkerLatlng: {lat: '0', lng: '0'},
         report_count: [], // 基站上报次数
         testSpeed: [{
@@ -305,8 +311,8 @@
         dufaultMarkIcon: null,
         customMarkIcon: null,
         bycleIcon: null,
-        url: 'http://'+ location.host.split(':')[0] +':4040/map/{z}/{x}/{y}.png',
-        // url: 'http://172.16.0.34:4040/map/{z}/{x}/{y}.png',
+        // url: 'http://'+ location.host.split(':')[0] +':4040/map/{z}/{x}/{y}.png',
+        url: 'http://172.16.0.34:4040/map/{z}/{x}/{y}.png',
         center: [28.966173, 118.84945],
         zoom: 15,
         bounds: null,
@@ -389,6 +395,13 @@
       this.map = this.$refs.myMap.mapObject;
       this.map.removeControl(this.map.zoomControl)
       this.heatMap = L.heatLayer(this.heatPoints, {radius: 10}).addTo(this.map);
+      // L.Routing.control({
+      //   waypoints: [
+      //     L.latLng(28.964802,118.900086),
+      //     L.latLng(28.981107,118.926819)
+      //   ]
+      // }).addTo(this.map);
+
       // this.getTime(); //得到时间
       // this.getMap(); //创建地图
       // this.setAnimation();
@@ -518,6 +531,13 @@
       clearInterval(this.timeInterval)
     },
     methods: {
+      closeInfoList(){
+        this.infoListShow = false;
+      },
+      //车辆信息列表弹窗
+      showInfoList(){
+        this.infoListShow = true;
+      },
       onSnake() {
         if (this.$refs.polyline) {
           this.animMarkerLatlng = this.$refs.polyline.mapObject._latlngs[0][this.$refs.polyline.mapObject._latlngs[0].length - 1]
@@ -1156,7 +1176,10 @@
       width: 100%;
       height: 100vh;
     }
-
+    .infoListWrap{
+      position:relative;
+      z-index: 1300;
+    }
     /*顶部信息*/
     .map_top {
       position: absolute;
@@ -1164,10 +1187,9 @@
       left: 0;
       width: 100%;
       height: 0.8rem;
-      z-index: 9999;
-
+      z-index: 999;
       .searchInput {
-        z-index: 9999;
+        z-index: 999;
       }
 
       /*background:rgba(0,0,0,.1);*/

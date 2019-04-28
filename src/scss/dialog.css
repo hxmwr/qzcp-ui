@@ -1,6 +1,19 @@
+.popDialog .close_btn {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer; }
+  .popDialog .close_btn img {
+    max-width: 100%; }
+
 .popDialog /deep/ .el-dialog {
   width: 436px;
-  margin-top: 30vh !important;
+  margin-top: 30vh;
   box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.3);
   border-radius: 20px; }
   .popDialog /deep/ .el-dialog .el-dialog__header {
