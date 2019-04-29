@@ -43,5 +43,5 @@ export const getTrackByTime = (data)=>{
 
 //车辆列表弹窗
 export const getInfoList = (data)=>{
-  // return axios.post();
-}
+  return axios.get(`${base}/vehicles`,{params:data});
+};

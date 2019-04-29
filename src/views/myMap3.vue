@@ -271,7 +271,7 @@
     <!--</div>-->
 
     <!--车辆信息列表页面-->
-    <infoListDialog v-show="infoListShow" class="infoListWrap" @closeInfoList="closeInfoList"></infoListDialog>
+    <infoListDialog v-show="infoListShow" class="infoListWrap" @closeInfoList="closeInfoList" :infoListAllData="infoListAllData" @changeData="changeInfoListData"></infoListDialog>
   </div>
 </template>
 
@@ -279,7 +279,7 @@
   import infoListDialog from '../components/infoList'
   import alarmDialog from '../components/alarmDialog'
   import mobileInfo from '../components/mobileInfo'
-  import {getBaseStation, getTrack, getTrafficFlow, searchInfo, getTrackByTime} from "../api/remConfig";
+  import {getBaseStation, getTrack, getTrafficFlow, searchInfo, getTrackByTime,getInfoList} from "../api/remConfig";
   import {gen_mock_event} from '../data/accident-data'
   import {gen_mock_alert, gen_alert_desc} from '../data/alarm-data'
   import heatMap from '../components/heatmap'
@@ -296,6 +296,7 @@
     },
     data() {
       return {
+        infoListAllData:[],//车辆信息列表数据
         infoListShow:false,//车辆信息列表显示判断
         animMarkerLatlng: {lat: '0', lng: '0'},
         report_count: [], // 基站上报次数
@@ -531,12 +532,21 @@
       clearInterval(this.timeInterval)
     },
     methods: {
+      changeInfoListData(data){
+        this.infoListAllData = data;
+      },
       closeInfoList(){
         this.infoListShow = false;
       },
       //车辆信息列表弹窗
       showInfoList(){
-        this.infoListShow = true;
+        getInfoList().then(refs=>{
+          this.infoListShow = true;
+          // console.log('refs',refs);
+          this.infoListAllData = refs.data.result;
+        }).catch(err=>{
+          console.log(err);
+        })
       },
       onSnake() {
         if (this.$refs.polyline) {

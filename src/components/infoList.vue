@@ -14,18 +14,22 @@
           </div>
           <div class="search_wrap">
             <el-input class="searchInput" v-model="searchInputVal" placeholder="请输入车牌号/告警ID/车架号"
-                      @keyup.enter.native="searchEnterInput">
-              <i slot="suffix" class="el-input__icon el-icon-search" @click="searchEnterInput"></i>
+                      @keyup.enter.native="searchInput">
+              <i slot="suffix" class="el-input__icon el-icon-search" @click="searchInput"></i>
             </el-input>
           </div>
           <div class="infoList_table">
-            <el-table :data="infoListData" style="width:100%">
+            <el-table :data="infoListAllData" style="width:100%">
               <el-table-column prop="id" label="ID" align="center"></el-table-column>
-              <el-table-column prop="licenseNum" label="车牌号" align="center"></el-table-column>
-              <el-table-column prop="frameNum" label="车架号" align="center"></el-table-column>
-              <el-table-column prop="type" label="车辆类型" align="center"></el-table-column>
-              <el-table-column prop="owner" label="车主" align="center"></el-table-column>
-              <el-table-column prop="phone" label="联系方式" align="center"></el-table-column>
+              <el-table-column prop="plate_no" label="车牌号" align="center"></el-table-column>
+              <el-table-column prop="frame_no" label="车架号" align="center"></el-table-column>
+              <el-table-column  label="车辆类型" align="center">
+                <template slot-scope="scope">
+                  <span>{{scope.row.type==1?'私人':'外卖'}}</span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="name" label="车主" align="center"></el-table-column>
+              <el-table-column prop="mobile" label="联系方式" align="center"></el-table-column>
               <el-table-column label="轨迹/违章" align="center">
                  <template slot-scope="scope">
                    <i class="infoList_track"></i><i class="infoList_warn"></i>
@@ -34,7 +38,7 @@
             </el-table>
             <!-- 分页栏 -->
             <div class="page_bar">
-              <el-pagination class="paginationBar" :current-page="currentPage" background layout="total,prev,pager,next" @current-change="handlePageNum" :total="totalPage" :page-size="limitNum"></el-pagination>
+              <el-pagination class="paginationBar" :current-page="currentPage" background layout="total,prev,pager,next" @current-change="handlePageNum" :total="infoListAllData.length" :page-size="limitNum"></el-pagination>
             </div>
           </div>
         </div>
@@ -44,52 +48,62 @@
 </template>
 
 <script>
+  import { getInfoList } from "../api/remConfig";
     export default {
       name: "infoList",
+      props:['infoListAllData'],
       data(){
         return{
           limitNum:10,
           currentPage:1,
-          totalPage:20,
+          totalPage:1,
           dialogVisible:true,
           searchInputVal:'',
-          infoListData:[{
-            id:'ZH19415001ND',
-            licenseNum:'浙H19415',
-            frameNum:'112334565354324321',
-            type:'私人用车',
-            owner:'赵三宝',
-            phone:'18012346321'
-          },{
-            id:'ZH19415001ND',
-            licenseNum:'浙H19415',
-            frameNum:'112334565354324321',
-            type:'私人用车',
-            owner:'赵三宝',
-            phone:'18012346321'
-          },{
-            id:'ZH19415001ND',
-            licenseNum:'浙H19415',
-            frameNum:'112334565354324321',
-            type:'私人用车',
-            owner:'赵三宝',
-            phone:'18012346321'
-          },{
-            id:'ZH19415001ND',
-            licenseNum:'浙H19415',
-            frameNum:'112334565354324321',
-            type:'私人用车',
-            owner:'赵三宝',
-            phone:'18012346321'
-          }]
+          // infoListData:this.infoListAllData
+          // infoListData:[{
+          //   id:'ZH19415001ND',
+          //   licenseNum:'浙H19415',
+          //   frameNum:'112334565354324321',
+          //   type:'私人用车',
+          //   owner:'赵三宝',
+          //   phone:'18012346321'
+          // },{
+          //   id:'ZH19415001ND',
+          //   licenseNum:'浙H19415',
+          //   frameNum:'112334565354324321',
+          //   type:'私人用车',
+          //   owner:'赵三宝',
+          //   phone:'18012346321'
+          // },{
+          //   id:'ZH19415001ND',
+          //   licenseNum:'浙H19415',
+          //   frameNum:'112334565354324321',
+          //   type:'私人用车',
+          //   owner:'赵三宝',
+          //   phone:'18012346321'
+          // },{
+          //   id:'ZH19415001ND',
+          //   licenseNum:'浙H19415',
+          //   frameNum:'112334565354324321',
+          //   type:'私人用车',
+          //   owner:'赵三宝',
+          //   phone:'18012346321'
+          // }]
         }
       },
       methods:{
         closeDialog(){
+          this.searchInputVal = '';
           this.$emit('closeInfoList');
         },
-        searchEnterInput(){
-
+        searchInput(){
+          getInfoList({"search":this.searchInputVal}).then(refs=>{
+            console.log('fff:',refs);
+            // this.infoListData = refs.data.result;
+            this.$emit('changeData',refs.data.result);
+          }).catch(err=>{
+            console.log(err);
+          })
         },
         handlePageNum(val){
           this.currentPage = val;
