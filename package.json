@@ -14,6 +14,7 @@
     "echarts": "^4.2.1",
     "element-ui": "^2.7.2",
     "leaflet": "^1.4.0",
+    "leaflet-routing-machine": "^3.2.12",
     "simpleheat": "^0.4.0",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",

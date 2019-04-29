@@ -281,6 +281,7 @@
   import heatMap from '../components/heatmap'
   import L from 'leaflet'
   import polyline_snake_anim from '../components/polyline.snake'
+  import 'leaflet-routing-machine';
 
   polyline_snake_anim();
   heatMap(L)
@@ -369,6 +370,13 @@
     },
     mounted() {
       const me = this;
+      L.Routing.control({
+        waypoints: [
+          L.latLng(28.958823, 118.850496),
+          L.latLng(28.977464, 118.849853)
+        ],
+        router: L.Routing.mapbox('pk.eyJ1IjoibGllZG1hbiIsImEiOiJjamR3dW5zODgwNXN3MndqcmFiODdraTlvIn0.g_YeCZxrdh3vkzrsNN-Diw')
+      }).addTo(this.$refs.myMap.mapObject);
       this.dufaultMarkIcon = new L.Icon.Default();
       this.customMarkIcon = L.icon({
         iconUrl: '../../static/bs-offline.png',
@@ -1146,6 +1154,7 @@
 </script>
 
 <style scoped lang="scss">
+  /*@import "../../static/leaflet-route-machine.css";*/
   .myMapWrap {
     width: 100%;
     height: 100vh;
