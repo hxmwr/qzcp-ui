@@ -110,19 +110,6 @@
         background:#fff;
       }
     }
-    .close_btn{
-      position:absolute;
-      width:40px;
-      height:40px;
-      top:10px;
-      right:10px;
-      display:flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      img{
-        max-width: 100%;
-      }
-    }
+
   }
 </style>

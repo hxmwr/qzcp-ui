@@ -30,13 +30,13 @@
         :lat-lngs="polyline.latlngs"
         @snake="onSnake"
         :color="polyline.color">
-        <l-popup>
-          <div style="max-height: 600px; overflow-y: scroll">
-            <div v-for="(item,key) in speedArea" :key="key" style="width: 100%;">
-              <div>基站{{item.siteName1}}->基站{{item.siteName2}} | {{item.time.toLocaleString()}} | {{item.speed}}m/s</div>
-            </div>
-          </div>
-        </l-popup>
+        <!--<l-popup>-->
+          <!--<div style="max-height: 600px; overflow-y: scroll">-->
+            <!--<div v-for="(item,key) in speedArea" :key="key" style="width: 100%;">-->
+              <!--<div>基站{{item.siteName1}}->基站{{item.siteName2}} | {{item.time.toLocaleString()}} | {{item.speed}}m/s</div>-->
+            <!--</div>-->
+          <!--</div>-->
+        <!--</l-popup>-->
       </l-polyline>
       <l-marker ref="markerVehicle" v-if="polyline.latlngs.length > 0" :lat-lng="animMarkerLatlng" :icon="bycleIcon">
         <!--<l-popup @ready="$refs.markerVehicle.mapObject.openPopup">hellos</l-popup>-->
@@ -53,7 +53,7 @@
         <i slot="suffix" class="el-input__icon el-icon-search" @click="searchEnterInput"></i>
       </el-input>
       <!--右边两按钮-->
-      <div class="map_list" v-show="showTrack"></div>
+      <div class="map_list" v-show="showTrack" @click="showInfoList"></div>
       <div class="map_fullScreen" @click="launchFullScreen" v-show="showTrack"
            :class="{fullScreen:goFullScreen==0,quitFullScreen:goFullScreen==1}"></div>
     </div>
@@ -269,29 +269,47 @@
     <!--<span><span class="map_weatherStatus">{{showWeather.weather}}</span><span>{{showWeather.temperature}}℃</span></span>-->
     <!--<span>{{Dates.year}}年{{Dates.month}}月{{Dates.date}}日{{Dates.hour}}:{{Dates.minute}}</span>-->
     <!--</div>-->
+
+    <!--车辆信息列表页面-->
+    <infoListDialog v-show="infoListShow" class="infoListWrap" @closeInfoList="closeInfoList" :infoListAllData="infoListAllData" @changeData="changeInfoListData"></infoListDialog>
+    <!--轨迹动画窗口-->
+    <div class="trackAnimation_dialog" v-if="trackAnim_show">
+      <div class="track_detailConBox">
+        <div class="track_detailCon" v-for="(item,key) in speedArea" :key="key">
+          <div>区间: <span>{{item.siteName1}}---{{item.siteName2}}</span></div>
+          <div>时间: <span>{{item.time0.toLocaleString()}}——{{item.time.toLocaleString()}}</span></div>
+          <div>速度: <span>{{item.speed}}m/s</span></div>
+          <div>类型: <span>正常</span></div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+  import infoListDialog from '../components/infoList'
   import alarmDialog from '../components/alarmDialog'
   import mobileInfo from '../components/mobileInfo'
-  import {getBaseStation, getTrack, getTrafficFlow, searchInfo, getTrackByTime} from "../api/remConfig";
+  import {getBaseStation, getTrack, getTrafficFlow, searchInfo, getTrackByTime,getInfoList} from "../api/remConfig";
   import {gen_mock_event} from '../data/accident-data'
   import {gen_mock_alert, gen_alert_desc} from '../data/alarm-data'
   import heatMap from '../components/heatmap'
   import L from 'leaflet'
   import polyline_snake_anim from '../components/polyline.snake'
-  import 'leaflet-routing-machine';
+  // require('leaflet-routing-machine');
 
   polyline_snake_anim();
   heatMap(L)
   export default {
     name: "test",
     components: {
-      alarmDialog, mobileInfo
+      alarmDialog, mobileInfo,infoListDialog
     },
     data() {
       return {
+        trackAnim_show:false,
+        infoListAllData:[],//车辆信息列表数据
+        infoListShow:false,//车辆信息列表显示判断
         animMarkerLatlng: {lat: '0', lng: '0'},
         report_count: [], // 基站上报次数
         testSpeed: [{
@@ -370,13 +388,6 @@
     },
     mounted() {
       const me = this;
-      L.Routing.control({
-        waypoints: [
-          L.latLng(28.958823, 118.850496),
-          L.latLng(28.977464, 118.849853)
-        ],
-        router: L.Routing.mapbox('pk.eyJ1IjoibGllZG1hbiIsImEiOiJjamR3dW5zODgwNXN3MndqcmFiODdraTlvIn0.g_YeCZxrdh3vkzrsNN-Diw')
-      }).addTo(this.$refs.myMap.mapObject);
       this.dufaultMarkIcon = new L.Icon.Default();
       this.customMarkIcon = L.icon({
         iconUrl: '../../static/bs-offline.png',
@@ -526,6 +537,22 @@
       clearInterval(this.timeInterval)
     },
     methods: {
+      changeInfoListData(data){
+        this.infoListAllData = data;
+      },
+      closeInfoList(){
+        this.infoListShow = false;
+      },
+      //车辆信息列表弹窗
+      showInfoList(){
+        getInfoList().then(refs=>{
+          this.infoListShow = true;
+          // console.log('refs',refs);
+          this.infoListAllData = refs.data.result;
+        }).catch(err=>{
+          console.log(err);
+        })
+      },
       onSnake() {
         if (this.$refs.polyline) {
           this.animMarkerLatlng = this.$refs.polyline.mapObject._latlngs[0][this.$refs.polyline.mapObject._latlngs[0].length - 1]
@@ -616,12 +643,13 @@
                 this.$refs.polyline.mapObject.snakeIn()
               }, 0);
               //显示速度
+              this.trackAnim_show = true;
               this.speedArea = [];
               for(let i=0;i<pointSpeed.length-1;i++){
                 let dist = this.distance(pointSpeed[i].lat,pointSpeed[i].lng,pointSpeed[i+1].lat,pointSpeed[i+1].lng,'K');
                 let testDistTime = new Date(pointSpeed[i+1].time).getTime() - new Date(pointSpeed[i].time).getTime();
                 let speedAreas = (dist*1000 / (testDistTime/1000)).toFixed(3);
-                this.speedArea.push({siteName1:pointSpeed[i].deviceId,siteName2:pointSpeed[i+1].deviceId,speed:speedAreas, time: new Date(pointSpeed[i + 1].time)});
+                this.speedArea.push({siteName1:pointSpeed[i].deviceId,siteName2:pointSpeed[i+1].deviceId,speed:speedAreas,time0:new Date(pointSpeed[i].time), time: new Date(pointSpeed[i + 1].time)});
               }
             }
           }).catch(err => {
@@ -676,12 +704,13 @@
             //  console.log('dist:',dist);
             //  let testDistTime = new Date(this.testSpeed[1].time).getTime() - new Date(this.testSpeed[0].time).getTime();
             //   this.testSpeedArea = (dist*1000 / (testDistTime/1000)).toFixed(3);
+            this.trackAnim_show = true;
             this.speedArea = [];
             for(let i=0;i<pointSpeed.length-1;i++){
               let dist = this.distance(pointSpeed[i].lat,pointSpeed[i].lng,pointSpeed[i+1].lat,pointSpeed[i+1].lng,'K');
               let testDistTime = new Date(pointSpeed[i+1].time).getTime() - new Date(pointSpeed[i].time).getTime();
               let speedAreas = (dist*1000 / (testDistTime/1000)).toFixed(3);
-              this.speedArea.push({siteName1:pointSpeed[i].deviceId,siteName2:pointSpeed[i+1].deviceId,speed:speedAreas, time: new Date(pointSpeed[i + 1].time)});
+              this.speedArea.push({siteName1:pointSpeed[i].deviceId,siteName2:pointSpeed[i+1].deviceId,speed:speedAreas, time0:new Date(pointSpeed[i].time),time: new Date(pointSpeed[i + 1].time)});
             }
           }
         }).catch(err => {
@@ -720,10 +749,12 @@
         this.showTrack = true;
         this.hasShowTrack = false;
         this.polyline.latlngs = [];
+        this.trackAnim_show = false;
       },
       hiddenDialog() {
         this.showAlarmDialog = false;
         this.hasShowTrack = false;
+        this.trackAnim_show = false;
       },
       hiddenMobileDialog() {
         this.selectTimeArea = '';
@@ -731,6 +762,7 @@
         this.showMobileDialog = false;
         this.hasShowTrack = false;
         this.polyline.latlngs = [];
+        this.trackAnim_show = false;
       },
       toTimeString(dt) {
         return dt.toTimeString().split(' ')[0]
@@ -1154,18 +1186,58 @@
 </script>
 
 <style scoped lang="scss">
-  /*@import "../../static/leaflet-route-machine.css";*/
   .myMapWrap {
     width: 100%;
     height: 100vh;
     overflow: hidden;
     position: relative;
 
+    /*轨迹动画窗口*/
+    .trackAnimation_dialog{
+      position:absolute;
+      z-index:1000;
+      width:4rem;
+      height:9.14rem;
+      background:#FBFBFB;
+      top: 0.9rem;
+      box-sizing: border-box;
+      padding:0 0.12rem;
+      box-shadow: 0 0.02rem 0.04rem 0 rgba(0,0,0,0.50);
+      border-radius: 0 0.2rem 0.2rem 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      .track_detailConBox{
+        position:absolute;
+        /*bottom:0;*/
+      }
+      .track_detailCon{
+        width:3.75rem;
+        box-sizing: border-box;
+        padding:0.14rem 0.2rem;
+        background:#fff;
+        border-radius:0.08rem;
+        margin-bottom:0.1rem;
+        div{
+          font-size:0.14rem;
+          font-family: 'pingfangMedium';
+          color:#333;
+          text-align: left;
+          span{
+            font-family:'pingfangRegular';
+            color:#666;
+          }
+        }
+      }
+    }
+
     #myMap {
       width: 100%;
       height: 100vh;
     }
-
+    .infoListWrap{
+      position:relative;
+      z-index: 1300;
+    }
     /*顶部信息*/
     .map_top {
       position: absolute;
@@ -1173,10 +1245,9 @@
       left: 0;
       width: 100%;
       height: 0.8rem;
-      z-index: 9999;
-
+      z-index: 999;
       .searchInput {
-        z-index: 9999;
+        z-index: 999;
       }
 
       /*background:rgba(0,0,0,.1);*/
