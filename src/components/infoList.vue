@@ -32,7 +32,7 @@
               <el-table-column prop="mobile" label="联系方式" align="center"></el-table-column>
               <el-table-column label="轨迹/违章" align="center">
                  <template slot-scope="scope">
-                   <i class="infoList_track"></i><i class="infoList_warn"></i>
+                   <i class="infoList_track" @click="showHistoryTrack(scope.row.id)"></i><i class="infoList_warn"></i>
                  </template>
               </el-table-column>
             </el-table>
@@ -92,6 +92,9 @@
         }
       },
       methods:{
+        showHistoryTrack(vehicleId){
+          this.$emit('historyTrack',{"vehicle_id":vehicleId,"flag":1});
+        },
         closeDialog(){
           this.searchInputVal = '';
           this.$emit('closeInfoList');
@@ -245,6 +248,7 @@
       background:url("../img/track.png") no-repeat center;
       vertical-align: middle;
       margin-right:30px;
+      cursor: pointer;
     }
     .infoList_warn{
       display: inline-block;
