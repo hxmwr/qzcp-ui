@@ -12,6 +12,9 @@
       @update:bounds="boundsUpdated"
     >
       <l-tile-layer :url="url"></l-tile-layer>
+      <l-marker ref="markerVehicle" v-if="polyline.latlngs.length > 0" :lat-lng="animMarkerLatlng" :icon="bycleIcon" :zIndexOffset="100">
+        <!--<l-popup @ready="$refs.markerVehicle.mapObject.openPopup">hellos</l-popup>-->
+      </l-marker>
       <l-marker v-for="(item, key) in base_stations" :lat-lng="[item.latitude, item.longitude]"
                 :icon="item.status?dufaultMarkIcon:customMarkIcon" :key="item.id">
         <!--<l-popup>{{item.desc}}</l-popup>-->
@@ -38,9 +41,6 @@
           <!--</div>-->
         <!--</l-popup>-->
       </l-polyline>
-      <l-marker ref="markerVehicle" v-if="polyline.latlngs.length > 0" :lat-lng="animMarkerLatlng" :icon="bycleIcon">
-        <!--<l-popup @ready="$refs.markerVehicle.mapObject.openPopup">hellos</l-popup>-->
-      </l-marker>
     </l-map>
     <!--顶部-->
     <div class="map_top flex flex_center">
@@ -274,10 +274,12 @@
     <infoListDialog v-show="infoListShow" class="infoListWrap" @closeInfoList="closeInfoList" :infoListAllData="infoListAllData" @changeData="changeInfoListData"></infoListDialog>
     <!--轨迹动画窗口-->
     <div class="trackAnimation_dialog" v-if="trackAnim_show">
+      <div style="font-size: 0.15rem; margin: 0 -0.12rem; color: white;background: #037aff;padding: 0.03rem 0;position: absolute;top: 0;left: 0;right:0;z-index: 8888;">轨迹记录</div>
       <div class="track_detailConBox">
         <div class="track_detailCon" v-for="(item,key) in speedArea" :key="key">
           <div>区间: <span>{{item.siteName1}}---{{item.siteName2}}</span></div>
-          <div>时间: <span>{{item.time0.toLocaleString()}}——{{item.time.toLocaleString()}}</span></div>
+          <div>开始: <span>{{item.time0.toISOString().split('.')[0].replace('T', ' ')}}</span></div>
+          <div>结束: <span>{{item.time.toISOString().split('.')[0].replace('T', ' ')}}</span></div>
           <div>速度: <span>{{item.speed}}m/s</span></div>
           <div>类型: <span>正常</span></div>
         </div>
@@ -398,9 +400,9 @@
       });
 
       this.bycleIcon = L.icon({
-        iconUrl: '../../static/bycle.png',
-        iconSize: [26, 20],
-        // iconAnchor: [12, 41],
+        iconUrl: '../../static/bycicle.png',
+        iconSize: [32, 42],
+        iconAnchor: [16, 42],
         popupAnchor: [1, -34],
         tooltipAnchor: [16, -28],
       });
@@ -649,7 +651,13 @@
                 let dist = this.distance(pointSpeed[i].lat,pointSpeed[i].lng,pointSpeed[i+1].lat,pointSpeed[i+1].lng,'K');
                 let testDistTime = new Date(pointSpeed[i+1].time).getTime() - new Date(pointSpeed[i].time).getTime();
                 let speedAreas = (dist*1000 / (testDistTime/1000)).toFixed(3);
-                this.speedArea.push({siteName1:pointSpeed[i].deviceId,siteName2:pointSpeed[i+1].deviceId,speed:speedAreas,time0:new Date(pointSpeed[i].time), time: new Date(pointSpeed[i + 1].time)});
+                this.speedArea.push({
+                  siteName1:this.base_stations[pointSpeed[i].deviceId].desc,
+                  siteName2:this.base_stations[pointSpeed[i+1].deviceId].desc,
+                  speed:speedAreas,
+                  time0:new Date(pointSpeed[i].time),
+                  time: new Date(pointSpeed[i + 1].time)
+                });
               }
             }
           }).catch(err => {
@@ -710,7 +718,14 @@
               let dist = this.distance(pointSpeed[i].lat,pointSpeed[i].lng,pointSpeed[i+1].lat,pointSpeed[i+1].lng,'K');
               let testDistTime = new Date(pointSpeed[i+1].time).getTime() - new Date(pointSpeed[i].time).getTime();
               let speedAreas = (dist*1000 / (testDistTime/1000)).toFixed(3);
-              this.speedArea.push({siteName1:pointSpeed[i].deviceId,siteName2:pointSpeed[i+1].deviceId,speed:speedAreas, time0:new Date(pointSpeed[i].time),time: new Date(pointSpeed[i + 1].time)});
+              this.speedArea.push({
+                siteName1:this.base_stations[pointSpeed[i].deviceId].desc,
+                siteName2:this.base_stations[pointSpeed[i+1].deviceId].desc,
+                speed:speedAreas,
+                time0:new Date(pointSpeed[i].time),
+                time: new Date(pointSpeed[i + 1].time)
+              });
+              // this.speedArea.push({siteName1:pointSpeed[i].deviceId,siteName2:pointSpeed[i+1].deviceId,speed:speedAreas, time0:new Date(pointSpeed[i].time),time: new Date(pointSpeed[i + 1].time)});
             }
           }
         }).catch(err => {
@@ -1203,14 +1218,16 @@
       box-sizing: border-box;
       padding:0 0.12rem;
       box-shadow: 0 0.02rem 0.04rem 0 rgba(0,0,0,0.50);
-      border-radius: 0 0.2rem 0.2rem 0;
+      /*border-radius: 0 0.2rem 0.2rem 0;*/
       overflow-y: auto;
       overflow-x: hidden;
       .track_detailConBox{
+        padding-top: 0.2rem;
         position:absolute;
         /*bottom:0;*/
       }
       .track_detailCon{
+        cursor: pointer;
         width:3.75rem;
         box-sizing: border-box;
         padding:0.14rem 0.2rem;
