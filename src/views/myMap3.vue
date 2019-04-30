@@ -271,7 +271,7 @@
     <!--</div>-->
 
     <!--车辆信息列表页面-->
-    <infoListDialog v-show="infoListShow" class="infoListWrap" @closeInfoList="closeInfoList" :infoListAllData="infoListAllData" @changeData="changeInfoListData"></infoListDialog>
+    <infoListDialog v-show="infoListShow" class="infoListWrap" @closeInfoList="closeInfoList" :infoListAllData="infoListAllData" @changeData="changeInfoListData" @historyTrack="historyTracks"></infoListDialog>
     <!--轨迹动画窗口-->
     <div class="trackAnimation_dialog" v-if="trackAnim_show">
       <div class="track_detailConBox">
@@ -398,8 +398,8 @@
       });
 
       this.bycleIcon = L.icon({
-        iconUrl: '../../static/bycle.png',
-        iconSize: [26, 20],
+        iconUrl: '../../static/bycle2.png',
+        iconSize: [25, 25],
         // iconAnchor: [12, 41],
         popupAnchor: [1, -34],
         tooltipAnchor: [16, -28],
@@ -544,6 +544,12 @@
       clearInterval(this.timeInterval)
     },
     methods: {
+      historyTracks(data){
+        this.showTrack = false;
+        this.showMobileDialog = false;
+        this.infoListShow = false;
+        this.getAllTracks(data);
+      },
       changeInfoListData(data){
         this.infoListAllData = data;
       },
@@ -562,6 +568,7 @@
       },
       onSnake() {
         if (this.$refs.polyline) {
+          console.log('polyline:',this.$refs.polyline);
           this.animMarkerLatlng = this.$refs.polyline.mapObject._latlngs[0][this.$refs.polyline.mapObject._latlngs[0].length - 1]
         }
       },
@@ -622,46 +629,12 @@
         }
       },
       toShowTrack(data) {
-        //显示轨迹   告警窗口过来的  需要字段vehicle_id，flat:1
+        //显示轨迹   告警窗口过来的  需要字段vehicle_id，flag:1
         this.showTrack = false;
         this.showAlarmDialog = false;
         this.selectDialog = 0;
         if (!this.hasShowTrack) {
-          // this.setAlarmTrack();
-          getTrackByTime(data).then(refs => {
-            console.log(refs);
-            // this.polyline.latlngs = refs.data.result.map(e => [e.latitude, e.longitude]);
-            if (refs.data.result.length > 0) {
-              let tmp = refs.data.result.map(e => [e.latitude, e.longitude]);
-              let tmpSpeed = refs.data.result.map(e =>{return {"time":e.time, "lat":e.latitude,"lng":e.longitude,"deviceId":e.device_id}});
-              let points = [],pointSpeed=[];
-              if (tmp.length == 0) return;
-              points.push(tmp[0]);
-              pointSpeed.push(tmpSpeed[0]);
-              for (let i = 1; i < tmp.length; i++) {
-                if (tmp[i][0] != tmp[i - 1][0] && tmp[i][1] != tmp[i - 1][1]) {
-                  points.push(tmp[i]);
-                  pointSpeed.push(tmpSpeed[i]);
-                }
-              }
-              this.polyline.latlngs = points;
-              setTimeout(() => {
-                this.$refs.polyline.mapObject._snaking = false
-                this.$refs.polyline.mapObject.snakeIn()
-              }, 0);
-              //显示速度
-              this.trackAnim_show = true;
-              this.speedArea = [];
-              for(let i=0;i<pointSpeed.length-1;i++){
-                let dist = this.distance(pointSpeed[i].lat,pointSpeed[i].lng,pointSpeed[i+1].lat,pointSpeed[i+1].lng,'K');
-                let testDistTime = new Date(pointSpeed[i+1].time).getTime() - new Date(pointSpeed[i].time).getTime();
-                let speedAreas = (dist*1000 / (testDistTime/1000)).toFixed(3);
-                this.speedArea.push({siteName1:pointSpeed[i].deviceId,siteName2:pointSpeed[i+1].deviceId,speed:speedAreas,time0:new Date(pointSpeed[i].time), time: new Date(pointSpeed[i + 1].time)});
-              }
-            }
-          }).catch(err => {
-            console.log(err);
-          })
+          this.getAllTracks(data);
         } else {
           return false;
         }
@@ -680,12 +653,16 @@
         return points;
       },
       toSearchTrack(data) {
-        //显示轨迹   车辆所有信息窗口过来的  需要字段vehicle_id，flat:1,start_time,end_time
+        //显示轨迹   车辆所有信息窗口过来的  需要字段vehicle_id，flag:1,start_time,end_time
         this.showTrack = false;
         this.showMobileDialog = false;
         this.selectDialog = 1;
         this.selectTimeArea = data;
+        this.getAllTracks(data);
+      },
+      getAllTracks(data){
         getTrackByTime(data).then(refs => {
+          console.log('refs:',refs);
           if (refs.data.result.length > 0) {
             this.polyline.latlngs = [];
             let tmp = refs.data.result.map(e => [e.latitude, e.longitude]);
