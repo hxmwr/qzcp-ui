@@ -280,7 +280,7 @@
           <div>区间: <span>{{item.siteName1}}---{{item.siteName2}}</span></div>
           <div>开始: <span>{{item.time0.toISOString().split('.')[0].replace('T', ' ')}}</span></div>
           <div>结束: <span>{{item.time.toISOString().split('.')[0].replace('T', ' ')}}</span></div>
-          <div>速度: <span>{{item.speed}}m/s</span></div>
+          <div>速度: <span>{{item.speed}}km/h</span></div>
           <div>类型: <span>正常</span></div>
         </div>
       </div>
@@ -327,7 +327,7 @@
         customMarkIcon: null,
         bycleIcon: null,
         // url: 'http://'+ location.host.split(':')[0] +':4040/map/{z}/{x}/{y}.png',
-        url: 'http://172.16.0.34:4040/map/{z}/{x}/{y}.png',
+        url: 'http://127.0.0.1:4040/map/{z}/{x}/{y}.png',
         center: [28.966173, 118.84945],
         zoom: 15,
         bounds: null,
@@ -688,7 +688,7 @@
             for(let i=0;i<pointSpeed.length-1;i++){
               let dist = this.distance(pointSpeed[i].lat,pointSpeed[i].lng,pointSpeed[i+1].lat,pointSpeed[i+1].lng,'K');
               let testDistTime = new Date(pointSpeed[i+1].time).getTime() - new Date(pointSpeed[i].time).getTime();
-              let speedAreas = (dist*1000 / (testDistTime/1000)).toFixed(3);
+              let speedAreas = (dist / (testDistTime/1000)).toFixed(3);
               this.speedArea.push({
                 siteName1:this.base_stations[pointSpeed[i].deviceId].desc,
                 siteName2:this.base_stations[pointSpeed[i+1].deviceId].desc,

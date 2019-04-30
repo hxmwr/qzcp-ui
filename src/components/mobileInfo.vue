@@ -71,6 +71,8 @@
         if(this.selectTimeArea){
           // this.dataArea = [new Date(this.selectTimeArea['start_time']),new Date(this.selectTimeArea['end_time'])];
           this.dataArea = [this.selectTimeArea['start_time'],this.selectTimeArea['end_time']];
+        } else {
+          this.dataArea = [(new Date).toISOString().split('.')[0].replace('T', ' '), (new Date((new Date).getTime() -  3600 * 12 * 1000)).toISOString().split('.').replace('T', ' ')]
         }
       }else{
         this.emptyShow = true;
