@@ -61,7 +61,7 @@
     data(){
       return{
         dialogVisible:true,
-        dataArea:'',
+        dataArea:[],
         emptyShow:true,
       }
     },
@@ -70,6 +70,7 @@
         this.emptyShow = false;
         if(this.selectTimeArea){
           // this.dataArea = [new Date(this.selectTimeArea['start_time']),new Date(this.selectTimeArea['end_time'])];
+          console.log(this.selectTimeArea);
           this.dataArea = [this.selectTimeArea['start_time'],this.selectTimeArea['end_time']];
         }
       }else{
