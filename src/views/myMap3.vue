@@ -281,7 +281,7 @@
           <div>开始: <span>{{item.time0.toISOString().split('.')[0].replace('T', ' ')}}</span></div>
           <div>结束: <span>{{item.time.toISOString().split('.')[0].replace('T', ' ')}}</span></div>
           <div>速度: <span>{{item.speed}}km/h</span></div>
-          <div>类型: <span>正常</span></div>
+          <div>类型: <span>{{item.type}}</span></div>
         </div>
       </div>
     </div>
@@ -564,7 +564,7 @@
       },
       onSnake() {
         if (this.$refs.polyline) {
-          console.log('polyline:',this.$refs.polyline);
+          // console.log('polyline:',this.$refs.polyline);
           this.animMarkerLatlng = this.$refs.polyline.mapObject._latlngs[0][this.$refs.polyline.mapObject._latlngs[0].length - 1]
         }
       },
@@ -658,10 +658,10 @@
       },
       getAllTracks(data){
         getTrackByTime(data).then(refs => {
-          console.log('refs:',refs);
+          let station_lnglats = this.base_stations.map(e => [e.latitude, e.longitude, e.id])
           if (refs.data.result.length > 0) {
             this.polyline.latlngs = [];
-            let tmp = refs.data.result.map(e => [e.latitude, e.longitude, e.device_id]);
+            let tmp = refs.data.result.map(e => station_lnglats[e.device_id - 1]);
             let tmpSpeed = refs.data.result.map(e =>{return {"time":e.time, "lat":e.latitude,"lng":e.longitude,"deviceId":e.device_id}});
             let points = [],pointSpeed=[];
             if (tmp.length == 0) return;
@@ -696,12 +696,36 @@
               let dist = this.distance(pointSpeed[i].lat,pointSpeed[i].lng,pointSpeed[i+1].lat,pointSpeed[i+1].lng,'K');
               let testDistTime = new Date(pointSpeed[i+1].time).getTime() - new Date(pointSpeed[i].time).getTime();
               let speedAreas = (dist / (testDistTime/1000) * 3600).toFixed(3);
+              let type = '正常';
+              let itemClass = 0;
+
+              if (speedAreas > 25) {
+                itemClass = 1;
+                type = '超速'
+              }
+
+              if (pointSpeed[i - 1]) {
+                if (
+                  (pointSpeed[i].deviceId == 1 && pointSpeed[i - 1].deviceId == 2) ||
+                  (pointSpeed[i].deviceId == 3 && pointSpeed[i - 1].deviceId == 4) ||
+                  (pointSpeed[i].deviceId == 5 && pointSpeed[i - 1].deviceId == 2)
+                ) {
+                  type = '逆行';
+                  itemClass = 2
+                }
+              }
+              if (pointSpeed[i].deviceId == 5) {
+                type = '机动车道行驶';
+                itemClass = 3;
+              }
               this.speedArea.push({
-                siteName1:this.base_stations[pointSpeed[i].deviceId].desc,
-                siteName2:this.base_stations[pointSpeed[i+1].deviceId].desc,
+                siteName1:this.base_stations[pointSpeed[i].deviceId - 1].desc,
+                siteName2:this.base_stations[pointSpeed[i+1].deviceId - 1].desc,
                 speed:speedAreas,
                 time0:new Date(pointSpeed[i].time),
-                time: new Date(pointSpeed[i + 1].time)
+                time: new Date(pointSpeed[i + 1].time),
+                type: type,
+                itemClass: itemClass
               });
               // this.speedArea.push({siteName1:pointSpeed[i].deviceId,siteName2:pointSpeed[i+1].deviceId,speed:speedAreas, time0:new Date(pointSpeed[i].time),time: new Date(pointSpeed[i + 1].time)});
             }
@@ -974,6 +998,7 @@
       showVehicleTrack(id) {
         getTrack({flag: 1, vehicle_id: id}).then(r => {
           console.log(r.data.result)
+
           this.vehicle_track.setPath(r.data.result.map(e => [e.longitude, e.latitude]))
         })
       },
