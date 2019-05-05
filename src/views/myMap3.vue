@@ -1123,9 +1123,6 @@
 </script>
 
 <style scoped lang="scss">
-  body {
-    margin: 0;
-  }
   .myMapWrap /deep/ .trackAnimation_dialog{
     .trackHistory_sel{
       .el-select{
