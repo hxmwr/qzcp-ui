@@ -53,7 +53,7 @@ L.Polyline.include({
 
 
   _snake: function(){
-
+    if (!this._snaking) return;
     var now = performance.now();
     var diff = now - this._snakingTime;	// In milliseconds
     var forward = diff * this.options.snakingSpeed / 1000;	// In pixels

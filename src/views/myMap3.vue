@@ -276,7 +276,7 @@
     <div class="trackAnimation_dialog" v-if="trackAnim_show">
       <div style="font-size: 0.15rem; margin: 0 -0.12rem; color: white;background: #037aff;padding: 0.03rem 0;position: absolute;top: 0;left: 0;right:0;z-index: 8888;">轨迹记录</div>
       <div class="track_detailConBox">
-        <div class="track_detailCon" v-for="(item,key) in speedArea" :key="key">
+        <div @click="selectTrackPoint({lat: item.lat, lng:item.lng})" class="track_detailCon" v-for="(item,key) in speedArea" :key="key">
           <div>区间: <span>{{item.siteName1}}---{{item.siteName2}}</span></div>
           <div>开始: <span>{{item.time0.toISOString().split('.')[0].replace('T', ' ')}}</span></div>
           <div>结束: <span>{{item.time.toISOString().split('.')[0].replace('T', ' ')}}</span></div>
@@ -540,6 +540,10 @@
       clearInterval(this.timeInterval)
     },
     methods: {
+      selectTrackPoint(latlng) {
+        this.$refs.polyline.mapObject._snakeEnd();
+        this.animMarkerLatlng = latlng
+      },
       historyTracks(data){
         this.showTrack = false;
         this.showMobileDialog = false;
@@ -725,6 +729,8 @@
                 time0:new Date(pointSpeed[i].time),
                 time: new Date(pointSpeed[i + 1].time),
                 type: type,
+                lat: pointSpeed[i].lat,
+                lng: pointSpeed[i].lng,
                 itemClass: itemClass
               });
               // this.speedArea.push({siteName1:pointSpeed[i].deviceId,siteName2:pointSpeed[i+1].deviceId,speed:speedAreas, time0:new Date(pointSpeed[i].time),time: new Date(pointSpeed[i + 1].time)});
