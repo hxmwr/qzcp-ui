@@ -13,11 +13,11 @@
     >
       <l-tile-layer :url="url"></l-tile-layer>
       <l-marker ref="markerVehicle" v-if="polyline.latlngs.length > 0" :lat-lng="animMarkerLatlng" :icon="bycleIcon" :zIndexOffset="100">
-        <!--<l-popup @ready="$refs.markerVehicle.mapObject.openPopup">hellos</l-popup>-->
+        <l-popup>{{pointVelocity}}km/h</l-popup>
       </l-marker>
       <l-marker v-for="(item, key) in base_stations" :lat-lng="[item.latitude, item.longitude]"
                 :icon="item.status?dufaultMarkIcon:customMarkIcon" :key="item.id">
-        <!--<l-popup>{{item.desc}}</l-popup>-->
+        <l-popup>{{item.desc}}</l-popup>
         <l-popup>
           <div><span>编号:</span>{{item.id}}</div>
           <div><span>位置:</span>{{item.desc}}</div>
@@ -27,6 +27,7 @@
           <div><img style="width: 250px;margin-top: 10px;" :src="'../../static/point' + item.id + '.png'" alt=""></div>
         </l-popup>
       </l-marker>
+
       <l-polyline
         v-if="polyline.latlngs.length > 0"
         ref="polyline"
@@ -40,6 +41,8 @@
             <!--</div>-->
           <!--</div>-->
         <!--</l-popup>-->
+      </l-polyline>
+      <l-polyline v-if="polyline.latlngs.length > 0" :lat-lngs="highlighted_segment" color="red">
       </l-polyline>
     </l-map>
     <!--顶部-->
@@ -74,30 +77,31 @@
             alarmData[0].time)}}
           </div>
         </div>
-        <div class="map_alarmLine">
-          <div class="map_alarmLineWrap">
-            <div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}"
-                 :style="{transform: 'translateY(' + offset2 + 'rem)', background: 'red', transition: transition2?'all .2s':'none'}">
-              <div class="map_alarms" v-for="(item,key) in alarmData" :key="item.id">
-                <!--左边信息-->
-                <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}">
-                  <div class="left alarm_time"><span>{{item.time}}</span><i></i></div>
-                  <div class="right alarm_con" @click="openAlarmDialog(item,'1')">
-                    <i></i>
-                    <div>车牌号:{{item.plate_no}}</div>
-                    <div>基站:QZRF{{('' + item.device_id).padStart(5, '0')}}</div>
-                    <div class="text_overflow">类型:{{item.type}}</div>
-                  </div>
+        <!--<div class="map_alarmLine">-->
+        <!--</div>-->
+        <div class="map_alarmLineWrap">
+          <div class="map_alarmsWrap" >
+            <!--<div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}"-->
+            <!--:style="{transform: 'translateY(' + offset2 + 'rem)', background: 'red', transition: transition2?'all .2s':'none'}">-->
+            <div class="map_alarms" v-for="(item,key) in alarmData" :key="item.id">
+              <!--左边信息-->
+              <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}">
+                <div class="left alarm_time"><span>{{item.time}}</span><i></i></div>
+                <div class="right alarm_con" @click="openAlarmDialog(item,'1')">
+                  <i></i>
+                  <div>车牌号:{{item.plate_no}}</div>
+                  <div>基站:QZRF{{('' + item.device_id).padStart(5, '0')}}</div>
+                  <div class="text_overflow">类型:{{item.type}}</div>
                 </div>
-                <!--右边信息-->
-                <div class="alarm_info alarm_right" :class="{showLeft:item.id%2==0}">
-                  <div class="right alarm_time"><i></i><span>{{item.time}}</span></div>
-                  <div class="left alarm_con" @click="openAlarmDialog(item,'1')">
-                    <i></i>
-                    <div>车牌号:{{item.plate_no}}</div>
-                    <div>基站:QZRF{{(item.device_id + '').padStart(5, '0')}}</div>
-                    <div class="text_overflow">类型:{{item.type}}</div>
-                  </div>
+              </div>
+              <!--右边信息-->
+              <div class="alarm_info alarm_right" :class="{showLeft:item.id%2==0}">
+                <div class="right alarm_time"><i></i><span>{{item.time}}</span></div>
+                <div class="left alarm_con" @click="openAlarmDialog(item,'1')">
+                  <i></i>
+                  <div>车牌号:{{item.plate_no}}</div>
+                  <div>基站:QZRF{{(item.device_id + '').padStart(5, '0')}}</div>
+                  <div class="text_overflow">类型:{{item.type}}</div>
                 </div>
               </div>
             </div>
@@ -118,32 +122,31 @@
             accident_data[0].time)}}
           </div>
         </div>
-        <div class="map_alarmLine">
-          <div class="map_alarmLineWrap">
+        <!--<div class="map_alarmLine">-->
+        <!--</div>-->
+        <div class="map_alarmLineWrap">
+          <div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}"
+               :style="{transform: 'translateY(' + offset1 + 'rem)', transition: transition1?'all .2s':'none'}">
+            <div class="map_alarms" v-for="(item,key) in accident_data" :key="item.id">
+              <!--左边信息-->
 
-            <div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}"
-                 :style="{transform: 'translateY(' + offset1 + 'rem)', background: 'red', transition: transition1?'all .2s':'none'}">
-              <div class="map_alarms" v-for="(item,key) in accident_data" :key="item.id">
-                <!--左边信息-->
-
-                <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}">
-                  <div class="left alarm_time"><span>{{item.time}}</span><i></i></div>
-                  <div class="right alarm_con" @click="openAlarmDialog(item,'2')">
-                    <i></i>
-                    <div>车牌号:{{item.plate_no}}</div>
-                    <div>基站:{{item.device_id}}</div>
-                    <div class="text_overflow">类型:{{item.type}}</div>
-                  </div>
+              <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}">
+                <div class="left alarm_time"><span>{{item.time}}</span><i></i></div>
+                <div class="right alarm_con" @click="openAlarmDialog(item,'2')">
+                  <i></i>
+                  <div>车牌号:{{item.plate_no}}</div>
+                  <div>基站:{{item.device_id}}</div>
+                  <div class="text_overflow">类型:{{item.type}}</div>
                 </div>
-                <!--右边信息-->
-                <div class="alarm_info alarm_right" :class="{showLeft:item.id%2==0}">
-                  <div class="right alarm_time"><i></i><span>{{item.time}}</span></div>
-                  <div class="left alarm_con" @click="openAlarmDialog(item,'2')">
-                    <i></i>
-                    <div>车牌号:{{item.plate_no}}</div>
-                    <div>基站:{{item.device_id}}</div>
-                    <div class="text_overflow">类型:{{item.type}}</div>
-                  </div>
+              </div>
+              <!--右边信息-->
+              <div class="alarm_info alarm_right" :class="{showLeft:item.id%2==0}">
+                <div class="right alarm_time"><i></i><span>{{item.time}}</span></div>
+                <div class="left alarm_con" @click="openAlarmDialog(item,'2')">
+                  <i></i>
+                  <div>车牌号:{{item.plate_no}}</div>
+                  <div>基站:{{item.device_id}}</div>
+                  <div class="text_overflow">类型:{{item.type}}</div>
                 </div>
               </div>
             </div>
@@ -274,16 +277,29 @@
     <infoListDialog v-show="infoListShow" class="infoListWrap" @closeInfoList="closeInfoList" :infoListAllData="infoListAllData" @changeData="changeInfoListData" @historyTrack="historyTracks"></infoListDialog>
     <!--轨迹动画窗口-->
     <div class="trackAnimation_dialog" v-if="trackAnim_show">
-      <div style="font-size: 0.15rem; margin: 0 -0.12rem; color: white;background: #037aff;padding: 0.03rem 0;position: absolute;top: 0;left: 0;right:0;z-index: 8888;">轨迹记录</div>
-      <div class="track_detailConBox">
-        <div @click="selectTrackPoint({lat: item.lat, lng:item.lng})" class="track_detailCon" v-for="(item,key) in speedArea" :key="key">
-          <div>区间: <span>{{item.siteName1}}---{{item.siteName2}}</span></div>
-          <div>开始: <span>{{item.time0.toISOString().split('.')[0].replace('T', ' ')}}</span></div>
-          <div>结束: <span>{{item.time.toISOString().split('.')[0].replace('T', ' ')}}</span></div>
-          <div>速度: <span>{{item.speed}}km/h</span></div>
-          <div>类型: <span>{{item.type}}</span></div>
+      <!--<div style="font-size: 0.15rem; margin: 0 -0.12rem; color: white;background: #037aff;padding: 0.03rem 0;position: absolute;top: 0;left: 0;right:0;z-index: 8888;">轨迹记录</div>-->
+      <div class="trackHistory_top">
+        <div class="trackHistory_title">历史轨迹记录</div>
+        <div class="trackHistory_sel flex flex_align">
+          <span>车辆选择</span>
+          <el-select v-model="bycleOptionSelect" filterable @change="changeSelect">
+            <el-option v-for="item in bycleOption" :key="item.id" :value="item.value"> </el-option>
+          </el-select>
         </div>
       </div>
+      <div class="trackHistory_bottom">
+        <div class="track_detailConBox">
+          <div @click="selectTrackPoint({lat: item.lat, lng:item.lng}, item.speed, item.prevLatlng)" class="track_detailCon" v-for="(item,key) in speedArea" :key="key">
+            <div>区间: <span>{{item.siteName1}}---{{item.siteName2}}</span></div>
+            <div>开始: <span>{{item.time0.toISOString().split('.')[0].replace('T', ' ')}}</span></div>
+            <div>结束: <span>{{item.time.toISOString().split('.')[0].replace('T', ' ')}}</span></div>
+            <div>速度: <span>{{item.speed}}km/h</span></div>
+            <div>类型: <span>{{item.type}}</span></div>
+          </div>
+        </div>
+        <div class="track_noHistory" v-if="noTrackHistory">暂无历史轨迹记录</div>
+      </div>
+
     </div>
   </div>
 </template>
@@ -310,6 +326,11 @@
     },
     data() {
       return {
+        highlighted_segment: [],
+        pointVelocity: 0,
+        noTrackHistory:false,
+        bycleOptionSelect:'',
+        bycleOption:[],
         trackAnim_show:false,
         infoListAllData:[],//车辆信息列表数据
         infoListShow:false,//车辆信息列表显示判断
@@ -327,14 +348,15 @@
         dufaultMarkIcon: null,
         customMarkIcon: null,
         bycleIcon: null,
-        url: 'http://'+ location.host.split(':')[0] +':4040/map/{z}/{x}/{y}.png',
-        // url: 'http://127.0.0.1:4040/map/{z}/{x}/{y}.png',
+        // url: 'http://'+ location.host.split(':')[0] +':4040/map/{z}/{x}/{y}.png',
+        url: 'http://172.16.0.34:4040/map/{z}/{x}/{y}.png',
         center: [28.966173, 118.84945],
         zoom: 15,
         bounds: null,
         polyline: {
           latlngs: [],
-          color: '#017AFF'
+          color: '#017AFF',
+
         },
         latlngs: [[28.966173, 118.84945, 0.7], [28.966173, 118.84945, 0.5]],
         heatPoints: [
@@ -411,9 +433,6 @@
       this.map = this.$refs.myMap.mapObject;
       this.map.removeControl(this.map.zoomControl)
       this.heatMap = L.heatLayer(this.heatPoints, {radius: 10}).addTo(this.map);
-      // this.getTime(); //得到时间
-      // this.getMap(); //创建地图
-      // this.setAnimation();
       this.map_activeNum = this.$echarts.init(document.getElementById('map_activeNum'));
       this.getMapActiveNum();//车辆活跃总数 折线图
 
@@ -521,28 +540,50 @@
         }
 
       };
-      // var index2 = 0;
-      // const fn2 = () => {
-      //   let e = gen_mock_alert();
-      //   e.id = index2++;
-      //   e.time = this.toTimeString(new Date);
-      //   this.alarmData.unshift(e);
-      //   this.offset2 += 0.8;
-      //   if (this.alarmData.length > 15) {
-      //     this.alarmData = this.alarmData.slice(0, -5);
-      //     this.offset2 -= (0.8 * 5);
-      //   }
-      //   setTimeout(fn2, Math.floor(2 + Math.random() * 4) * 1000)
-      // };
-      // fn2();
+
+      this.getPlateNo();
     },
     destroyed() {
       clearInterval(this.timeInterval)
     },
     methods: {
-      selectTrackPoint(latlng) {
+      selectTrackPoint(latlng, speed, prevLatlng) {
         this.$refs.polyline.mapObject._snakeEnd();
         this.animMarkerLatlng = latlng
+        this.pointVelocity = speed
+        // this.$refs.markerVehicle.mapObject.openPopup()
+        this.highlighted_segment = [...prevLatlng, latlng]
+
+      },
+      changeSelect(val){
+        let vehicleid = '';
+        this.bycleOption.forEach(e=>{
+          if(e.value == val){
+            vehicleid=e.id;
+          }
+        });
+        let data = {"vehicle_id":vehicleid,"flag":1};
+        // console.log('val',data);
+        this.getAllTracks(data);
+        searchInfo({"key_word":val}).then(refs => {
+          // refs.data.profile
+          this.detailMobileInfo = refs.data.profile;
+          // this.selectTimeArea = {"start_time":new Date(new Date().getTime()-86400000).toISOString().split('.')[0].replace('T', ' '),"end_time":new Date().toISOString().split('.')[0].replace('T', ' ')};
+          this.selectTimeArea = '';
+        }).catch(err => {
+          console.log(err);
+        });
+      },
+      getPlateNo(){
+        let temp = [];
+        getInfoList().then(refs=>{
+          refs.data.result.forEach(e=>{
+            temp.push({id:e.id,value:e.plate_no});
+          });
+          this.bycleOption = temp;
+        }).catch(err=>{
+          console.log(err);
+        })
       },
       historyTracks(data){
         this.showTrack = false;
@@ -589,35 +630,6 @@
         }
         return 0
       },
-      // getTime() {
-      //   var self = this;
-      //   // 得到天气
-      //   AMap.plugin('AMap.Weather', function () {
-      //     //创建天气查询实例
-      //     var weather = new AMap.Weather();
-      //     //执行实时天气信息查询
-      //     weather.getLive('衢州市', function (err, data) {
-      //       // console.log(data);
-      //       self.showWeather = data;
-      //     });
-      //   });
-      //   //得到时间
-      //   this.timeInterval = setInterval(function () {
-      //     self.getTime_realTime()
-      //   }, 1000);
-      // },
-      getTime_realTime() {
-        var nowDate = new Date();
-        this.Dates.year = nowDate.getFullYear();
-        var now_Month = nowDate.getMonth() + 1;
-        this.Dates.month = now_Month < 10 ? '0' + now_Month : now_Month;
-        var now_Date = nowDate.getDate();
-        this.Dates.date = now_Date < 10 ? '0' + now_Date : now_Date;
-        var now_hour = nowDate.getHours();
-        this.Dates.hour = now_hour < 10 ? '0' + now_hour : now_hour;
-        var now_minute = nowDate.getMinutes();
-        this.Dates.minute = now_minute < 10 ? '0' + now_minute : now_minute;
-      },
       showInfoDialog() {
         //重新打开告警信息等窗口
         if (this.selectDialog == 0) {
@@ -662,8 +674,11 @@
       },
       getAllTracks(data){
         getTrackByTime(data).then(refs => {
+          // console.log('refs:',refs);
           let station_lnglats = this.base_stations.map(e => [e.latitude, e.longitude, e.id])
           if (refs.data.result.length > 0) {
+            this.bycleOptionSelect = refs.data.result[0].plate_no;
+            this.noTrackHistory = false;
             this.polyline.latlngs = [];
             let tmp = refs.data.result.map(e => station_lnglats[e.device_id - 1]);
             let tmpSpeed = refs.data.result.map(e =>{return {"time":e.time, "lat":e.latitude,"lng":e.longitude,"deviceId":e.device_id}});
@@ -685,6 +700,7 @@
             }
             this.polyline.latlngs = points;
             setTimeout(() => {
+              this.highlighted_segment = []
               this.$refs.polyline.mapObject._snaking = false
               this.$refs.polyline.mapObject.snakeIn()
             }, 0);
@@ -696,44 +712,59 @@
             //   this.testSpeedArea = (dist*1000 / (testDistTime/1000)).toFixed(3);
             this.trackAnim_show = true;
             this.speedArea = [];
-            for(let i=0;i<pointSpeed.length-1;i++){
-              let dist = this.distance(pointSpeed[i].lat,pointSpeed[i].lng,pointSpeed[i+1].lat,pointSpeed[i+1].lng,'K');
-              let testDistTime = new Date(pointSpeed[i+1].time).getTime() - new Date(pointSpeed[i].time).getTime();
-              let speedAreas = (dist / (testDistTime/1000) * 3600).toFixed(3);
-              let type = '正常';
-              let itemClass = 0;
+            if(pointSpeed.length>1){
+              for(let i=0;i<pointSpeed.length-1;i++){
+                let dist = this.distance(pointSpeed[i].lat,pointSpeed[i].lng,pointSpeed[i+1].lat,pointSpeed[i+1].lng,'K');
+                let testDistTime = new Date(pointSpeed[i+1].time).getTime() - new Date(pointSpeed[i].time).getTime();
+                let speedAreas = (dist*1000 / (testDistTime/1000)).toFixed(3);
+                let type = '正常';
+                let itemClass = 0;
 
-              if (speedAreas > 25) {
-                itemClass = 1;
-                type = '超速'
-              }
+                if (speedAreas > 25) {
+                  itemClass = 1;
+                  type = '超速'
+                }
 
-              if (pointSpeed[i - 1]) {
                 if (
-                  (pointSpeed[i].deviceId == 1 && pointSpeed[i - 1].deviceId == 2) ||
-                  (pointSpeed[i].deviceId == 3 && pointSpeed[i - 1].deviceId == 4) ||
-                  (pointSpeed[i].deviceId == 5 && pointSpeed[i - 1].deviceId == 2)
+                  (pointSpeed[i+1].deviceId == 1 && pointSpeed[i].deviceId == 2) ||
+                  (pointSpeed[i+1].deviceId == 3 && pointSpeed[i].deviceId == 4) ||
+                  (pointSpeed[i+1].deviceId == 5 && pointSpeed[i].deviceId == 2)
                 ) {
                   type = '逆行';
                   itemClass = 2
                 }
+                if (pointSpeed[i+1].deviceId == 5) {
+                  type = '机动车道行驶';
+                  itemClass = 3;
+                }
+                let prevLatlng = []
+                let interpolate = route_interpolate_data[pointSpeed[i].deviceId + '_' + pointSpeed[i+1].deviceId]
+                if (interpolate) {
+                  prevLatlng = interpolate
+                }
+                prevLatlng.unshift({
+                  lat: pointSpeed[i].lat,
+                  lng: pointSpeed[i].lng
+                })
+                this.speedArea.push({
+                  siteName1:this.base_stations[pointSpeed[i].deviceId - 1].desc,
+                  siteName2:this.base_stations[pointSpeed[i+1].deviceId - 1].desc,
+                  speed:speedAreas,
+                  time0:new Date(pointSpeed[i].time),
+                  time: new Date(pointSpeed[i + 1].time),
+                  type: type,
+                  lat: pointSpeed[i + 1].lat,
+                  lng: pointSpeed[i + 1].lng,
+                  itemClass: itemClass,
+                  prevLatlng: prevLatlng
+                });
+                // this.speedArea.push({siteName1:pointSpeed[i].deviceId,siteName2:pointSpeed[i+1].deviceId,speed:speedAreas, time0:new Date(pointSpeed[i].time),time: new Date(pointSpeed[i + 1].time)});
               }
-              if (pointSpeed[i].deviceId == 5) {
-                type = '机动车道行驶';
-                itemClass = 3;
-              }
-              this.speedArea.push({
-                siteName1:this.base_stations[pointSpeed[i].deviceId - 1].desc,
-                siteName2:this.base_stations[pointSpeed[i+1].deviceId - 1].desc,
-                speed:speedAreas,
-                time0:new Date(pointSpeed[i].time),
-                time: new Date(pointSpeed[i + 1].time),
-                type: type,
-                lat: pointSpeed[i].lat,
-                lng: pointSpeed[i].lng,
-                itemClass: itemClass
-              });
-              // this.speedArea.push({siteName1:pointSpeed[i].deviceId,siteName2:pointSpeed[i+1].deviceId,speed:speedAreas, time0:new Date(pointSpeed[i].time),time: new Date(pointSpeed[i + 1].time)});
+            }else{
+              this.speedArea = [];
+              this.noTrackHistory = true;
+              this.hasShowTrack = false;
+              this.polyline.latlngs = [];
             }
           }
         }).catch(err => {
@@ -802,6 +833,7 @@
             this.showMobileDialog = true;
             this.detailMobileInfo = refs.data.profile;
           }).catch(err => {
+            console.log(err);
           });
         }
       },
@@ -882,129 +914,10 @@
           }, 1000);
         }, 2000);
       },
-      getMap() {
-        // var map = new AMap.Map('myMap', {
-        //   resizeEnable: true, //是否监控地图容器尺寸变化
-        //   zoom: 15, //初始化地图层级
-        //   center: [118.84945,28.966173] //初始化地图中心点
-        // });
-
-        // 信息窗体
-        // this.infoWindow  = new AMap.InfoWindow({
-        //   // isCustom: true,  //使用自定义窗体
-        //   content: '',
-        //   offset: new AMap.Pixel(1, -35)
-        // });
-
-
-        //***************************************** 热力图
-        if (!isSupportCanvas()) {
-          alert('热力图仅对支持canvas的浏览器适用,您所使用的浏览器不能使用热力图功能,请换个浏览器试试~')
-        }
-        var me = this;
-        var heatmap;
-        // map.plugin(["AMap.Heatmap"], function () {
-        //   var points = [
-        //     {"lng": 118.860129, "lat": 28.974408, "count": 50},
-        //     {"lng": 118.858117, "lat": 28.974156, "count": 51},
-        //     {"lng": 118.859267, "lat": 28.974156, "count": 15},
-        //     {"lng": 118.860273, "lat": 28.974282, "count": 40},
-        //     {"lng": 118.855674, "lat": 28.973903, "count": 100}];
-        //   //初始化heatmap对象
-        //   // heatmap = new AMap.Heatmap(map, {
-        //   //   radius: 25, //给定半径
-        //   //   opacity: [0, 0.8]
-        //   //   /*,
-        //   //   gradient:{
-        //   //       0.5: 'blue',
-        //   //       0.65: 'rgb(117,211,248)',
-        //   //       0.7: 'rgb(0, 255, 0)',
-        //   //       0.9: '#ffea00',
-        //   //       1.0: 'red'
-        //   //   }
-        //   //    */
-        //   // });
-        //   // me.heatMap = heatmap
-        //   //设置数据集：该数据为北京部分“公园”数据
-        //   // heatmap.setDataSet({
-        //   //   data: points,
-        //   //   max: 100
-        //   // });
-        // });
-
-        //判断浏览区是否支持canvas
-        function isSupportCanvas() {
-          var elem = document.createElement('canvas');
-          return !!(elem.getContext && elem.getContext('2d'));
-        }
-
-        // ***********************************************************
-
-        // 布点基站
-        // 创建一个 Icon
-        // var startIcon = new AMap.Icon({
-        //   // 图标尺寸
-        //   size: new AMap.Size(100, 134),
-        //   // 图标的取图地址
-        //   image: 'http://lbsyun.baidu.com/jsdemo/img/fox.gif',
-        //   // image:'https://webapi.amap.com/theme/v1.3/markers/n/mark_bs.png',
-        //   // // 图标所用图片大小
-        //   imageSize: new AMap.Size(135, 100),
-        //   // // 图标取图偏移量
-        //   imageOffset: new AMap.Pixel(-47, -13)
-        // });
-        // let maker1 = new AMap.Marker({
-        //   position: new AMap.LngLat(118.867388, 28.975262),   // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
-        //   icon: startIcon,
-        //   animation: 'AMAP_ANIMATION_BOUNCE',
-        //   offset: new AMap.Pixel(-13, -30),
-        //   title: '衢州1'
-        // });
-        // let maker2 = new AMap.Marker({
-        //   position: new AMap.LngLat(118.880323, 28.970332),   // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
-        //   title: '衢州2'
-        // });
-        // map.add([maker1, maker2]);
-
-        // 轨迹
-        let path_track = [
-          [118.867388, 28.975262],
-          [118.880323, 28.970332]
-        ];
-
-        // var polyline_track = new AMap.Polyline({
-        //   isOutline: false,
-        //   borderWeight: 3,
-        //   strokeColor: "#017AFF",
-        //   strokeOpacity: 1,
-        //   strokeWeight: 3.5,
-        //   // 折线样式还支持 'dashed'
-        //   strokeStyle: "solid",
-        //   // strokeStyle是dashed时有效
-        //   strokeDasharray: [10, 5],
-        //   lineJoin: 'round',
-        //   lineCap: 'round',
-        //   zIndex: 50,
-        // });
-
-        // polyline_track.setMap(map);
-        // this.vehicle_track = polyline_track;
-        // this.passedPolyline = new AMap.Polyline({
-        //   map: this.map,
-        //   // path: lineArr,
-        //   strokeColor: "#AF5",  //线颜色
-        //   // strokeOpacity: 1,     //线透明度
-        //   strokeWeight: 3.5,      //线宽
-        //   // strokeStyle: "solid"  //线样式
-        // });
-        // 缩放地图到合适的视野级别
-        // map.setFitView([ polyline_track ])
-      },
       // 显示车辆 track
       showVehicleTrack(id) {
         getTrack({flag: 1, vehicle_id: id}).then(r => {
           console.log(r.data.result)
-
           this.vehicle_track.setPath(r.data.result.map(e => [e.longitude, e.latitude]))
         })
       },
@@ -1210,6 +1123,27 @@
 </script>
 
 <style scoped lang="scss">
+  body {
+    margin: 0;
+  }
+  .myMapWrap /deep/ .trackAnimation_dialog{
+    .trackHistory_sel{
+      .el-select{
+        .el-input{
+          height:0.3rem;
+        }
+        .el-input__inner{
+          height:0.3rem;
+          padding: 0 0.55rem 0 0.3rem;
+          border-radius:0.06rem ;
+        }
+        .el-input__icon{
+          line-height: 0.3rem;
+        }
+      }
+    }
+  }
+
   .myMapWrap {
     width: 100%;
     height: 100vh;
@@ -1221,19 +1155,29 @@
       position:absolute;
       z-index:1000;
       width:4rem;
-      height:9.14rem;
+      /*height:9.14rem;*/
       background:#FBFBFB;
       top: 0.9rem;
       box-sizing: border-box;
-      padding:0 0.12rem;
+      /*padding:0 0.12rem;*/
       box-shadow: 0 0.02rem 0.04rem 0 rgba(0,0,0,0.50);
+      border-top-right-radius: 0.2rem;
       /*border-radius: 0 0.2rem 0.2rem 0;*/
-      overflow-y: auto;
-      overflow-x: hidden;
+      .trackHistory_bottom{
+        position:relative;
+        height:8.24rem;
+        overflow-y: auto;
+        overflow-x: hidden;
+        margin-top:0.9rem;
+      }
       .track_detailConBox{
         padding-top: 0.2rem;
         position:absolute;
         /*bottom:0;*/
+      }
+      .track_noHistory{
+        font-size:0.14rem;
+        padding-top:0.5rem;
       }
       .track_detailCon{
         cursor: pointer;
@@ -1251,6 +1195,35 @@
           span{
             font-family:'pingfangRegular';
             color:#666;
+          }
+        }
+      }
+      .trackHistory_top{
+        position:fixed;
+        width:4rem;
+        height:0.9rem;
+        left:0;
+        z-index:1001;
+        border-top-right-radius: 0.2rem;
+        .trackHistory_title{
+          height:0.44rem;
+          line-height: 0.44rem;
+          background: #017AFF;
+          font-size:0.2rem;
+          color:#fff;
+          font-family: 'pingfangMedium';
+          border-top-right-radius: 0.2rem;
+        }
+        .trackHistory_sel{
+          padding-left:0.35rem;
+          height:0.46rem;
+          background: #FFFFFF;
+          box-shadow: 0 0.02rem 0.04rem 0 rgba(0,0,0,0.20);
+          span{
+            font-size:0.18rem;
+            color:#333;
+            font-family: 'pingfangMedium';
+            margin-right:0.12rem;
           }
         }
       }
@@ -1366,7 +1339,6 @@
       border-radius: 0.1rem;
       cursor: pointer;
       z-index: 999;
-
       i {
         position: absolute;
         width: 0.35rem;
@@ -1407,27 +1379,32 @@
           bottom: 0;
           width: 0.01rem;
           background: #017AFF;
-          left: 54%;
-
-          .map_alarmLineWrap {
-            height: 6.5rem;
-            position: absolute;
-            top: -0.45rem;
-          }
+          left: 52%;
         }
-
+      .map_alarmLineWrap {
+          width:100%;
+          height: 4.57rem;
+          position: absolute;
+          overflow-y:auto;
+          /*&:before{*/
+            /*content:'';*/
+            /*position:absolute;*/
+            /*width: 0.01rem;*/
+            /*background: #017AFF;*/
+            /*left:2.3rem;top:0;bottom:0;*/
+          /*}*/
+        }
         .map_alarmsWrap {
           position: absolute;
           bottom: 0;
-          width: 100%;
+          width:2rem;
           transition: all .2s;
-
+          left:1.3rem;
           .map_alarms {
             /*height:1.2rem;*/
             height: 0.8rem;
           }
         }
-
         .animation_alarms {
           margin-top: 0.8rem;
           transition: all 1s;
@@ -1443,6 +1420,16 @@
           left: 50%;
           /*top:0.5rem;*/
           margin-left: -0.055rem;
+          &:before{
+            content:'';
+            position:absolute;
+            width: 0.01rem;
+            background: #017AFF;
+            bottom:0;
+            height:0.8rem;
+            left:0.05rem;
+            z-index: -1;
+          }
 
           .alarm_time {
             position: absolute;
@@ -1623,6 +1610,16 @@
         .alarm_info {
           background: url("../img/message_red.png") no-repeat center;
           background-size: 100% 100%;
+          &:before{
+            content:'';
+            position:absolute;
+            width: 0.01rem;
+            background:#CB0500;
+            bottom:0;
+            height:0.8rem;
+            left:0.05rem;
+            z-index: -1;
+          }
 
           .alarm_time {
             i {
@@ -1639,6 +1636,9 @@
               background-size: 100% 100%;
             }
           }
+        }
+        .map_alarmLineWrap{
+          /*overflow-y: hidden !important;*/
         }
       }
 
