@@ -298,6 +298,7 @@
   import heatMap from '../components/heatmap'
   import L from 'leaflet'
   import polyline_snake_anim from '../components/polyline.snake'
+  import route_interpolate_data from '../data/route-interpolate-data'
   // require('leaflet-routing-machine');
 
   polyline_snake_anim();
@@ -326,8 +327,8 @@
         dufaultMarkIcon: null,
         customMarkIcon: null,
         bycleIcon: null,
-        // url: 'http://'+ location.host.split(':')[0] +':4040/map/{z}/{x}/{y}.png',
-        url: 'http://127.0.0.1:4040/map/{z}/{x}/{y}.png',
+        url: 'http://'+ location.host.split(':')[0] +':4040/map/{z}/{x}/{y}.png',
+        // url: 'http://127.0.0.1:4040/map/{z}/{x}/{y}.png',
         center: [28.966173, 118.84945],
         zoom: 15,
         bounds: null,
@@ -660,7 +661,7 @@
           console.log('refs:',refs);
           if (refs.data.result.length > 0) {
             this.polyline.latlngs = [];
-            let tmp = refs.data.result.map(e => [e.latitude, e.longitude]);
+            let tmp = refs.data.result.map(e => [e.latitude, e.longitude, e.device_id]);
             let tmpSpeed = refs.data.result.map(e =>{return {"time":e.time, "lat":e.latitude,"lng":e.longitude,"deviceId":e.device_id}});
             let points = [],pointSpeed=[];
             if (tmp.length == 0) return;
@@ -668,6 +669,12 @@
             pointSpeed.push(tmpSpeed[0]);
             for (let i = 1; i < tmp.length; i++) {
               if (tmp[i][0] != tmp[i - 1][0] && tmp[i][1] != tmp[i - 1][1]) {
+                let interpolate = route_interpolate_data[tmp[i-1][2] + '_' + tmp[i][2]];
+                if (interpolate) {
+                  for (let j=0;j<interpolate.length;j++) {
+                    points.push(interpolate[j])
+                  }
+                }
                 points.push(tmp[i]);
                 pointSpeed.push(tmpSpeed[i]);
               }
@@ -688,7 +695,7 @@
             for(let i=0;i<pointSpeed.length-1;i++){
               let dist = this.distance(pointSpeed[i].lat,pointSpeed[i].lng,pointSpeed[i+1].lat,pointSpeed[i+1].lng,'K');
               let testDistTime = new Date(pointSpeed[i+1].time).getTime() - new Date(pointSpeed[i].time).getTime();
-              let speedAreas = (dist / (testDistTime/1000)).toFixed(3);
+              let speedAreas = (dist / (testDistTime/1000) * 3600).toFixed(3);
               this.speedArea.push({
                 siteName1:this.base_stations[pointSpeed[i].deviceId].desc,
                 siteName2:this.base_stations[pointSpeed[i+1].deviceId].desc,
