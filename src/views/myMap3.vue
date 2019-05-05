@@ -74,30 +74,31 @@
             alarmData[0].time)}}
           </div>
         </div>
-        <div class="map_alarmLine">
-          <div class="map_alarmLineWrap">
-            <div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}"
-                 :style="{transform: 'translateY(' + offset2 + 'rem)', background: 'red', transition: transition2?'all .2s':'none'}">
-              <div class="map_alarms" v-for="(item,key) in alarmData" :key="item.id">
-                <!--左边信息-->
-                <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}">
-                  <div class="left alarm_time"><span>{{item.time}}</span><i></i></div>
-                  <div class="right alarm_con" @click="openAlarmDialog(item,'1')">
-                    <i></i>
-                    <div>车牌号:{{item.plate_no}}</div>
-                    <div>基站:QZRF{{('' + item.device_id).padStart(5, '0')}}</div>
-                    <div class="text_overflow">类型:{{item.type}}</div>
-                  </div>
+        <!--<div class="map_alarmLine">-->
+        <!--</div>-->
+        <div class="map_alarmLineWrap">
+          <div class="map_alarmsWrap" >
+            <!--<div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}"-->
+            <!--:style="{transform: 'translateY(' + offset2 + 'rem)', background: 'red', transition: transition2?'all .2s':'none'}">-->
+            <div class="map_alarms" v-for="(item,key) in alarmData" :key="item.id">
+              <!--左边信息-->
+              <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}">
+                <div class="left alarm_time"><span>{{item.time}}</span><i></i></div>
+                <div class="right alarm_con" @click="openAlarmDialog(item,'1')">
+                  <i></i>
+                  <div>车牌号:{{item.plate_no}}</div>
+                  <div>基站:QZRF{{('' + item.device_id).padStart(5, '0')}}</div>
+                  <div class="text_overflow">类型:{{item.type}}</div>
                 </div>
-                <!--右边信息-->
-                <div class="alarm_info alarm_right" :class="{showLeft:item.id%2==0}">
-                  <div class="right alarm_time"><i></i><span>{{item.time}}</span></div>
-                  <div class="left alarm_con" @click="openAlarmDialog(item,'1')">
-                    <i></i>
-                    <div>车牌号:{{item.plate_no}}</div>
-                    <div>基站:QZRF{{(item.device_id + '').padStart(5, '0')}}</div>
-                    <div class="text_overflow">类型:{{item.type}}</div>
-                  </div>
+              </div>
+              <!--右边信息-->
+              <div class="alarm_info alarm_right" :class="{showLeft:item.id%2==0}">
+                <div class="right alarm_time"><i></i><span>{{item.time}}</span></div>
+                <div class="left alarm_con" @click="openAlarmDialog(item,'1')">
+                  <i></i>
+                  <div>车牌号:{{item.plate_no}}</div>
+                  <div>基站:QZRF{{(item.device_id + '').padStart(5, '0')}}</div>
+                  <div class="text_overflow">类型:{{item.type}}</div>
                 </div>
               </div>
             </div>
@@ -118,32 +119,31 @@
             accident_data[0].time)}}
           </div>
         </div>
-        <div class="map_alarmLine">
-          <div class="map_alarmLineWrap">
+        <!--<div class="map_alarmLine">-->
+        <!--</div>-->
+        <div class="map_alarmLineWrap">
+          <div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}"
+               :style="{transform: 'translateY(' + offset1 + 'rem)', transition: transition1?'all .2s':'none'}">
+            <div class="map_alarms" v-for="(item,key) in accident_data" :key="item.id">
+              <!--左边信息-->
 
-            <div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}"
-                 :style="{transform: 'translateY(' + offset1 + 'rem)', background: 'red', transition: transition1?'all .2s':'none'}">
-              <div class="map_alarms" v-for="(item,key) in accident_data" :key="item.id">
-                <!--左边信息-->
-
-                <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}">
-                  <div class="left alarm_time"><span>{{item.time}}</span><i></i></div>
-                  <div class="right alarm_con" @click="openAlarmDialog(item,'2')">
-                    <i></i>
-                    <div>车牌号:{{item.plate_no}}</div>
-                    <div>基站:{{item.device_id}}</div>
-                    <div class="text_overflow">类型:{{item.type}}</div>
-                  </div>
+              <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}">
+                <div class="left alarm_time"><span>{{item.time}}</span><i></i></div>
+                <div class="right alarm_con" @click="openAlarmDialog(item,'2')">
+                  <i></i>
+                  <div>车牌号:{{item.plate_no}}</div>
+                  <div>基站:{{item.device_id}}</div>
+                  <div class="text_overflow">类型:{{item.type}}</div>
                 </div>
-                <!--右边信息-->
-                <div class="alarm_info alarm_right" :class="{showLeft:item.id%2==0}">
-                  <div class="right alarm_time"><i></i><span>{{item.time}}</span></div>
-                  <div class="left alarm_con" @click="openAlarmDialog(item,'2')">
-                    <i></i>
-                    <div>车牌号:{{item.plate_no}}</div>
-                    <div>基站:{{item.device_id}}</div>
-                    <div class="text_overflow">类型:{{item.type}}</div>
-                  </div>
+              </div>
+              <!--右边信息-->
+              <div class="alarm_info alarm_right" :class="{showLeft:item.id%2==0}">
+                <div class="right alarm_time"><i></i><span>{{item.time}}</span></div>
+                <div class="left alarm_con" @click="openAlarmDialog(item,'2')">
+                  <i></i>
+                  <div>车牌号:{{item.plate_no}}</div>
+                  <div>基站:{{item.device_id}}</div>
+                  <div class="text_overflow">类型:{{item.type}}</div>
                 </div>
               </div>
             </div>
@@ -1284,7 +1284,6 @@
       border-radius: 0.1rem;
       cursor: pointer;
       z-index: 999;
-
       i {
         position: absolute;
         width: 0.35rem;
@@ -1325,27 +1324,32 @@
           bottom: 0;
           width: 0.01rem;
           background: #017AFF;
-          left: 54%;
-
-          .map_alarmLineWrap {
-            height: 6.5rem;
-            position: absolute;
-            top: -0.45rem;
-          }
+          left: 52%;
         }
-
+      .map_alarmLineWrap {
+          width:100%;
+          height: 4.57rem;
+          position: absolute;
+          overflow-y:auto;
+          /*&:before{*/
+            /*content:'';*/
+            /*position:absolute;*/
+            /*width: 0.01rem;*/
+            /*background: #017AFF;*/
+            /*left:2.3rem;top:0;bottom:0;*/
+          /*}*/
+        }
         .map_alarmsWrap {
           position: absolute;
           bottom: 0;
-          width: 100%;
+          width:2rem;
           transition: all .2s;
-
+          left:1.3rem;
           .map_alarms {
             /*height:1.2rem;*/
             height: 0.8rem;
           }
         }
-
         .animation_alarms {
           margin-top: 0.8rem;
           transition: all 1s;
@@ -1361,6 +1365,16 @@
           left: 50%;
           /*top:0.5rem;*/
           margin-left: -0.055rem;
+          &:before{
+            content:'';
+            position:absolute;
+            width: 0.01rem;
+            background: #017AFF;
+            bottom:0;
+            height:0.8rem;
+            left:0.05rem;
+            z-index: -1;
+          }
 
           .alarm_time {
             position: absolute;
@@ -1541,6 +1555,16 @@
         .alarm_info {
           background: url("../img/message_red.png") no-repeat center;
           background-size: 100% 100%;
+          &:before{
+            content:'';
+            position:absolute;
+            width: 0.01rem;
+            background:#CB0500;
+            bottom:0;
+            height:0.8rem;
+            left:0.05rem;
+            z-index: -1;
+          }
 
           .alarm_time {
             i {
@@ -1557,6 +1581,9 @@
               background-size: 100% 100%;
             }
           }
+        }
+        .map_alarmLineWrap{
+          /*overflow-y: hidden !important;*/
         }
       }
 
