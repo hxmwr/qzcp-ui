@@ -294,7 +294,7 @@
             <div>开始: <span>{{item.time0.toISOString().split('.')[0].replace('T', ' ')}}</span></div>
             <div>结束: <span>{{item.time.toISOString().split('.')[0].replace('T', ' ')}}</span></div>
             <div>速度: <span>{{item.speed}}km/h</span></div>
-            <div>类型: <span>{{item.type}}</span></div>
+            <div>类型: <span :style="{color: item.itemClass?'red':'black'}">{{item.type}}</span></div>
           </div>
         </div>
         <div class="track_noHistory" v-if="noTrackHistory">暂无历史轨迹记录</div>
@@ -348,8 +348,8 @@
         dufaultMarkIcon: null,
         customMarkIcon: null,
         bycleIcon: null,
-        // url: 'http://'+ location.host.split(':')[0] +':4040/map/{z}/{x}/{y}.png',
-        url: 'http://172.16.0.34:4040/map/{z}/{x}/{y}.png',
+        url: 'http://'+ location.host.split(':')[0] +':4040/map/{z}/{x}/{y}.png',
+        // url: 'http://172.16.0.34:4040/map/{z}/{x}/{y}.png',
         center: [28.966173, 118.84945],
         zoom: 15,
         bounds: null,
