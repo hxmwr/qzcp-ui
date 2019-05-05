@@ -688,8 +688,10 @@
             pointSpeed.push(tmpSpeed[0]);
             for (let i = 1; i < tmp.length; i++) {
               if (tmp[i][0] != tmp[i - 1][0] && tmp[i][1] != tmp[i - 1][1]) {
+                console.log(tmp[i-1][2] + '_' + tmp[i][2])
                 let interpolate = route_interpolate_data[tmp[i-1][2] + '_' + tmp[i][2]];
                 if (interpolate) {
+                  console.log(tmp[i-1][2] + '_' + tmp[i][2])
                   for (let j=0;j<interpolate.length;j++) {
                     points.push(interpolate[j])
                   }
