@@ -518,7 +518,7 @@
               vehicle_id: e.vehicle_id,
               location: ['', '白云中大道与南海路交叉(A点)', '白云中大道鹿鸣公园(B点)', '白云小区(C点)', '颐高电子(D点)', '白云中大道与南海路交叉(E点)'][e.device_id],
               type: '过车',
-              time: this.toTimeString(new Date(Date.parse(e.time)))
+              time: this.toTimeString(new Date(Date.parse(e.time) - 3600 * 8 * 1000))
             }
           });
           let i = 0;
@@ -863,7 +863,6 @@
                 });
                 // this.speedArea.push({siteName1:pointSpeed[i].deviceId,siteName2:pointSpeed[i+1].deviceId,speed:speedAreas, time0:new Date(pointSpeed[i].time),time: new Date(pointSpeed[i + 1].time)});
               }
-              console.log();
             } else {
               this.speedArea = [];
               this.noTrackHistory = true;
