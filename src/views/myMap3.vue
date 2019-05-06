@@ -80,9 +80,8 @@
         <!--<div class="map_alarmLine">-->
         <!--</div>-->
         <div class="map_alarmLineWrap">
-          <div class="map_alarmsWrap" >
-            <!--<div class="map_alarmsWrap" :class="{animation_alarms:showAnimation}"-->
-            <!--:style="{transform: 'translateY(' + offset2 + 'rem)', background: 'red', transition: transition2?'all .2s':'none'}">-->
+          <!--<div class="map_alarmsWrap" >-->
+            <div class="map_alarmsWrap" :class="{animation_start:showAnimation}">
             <div class="map_alarms" v-for="(item,key) in alarmData" :key="item.id">
               <!--左边信息-->
               <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}">
@@ -384,7 +383,7 @@
         selectDialog: 0,//看是打开告警窗口还是信息查询窗口 默认0是告警窗口
         map: null,
         vehicle_track: null,
-        offset1: -5.7,
+        offset1: -5.45,
         offset2: -5.7,
         transition2: true,
         transition1: true,
@@ -406,13 +405,56 @@
         showAlarmDialog: false,//告警详情对话框
         showMobileDialog: false,//车辆信息对话框
         searchInputVal: '',//搜索
-        alarmData: [],
+        alarmData: [{
+          id:0,
+          time:'09:40:21',
+          plate_no:'衢3891921',
+          device_id:'12330',
+          type:'超车'
+        },{
+          id:1,
+          time:'09:40:21',
+          plate_no:'衢3891921',
+          device_id:'12330',
+          type:'超车'
+        },{
+          id:2,
+          time:'09:40:21',
+          plate_no:'衢3891921',
+          device_id:'12330',
+          type:'超车'
+        },{
+          id:3,
+          time:'09:40:21',
+          plate_no:'衢3891921',
+          device_id:'12330',
+          type:'超车'
+        },{
+          id:4,
+          time:'09:40:21',
+          plate_no:'衢3891921',
+          device_id:'12330',
+          type:'超车'
+        },{
+          id:5,
+          time:'09:40:21',
+          plate_no:'衢3891921',
+          device_id:'12330',
+          type:'超车'
+        }],
         accident_data: []
       }
     },
     mounted() {
       const me = this;
-      this.dufaultMarkIcon = new L.Icon.Default();
+      // this.dufaultMarkIcon = new L.Icon.Default();
+      this.dufaultMarkIcon = L.icon({
+        iconUrl: '../../static/bs-online.gif',
+        iconSize: [25, 45.8],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        tooltipAnchor: [16, -28],
+      });
       this.customMarkIcon = L.icon({
         iconUrl: '../../static/bs-offline.png',
         iconSize: [25, 41],
@@ -515,6 +557,7 @@
       var host = location.host.split(':')[0] + ':8889'
       var ws = new WebSocket('ws://' + host);
       ws.onmessage = (e) => {
+        this.showAnimation = true;
         let data = JSON.parse(e.data);
         data.id = index2++;
         data.type = '过车';
@@ -589,7 +632,13 @@
         this.showTrack = false;
         this.showMobileDialog = false;
         this.infoListShow = false;
+        this.selectDialog = 1;
         this.getAllTracks(data);
+        searchInfo({"key_word": data.plate_no}).then(refs => {
+          this.detailMobileInfo = refs.data.profile;
+        }).catch(err => {
+          console.log(err);
+        });
       },
       changeInfoListData(data){
         this.infoListAllData = data;
@@ -601,7 +650,6 @@
       showInfoList(){
         getInfoList().then(refs=>{
           this.infoListShow = true;
-          // console.log('refs',refs);
           this.infoListAllData = refs.data.result;
         }).catch(err=>{
           console.log(err);
@@ -674,7 +722,6 @@
       },
       getAllTracks(data){
         getTrackByTime(data).then(refs => {
-          // console.log('refs:',refs);
           let station_lnglats = this.base_stations.map(e => [e.latitude, e.longitude, e.id])
           if (refs.data.result.length > 0) {
             this.bycleOptionSelect = refs.data.result[0].plate_no;
@@ -688,10 +735,8 @@
             pointSpeed.push(tmpSpeed[0]);
             for (let i = 1; i < tmp.length; i++) {
               if (tmp[i][0] != tmp[i - 1][0] && tmp[i][1] != tmp[i - 1][1]) {
-                console.log(tmp[i-1][2] + '_' + tmp[i][2])
                 let interpolate = route_interpolate_data[tmp[i-1][2] + '_' + tmp[i][2]];
                 if (interpolate) {
-                  console.log(tmp[i-1][2] + '_' + tmp[i][2])
                   for (let j=0;j<interpolate.length;j++) {
                     points.push(interpolate[j])
                   }
@@ -768,6 +813,11 @@
               this.hasShowTrack = false;
               this.polyline.latlngs = [];
             }
+          }else{
+            this.speedArea = [];
+            this.noTrackHistory = true;
+            this.hasShowTrack = false;
+            this.polyline.latlngs = [];
           }
         }).catch(err => {
           console.log(err);
@@ -831,7 +881,7 @@
       searchEnterInput() {
         if (this.searchInputVal) {
           searchInfo({"key_word": this.searchInputVal}).then(refs => {
-            // refs.data.profile
+            console.log(refs);
             this.showMobileDialog = true;
             this.detailMobileInfo = refs.data.profile;
           }).catch(err => {
@@ -1409,6 +1459,11 @@
           transition: all 1s;
           /*animation: fadeDown 1s linear;*/
         }
+        .animation_start{
+          transform:translateY(-5.7rem);
+          transition: all .2s;
+        }
+
 
         .alarm_info {
           position: absolute;
@@ -1637,6 +1692,7 @@
           }
         }
         .map_alarmLineWrap{
+          height:4.2rem;
           /*overflow-y: hidden !important;*/
         }
       }
