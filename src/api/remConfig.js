@@ -17,6 +17,10 @@ export default function () {
   document.documentElement.style.fontSize = rem + 'px'
 }
 
+export const getPoints = (data) => {
+  return axios.post(`${base}/points`, data)
+}
+
 export const getBaseStation = () => {
   //基站
   return axios.get(`${base}/base-station`);

@@ -10,7 +10,7 @@
            <!--告警弹窗内容-->
            <div class="dialog_con" v-show="alarmCon">
              <div>
-               车牌号: <span>{{ detailAlarm.plate_no}}</span>
+               车牌号: <span>衢{{ detailAlarm.plate_no}}</span>
              </div>
              <div v-if="detailAlarm.velocity">
                车辆速度：<span>{{ parseFloat(detailAlarm.velocity).toFixed(2) }}m/s</span>
@@ -26,7 +26,7 @@
              <div>
                告警时间: <span>{{detailAlarm.time}}</span>
              </div>
-             <div>告警描述：</div>
+             <!--<div>告警描述：</div>-->
              <div>
                <!--<span>浙H19415于2019年4月15日上午10点34分29秒在柯城区双林路由南向北路段被ZQ0168号基站通过雷达测速手段，测得区间55km/h，超速100%以上。</span>-->
                <span>{{detailAlarm.description}}</span>
@@ -78,10 +78,10 @@
         console.log('shh');
         if(this.detailType==1){
           this.alarmCon = true;
-          this.showTitle = '告警详情---'+this.detailAlarm['plate_no'];
+          this.showTitle = '告警详情（衢'+this.detailAlarm['plate_no'] + '）';
         }else{
           this.accidentCon = true;
-          this.showTitle = '事故详情---'+this.detailAlarm['plate_no'];
+          this.showTitle = '事故详情（衢'+this.detailAlarm['plate_no'] + '）';
         }
       },
       methods:{

@@ -81,7 +81,8 @@
         <!--</div>-->
         <div class="map_alarmLineWrap">
           <!--<div class="map_alarmsWrap" >-->
-            <div class="map_alarmsWrap" :class="{animation_start:showAnimation}">
+            <div class="map_alarmsWrap" :class="{animation_start:showAnimation}"
+                 :style="{transform: 'translateY(' + offset2 + 'rem)', transition: transition1?'all .2s':'none'}">
             <div class="map_alarms" v-for="(item,key) in alarmData" :key="item.id">
               <!--左边信息-->
               <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}">
@@ -306,7 +307,15 @@
   import infoListDialog from '../components/infoList'
   import alarmDialog from '../components/alarmDialog'
   import mobileInfo from '../components/mobileInfo'
-  import {getBaseStation, getTrack, getTrafficFlow, searchInfo, getTrackByTime,getInfoList} from "../api/remConfig";
+  import {
+    getBaseStation,
+    getTrack,
+    getTrafficFlow,
+    searchInfo,
+    getTrackByTime,
+    getInfoList,
+    getPoints
+  } from "../api/remConfig";
   import {gen_mock_event} from '../data/accident-data'
   import {gen_mock_alert, gen_alert_desc} from '../data/alarm-data'
   import heatMap from '../components/heatmap'
@@ -383,8 +392,8 @@
         selectDialog: 0,//看是打开告警窗口还是信息查询窗口 默认0是告警窗口
         map: null,
         vehicle_track: null,
-        offset1: -5.45,
-        offset2: -5.7,
+        offset1: -3.8,
+        offset2: -4.1,
         transition2: true,
         transition1: true,
         heat_map_points: [],
@@ -405,43 +414,7 @@
         showAlarmDialog: false,//告警详情对话框
         showMobileDialog: false,//车辆信息对话框
         searchInputVal: '',//搜索
-        alarmData: [{
-          id:0,
-          time:'09:40:21',
-          plate_no:'衢3891921',
-          device_id:'12330',
-          type:'超车'
-        },{
-          id:1,
-          time:'09:40:21',
-          plate_no:'衢3891921',
-          device_id:'12330',
-          type:'超车'
-        },{
-          id:2,
-          time:'09:40:21',
-          plate_no:'衢3891921',
-          device_id:'12330',
-          type:'超车'
-        },{
-          id:3,
-          time:'09:40:21',
-          plate_no:'衢3891921',
-          device_id:'12330',
-          type:'超车'
-        },{
-          id:4,
-          time:'09:40:21',
-          plate_no:'衢3891921',
-          device_id:'12330',
-          type:'超车'
-        },{
-          id:5,
-          time:'09:40:21',
-          plate_no:'衢3891921',
-          device_id:'12330',
-          type:'超车'
-        }],
+        alarmData: [],
         accident_data: []
       }
     },
@@ -489,6 +462,31 @@
       getBaseStation().then(function (r) {
         //得到基站值
         me.base_stations = r.data.data
+      });
+
+      // 获取历史过点数据
+      getPoints({flag:3}).then(r => {
+        if (r.data.result.length > 0) {
+          let data = r.data.result.slice(r.data.result.length - 6, r.data.result.length - 1).map(e => {
+            return {
+              longitude: e.longitude,
+              latitude: e.latitude,
+              rfid: e.rfid,
+              timestamp: Date.parse(e.time),
+              device_id: e.device_id,
+              plate_no: e.plate_no,
+              entity_id: e.entity_id,
+              vehicle_id: e.vehicle_id,
+              location: ['', '白云中大道与南海路交叉(A点)', '白云中大道鹿鸣公园(B点)', '白云小区(C点)', '颐高电子(D点)', '白云中大道与南海路交叉(E点)'][e.device_id],
+              type: '过车',
+              time: this.toTimeString(new Date(Date.parse(e.time)))
+            }
+          });
+          let i = 0;
+          data.map(e => {e.id = i++; return e;})
+          this.alarmData = data.reverse()
+          this.offset2 += data.length * 0.8;
+        }
       });
 
       // 定时更新基站流量数据
@@ -553,8 +551,8 @@
 
       // 告警滚动列表
       var index2 = 0
-      // var host = '172.16.0.34' + ':8889'
-      var host = location.host.split(':')[0] + ':8889'
+      var host = '172.16.0.34' + ':8889'
+      // var host = location.host.split(':')[0] + ':8889'
       var ws = new WebSocket('ws://' + host);
       ws.onmessage = (e) => {
         this.showAnimation = true;
@@ -729,13 +727,15 @@
             this.polyline.latlngs = [];
             let tmp = refs.data.result.map(e => station_lnglats[e.device_id - 1]);
             let tmpSpeed = refs.data.result.map(e =>{return {"time":e.time, "lat":e.latitude,"lng":e.longitude,"deviceId":e.device_id}});
-            let points = [],pointSpeed=[];
+            let points = [], pointSpeed=[];
             if (tmp.length == 0) return;
             points.push(tmp[0]);
             pointSpeed.push(tmpSpeed[0]);
+            let jj = 0;
             for (let i = 1; i < tmp.length; i++) {
               if (tmp[i][0] != tmp[i - 1][0] && tmp[i][1] != tmp[i - 1][1]) {
                 let interpolate = route_interpolate_data[tmp[i-1][2] + '_' + tmp[i][2]];
+                console.log(tmp[i-1][2] + '_' + tmp[i][2]);
                 if (interpolate) {
                   for (let j=0;j<interpolate.length;j++) {
                     points.push(interpolate[j])
@@ -743,6 +743,10 @@
                 }
                 points.push(tmp[i]);
                 pointSpeed.push(tmpSpeed[i]);
+                jj++;
+              } else {
+                points[jj] = tmp[i];
+                pointSpeed[jj] = tmpSpeed[i];
               }
             }
             this.polyline.latlngs = points;
@@ -948,24 +952,24 @@
         this.open_right = false;
         this.shrink_right = true;
       },
-      setAnimation() {
-        let i = 4;
-        this.alarmInterval = setInterval(() => {
-          // console.log(i);
-          this.alarmData.unshift({
-            id: i++,
-            time: '14:15:0' + i,
-            mobileId: '浙H20190606',
-            mobileSite: 'ZQ0067',
-            alarmType: '超速:50%'
-          });
-          // this.alarmData.pop();
-          this.showAnimation = false;
-          this.alarmTimeout = setTimeout(() => {
-            this.showAnimation = true;
-          }, 1000);
-        }, 2000);
-      },
+      // setAnimation() {
+      //   let i = 4;
+      //   this.alarmInterval = setInterval(() => {
+      //     // console.log(i);
+      //     this.alarmData.unshift({
+      //       id: i++,
+      //       time: '14:15:0' + i,
+      //       mobileId: '浙H20190606',
+      //       mobileSite: 'ZQ0067',
+      //       alarmType: '超速:50%'
+      //     });
+      //     // this.alarmData.pop();
+      //     this.showAnimation = false;
+      //     this.alarmTimeout = setTimeout(() => {
+      //       this.showAnimation = true;
+      //     }, 1000);
+      //   }, 2000);
+      // },
       // 显示车辆 track
       showVehicleTrack(id) {
         getTrack({flag: 1, vehicle_id: id}).then(r => {
@@ -1434,7 +1438,7 @@
           width:100%;
           height: 4.57rem;
           position: absolute;
-          overflow-y:auto;
+          /*overflow-y:auto;*/
           /*&:before{*/
             /*content:'';*/
             /*position:absolute;*/
