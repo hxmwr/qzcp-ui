@@ -12,7 +12,8 @@
       @update:bounds="boundsUpdated"
     >
       <l-tile-layer :url="url"></l-tile-layer>
-      <l-marker ref="markerVehicle" v-if="polyline.latlngs.length > 0" :lat-lng="animMarkerLatlng" :icon="bycleIcon" :zIndexOffset="100">
+      <l-marker ref="markerVehicle" v-if="polyline.latlngs.length > 0" :lat-lng="animMarkerLatlng" :icon="bycleIcon"
+                :zIndexOffset="100">
         <l-popup>{{pointVelocity}}km/h</l-popup>
       </l-marker>
       <l-marker v-for="(item, key) in base_stations" :lat-lng="[item.latitude, item.longitude]"
@@ -35,11 +36,11 @@
         @snake="onSnake"
         :color="polyline.color">
         <!--<l-popup>-->
-          <!--<div style="max-height: 600px; overflow-y: scroll">-->
-            <!--<div v-for="(item,key) in speedArea" :key="key" style="width: 100%;">-->
-              <!--<div>基站{{item.siteName1}}->基站{{item.siteName2}} | {{item.time.toLocaleString()}} | {{item.speed}}m/s</div>-->
-            <!--</div>-->
-          <!--</div>-->
+        <!--<div style="max-height: 600px; overflow-y: scroll">-->
+        <!--<div v-for="(item,key) in speedArea" :key="key" style="width: 100%;">-->
+        <!--<div>基站{{item.siteName1}}->基站{{item.siteName2}} | {{item.time.toLocaleString()}} | {{item.speed}}m/s</div>-->
+        <!--</div>-->
+        <!--</div>-->
         <!--</l-popup>-->
       </l-polyline>
       <l-polyline v-if="polyline.latlngs.length > 0" :lat-lngs="highlighted_segment" color="red">
@@ -81,8 +82,8 @@
         <!--</div>-->
         <div class="map_alarmLineWrap">
           <!--<div class="map_alarmsWrap" >-->
-            <div class="map_alarmsWrap" :class="{animation_start:showAnimation}"
-                 :style="{transform: 'translateY(' + offset2 + 'rem)', transition: transition1?'all .2s':'none'}">
+          <div class="map_alarmsWrap" :class="{animation_start:showAnimation}"
+               :style="{transform: 'translateY(' + offset2 + 'rem)', transition: transition1?'all .2s':'none'}">
             <div class="map_alarms" v-for="(item,key) in alarmData" :key="item.id">
               <!--左边信息-->
               <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}">
@@ -274,7 +275,9 @@
     <!--</div>-->
 
     <!--车辆信息列表页面-->
-    <infoListDialog v-show="infoListShow" class="infoListWrap" @closeInfoList="closeInfoList" :infoListAllData="infoListAllData" @changeData="changeInfoListData" @historyTrack="historyTracks"></infoListDialog>
+    <infoListDialog v-show="infoListShow" class="infoListWrap" @closeInfoList="closeInfoList"
+                    :infoListAllData="infoListAllData" @changeData="changeInfoListData"
+                    @historyTrack="historyTracks"></infoListDialog>
     <!--轨迹动画窗口-->
     <div class="trackAnimation_dialog" v-if="trackAnim_show">
       <!--<div style="font-size: 0.15rem; margin: 0 -0.12rem; color: white;background: #037aff;padding: 0.03rem 0;position: absolute;top: 0;left: 0;right:0;z-index: 8888;">轨迹记录</div>-->
@@ -283,13 +286,14 @@
         <div class="trackHistory_sel flex flex_align">
           <span>车辆选择</span>
           <el-select v-model="bycleOptionSelect" filterable @change="changeSelect">
-            <el-option v-for="item in bycleOption" :key="item.id" :value="item.value"> </el-option>
+            <el-option v-for="item in bycleOption" :key="item.id" :value="item.value"></el-option>
           </el-select>
         </div>
       </div>
       <div class="trackHistory_bottom">
         <div class="track_detailConBox">
-          <div @click="selectTrackPoint({lat: item.lat, lng:item.lng}, item.speed, item.prevLatlng)" class="track_detailCon" v-for="(item,key) in speedArea" :key="key">
+          <div @click="selectTrackPoint({lat: item.lat, lng:item.lng}, item.speed, item.prevLatlng)"
+               class="track_detailCon" v-for="(item,key) in speedArea" :key="key">
             <div>区间: <span>{{item.siteName1}}---{{item.siteName2}}</span></div>
             <div>开始: <span>{{item.time0.toISOString().split('.')[0].replace('T', ' ')}}</span></div>
             <div>结束: <span>{{item.time.toISOString().split('.')[0].replace('T', ' ')}}</span></div>
@@ -299,6 +303,41 @@
         </div>
         <div class="track_noHistory" v-if="noTrackHistory">暂无历史轨迹记录</div>
       </div>
+    </div>
+    <div id="dock-container">
+      <ul>
+        <li>
+          <span>车辆登记</span>
+          <a href="#"><img src="http://demos.cssstars.com/Mac-Address-Book-icon.png"></a>
+        </li>
+        <li>
+          <span>即时路况</span>
+          <a href="#"><img src="http://demos.cssstars.com/Mac-App-Store-icon.png"></a>
+        </li>
+        <li>
+          <span>违法违章</span>
+          <a href="#"><img src="http://demos.cssstars.com/chrome_ico.png"></a>
+        </li>
+        <li>
+          <span>事故处理</span>
+          <a href="#"><img src="http://demos.cssstars.com/firefox.png"></a>
+        </li>
+        <li>
+          <span>数据统计</span>
+          <a href="#"><img src="http://demos.cssstars.com/Mac-icon.png"></a></li>
+        <li>
+          <span>视频查证</span>
+          <a href="#"><img src="http://demos.cssstars.com/mac-icon%20(1).png"></a>
+        </li>
+        <li>
+          <span>Chat</span>
+          <a href="#"><img src="http://demos.cssstars.com/MetroUI-Apps-Mac-iChat-icon.png"></a>
+        </li>
+        <li>
+          <span>Apple</span>
+          <a href="#"><img src="http://demos.cssstars.com/apple-icon.png"></a>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -325,37 +364,37 @@
   // require('leaflet-routing-machine');
 
   polyline_snake_anim();
-  heatMap(L)
+  heatMap(L);
   export default {
     name: "test",
     components: {
-      alarmDialog, mobileInfo,infoListDialog
+      alarmDialog, mobileInfo, infoListDialog
     },
     data() {
       return {
         highlighted_segment: [],
         pointVelocity: 0,
-        noTrackHistory:false,
-        bycleOptionSelect:'',
-        bycleOption:[],
-        trackAnim_show:false,
-        infoListAllData:[],//车辆信息列表数据
-        infoListShow:false,//车辆信息列表显示判断
+        noTrackHistory: false,
+        bycleOptionSelect: '',
+        bycleOption: [],
+        trackAnim_show: false,
+        infoListAllData: [],//车辆信息列表数据
+        infoListShow: false,//车辆信息列表显示判断
         animMarkerLatlng: {lat: '0', lng: '0'},
         report_count: [], // 基站上报次数
         testSpeed: [{
-          time: '2019-04-18T00:00:01.390000128Z', lat: '28.969353', lng: '118.857255',device_id:'1'
+          time: '2019-04-18T00:00:01.390000128Z', lat: '28.969353', lng: '118.857255', device_id: '1'
         }, {
-          time: '2019-04-18T18:05:51.500999936Z', lat: '28.976684', lng: '118.886719',device_id:'2'
-        },{
-          time: '2019-04-18T20:05:51.500999936Z', lat: '28.990712', lng: '118.863291',device_id:'3'
+          time: '2019-04-18T18:05:51.500999936Z', lat: '28.976684', lng: '118.886719', device_id: '2'
+        }, {
+          time: '2019-04-18T20:05:51.500999936Z', lat: '28.990712', lng: '118.863291', device_id: '3'
         }], //测试速度的数据
-        testSpeedArea:'',
-        speedArea:[],
+        testSpeedArea: '',
+        speedArea: [],
         dufaultMarkIcon: null,
         customMarkIcon: null,
         bycleIcon: null,
-        url: 'http://'+ location.host.split(':')[0] +':4040/map/{z}/{x}/{y}.png',
+        url: 'http://' + location.host.split(':')[0] + ':4040/map/{z}/{x}/{y}.png',
         // url: 'http://172.16.0.34:4040/map/{z}/{x}/{y}.png',
         center: [28.966173, 118.84945],
         zoom: 15,
@@ -465,7 +504,7 @@
       });
 
       // 获取历史过点数据
-      getPoints({flag:3}).then(r => {
+      getPoints({flag: 3}).then(r => {
         if (r.data.result.length > 0) {
           let data = r.data.result.slice(r.data.result.length - 6, r.data.result.length - 1).map(e => {
             return {
@@ -483,7 +522,10 @@
             }
           });
           let i = 0;
-          data.map(e => {e.id = i++; return e;})
+          data.map(e => {
+            e.id = i++;
+            return e;
+          })
           this.alarmData = data.reverse()
           this.offset2 += data.length * 0.8;
         }
@@ -551,8 +593,8 @@
 
       // 告警滚动列表
       var index2 = 0
-      var host = '172.16.0.34' + ':8889'
-      // var host = location.host.split(':')[0] + ':8889'
+      // var host = '172.16.0.34' + ':8889'
+      var host = location.host.split(':')[0] + ':8889'
       var ws = new WebSocket('ws://' + host);
       ws.onmessage = (e) => {
         this.showAnimation = true;
@@ -596,17 +638,17 @@
         this.highlighted_segment = [...prevLatlng, latlng]
 
       },
-      changeSelect(val){
+      changeSelect(val) {
         let vehicleid = '';
-        this.bycleOption.forEach(e=>{
-          if(e.value == val){
-            vehicleid=e.id;
+        this.bycleOption.forEach(e => {
+          if (e.value == val) {
+            vehicleid = e.id;
           }
         });
-        let data = {"vehicle_id":vehicleid,"flag":1};
+        let data = {"vehicle_id": vehicleid, "flag": 1};
         // console.log('val',data);
         this.getAllTracks(data);
-        searchInfo({"key_word":val}).then(refs => {
+        searchInfo({"key_word": val}).then(refs => {
           // refs.data.profile
           this.detailMobileInfo = refs.data.profile;
           // this.selectTimeArea = {"start_time":new Date(new Date().getTime()-86400000).toISOString().split('.')[0].replace('T', ' '),"end_time":new Date().toISOString().split('.')[0].replace('T', ' ')};
@@ -615,18 +657,18 @@
           console.log(err);
         });
       },
-      getPlateNo(){
+      getPlateNo() {
         let temp = [];
-        getInfoList().then(refs=>{
-          refs.data.result.forEach(e=>{
-            temp.push({id:e.id,value:e.plate_no});
+        getInfoList().then(refs => {
+          refs.data.result.forEach(e => {
+            temp.push({id: e.id, value: e.plate_no});
           });
           this.bycleOption = temp;
-        }).catch(err=>{
+        }).catch(err => {
           console.log(err);
         })
       },
-      historyTracks(data){
+      historyTracks(data) {
         this.showTrack = false;
         this.showMobileDialog = false;
         this.infoListShow = false;
@@ -638,18 +680,18 @@
           console.log(err);
         });
       },
-      changeInfoListData(data){
+      changeInfoListData(data) {
         this.infoListAllData = data;
       },
-      closeInfoList(){
+      closeInfoList() {
         this.infoListShow = false;
       },
       //车辆信息列表弹窗
-      showInfoList(){
-        getInfoList().then(refs=>{
+      showInfoList() {
+        getInfoList().then(refs => {
           this.infoListShow = true;
           this.infoListAllData = refs.data.result;
-        }).catch(err=>{
+        }).catch(err => {
           console.log(err);
         })
       },
@@ -669,7 +711,7 @@
         this.bounds = bounds;
       },
       getReportCountById(id) {
-        for (let i=0; i < this.report_count.length; i++) {
+        for (let i = 0; i < this.report_count.length; i++) {
           if (this.report_count[i][0] == id) {
             return this.report_count[i][1];
           }
@@ -718,37 +760,47 @@
         this.selectTimeArea = data;
         this.getAllTracks(data);
       },
-      getAllTracks(data){
+      getAllTracks(data) {
         getTrackByTime(data).then(refs => {
-          let station_lnglats = this.base_stations.map(e => [e.latitude, e.longitude, e.id])
+          const real_latlngs = [[], [28.958532, 118.850663], [28.966163,118.84944], [28.977356,118.849815], [28.973611,118.849643], [28.958532,118.850663]]
+          let station_lnglats = this.base_stations.map(e => ({lat:real_latlngs[e.id][0], lng:real_latlngs[e.id][1], id:e.id}))
+          // let station_lnglats2 = station_lnglats.map(e => ({lat: e[0], lng: e[1]}))
           if (refs.data.result.length > 0) {
             this.bycleOptionSelect = refs.data.result[0].plate_no;
             this.noTrackHistory = false;
             this.polyline.latlngs = [];
             let tmp = refs.data.result.map(e => station_lnglats[e.device_id - 1]);
-            let tmpSpeed = refs.data.result.map(e =>{return {"time":e.time, "lat":e.latitude,"lng":e.longitude,"deviceId":e.device_id}});
-            let points = [], pointSpeed=[];
+            let tmpSpeed = refs.data.result.map(e => {
+              return {"time": e.time, ...station_lnglats[e.device_id - 1], "deviceId": e.device_id}
+            });
+            let points = [], pointSpeed = [];
             if (tmp.length == 0) return;
-            points.push(tmp[0]);
-            pointSpeed.push(tmpSpeed[0]);
+            points.push({...tmp[0]});
+            pointSpeed.push({...tmpSpeed[0]});
             let jj = 0;
+            let kk = 0;
             for (let i = 1; i < tmp.length; i++) {
-              if (tmp[i][0] != tmp[i - 1][0] && tmp[i][1] != tmp[i - 1][1]) {
-                let interpolate = route_interpolate_data[tmp[i-1][2] + '_' + tmp[i][2]];
-                console.log(tmp[i-1][2] + '_' + tmp[i][2]);
+              if (tmp[i].id != tmp[i - 1].id) {
+                let interpolate = route_interpolate_data[tmp[i - 1].id + '_' + tmp[i].id];
+                // console.log(tmp[i - 1].id + '_' + tmp[i].id);
                 if (interpolate) {
-                  for (let j=0;j<interpolate.length;j++) {
-                    points.push(interpolate[j])
+                  console.log(interpolate)
+                  for (let j = 0; j < interpolate.length; j++) {
+                    points.push({...interpolate[j]})
+                    jj++;
                   }
                 }
-                points.push(tmp[i]);
-                pointSpeed.push(tmpSpeed[i]);
+                points.push({...tmp[i]});
+                pointSpeed.push({...tmpSpeed[i]});
                 jj++;
+                kk++;
               } else {
-                points[jj] = tmp[i];
-                pointSpeed[jj] = tmpSpeed[i];
+                points[jj] = {...tmp[i]};
+                pointSpeed[kk] = {...tmpSpeed[i]};
               }
             }
+            console.log('points', points)
+            console.log('pointSpeed', pointSpeed);
             this.polyline.latlngs = points;
             setTimeout(() => {
               this.highlighted_segment = []
@@ -763,11 +815,11 @@
             //   this.testSpeedArea = (dist*1000 / (testDistTime/1000)).toFixed(3);
             this.trackAnim_show = true;
             this.speedArea = [];
-            if(pointSpeed.length>1){
-              for(let i=0;i<pointSpeed.length-1;i++){
-                let dist = this.distance(pointSpeed[i].lat,pointSpeed[i].lng,pointSpeed[i+1].lat,pointSpeed[i+1].lng,'K');
-                let testDistTime = new Date(pointSpeed[i+1].time).getTime() - new Date(pointSpeed[i].time).getTime();
-                let speedAreas = (dist*1000 / (testDistTime/1000)).toFixed(3);
+            if (pointSpeed.length > 1) {
+              for (let i = 0; i < pointSpeed.length - 1; i++) {
+                let dist = this.distance(pointSpeed[i].lat, pointSpeed[i].lng, pointSpeed[i + 1].lat, pointSpeed[i + 1].lng, 'K');
+                let testDistTime = new Date(pointSpeed[i + 1].time).getTime() - new Date(pointSpeed[i].time).getTime();
+                let speedAreas = (dist * 1000 / (testDistTime / 1000)).toFixed(3);
                 let type = '正常';
                 let itemClass = 0;
 
@@ -777,19 +829,19 @@
                 }
 
                 if (
-                  (pointSpeed[i+1].deviceId == 1 && pointSpeed[i].deviceId == 2) ||
-                  (pointSpeed[i+1].deviceId == 3 && pointSpeed[i].deviceId == 4) ||
-                  (pointSpeed[i+1].deviceId == 5 && pointSpeed[i].deviceId == 2)
+                  (pointSpeed[i + 1].deviceId == 1 && pointSpeed[i].deviceId == 2) ||
+                  (pointSpeed[i + 1].deviceId == 3 && pointSpeed[i].deviceId == 4) ||
+                  (pointSpeed[i + 1].deviceId == 5 && pointSpeed[i].deviceId == 2)
                 ) {
                   type = '逆行';
                   itemClass = 2
                 }
-                if (pointSpeed[i+1].deviceId == 5) {
+                if (pointSpeed[i + 1].deviceId == 5) {
                   type = '机动车道行驶';
                   itemClass = 3;
                 }
                 let prevLatlng = []
-                let interpolate = route_interpolate_data[pointSpeed[i].deviceId + '_' + pointSpeed[i+1].deviceId]
+                let interpolate = route_interpolate_data[pointSpeed[i].deviceId + '_' + pointSpeed[i + 1].deviceId]
                 if (interpolate) {
                   prevLatlng = interpolate
                 }
@@ -798,10 +850,10 @@
                   lng: pointSpeed[i].lng
                 })
                 this.speedArea.push({
-                  siteName1:this.base_stations[pointSpeed[i].deviceId - 1].desc,
-                  siteName2:this.base_stations[pointSpeed[i+1].deviceId - 1].desc,
-                  speed:speedAreas,
-                  time0:new Date(pointSpeed[i].time),
+                  siteName1: this.base_stations[pointSpeed[i].deviceId - 1].desc,
+                  siteName2: this.base_stations[pointSpeed[i + 1].deviceId - 1].desc,
+                  speed: speedAreas,
+                  time0: new Date(pointSpeed[i].time),
                   time: new Date(pointSpeed[i + 1].time),
                   type: type,
                   lat: pointSpeed[i + 1].lat,
@@ -811,13 +863,14 @@
                 });
                 // this.speedArea.push({siteName1:pointSpeed[i].deviceId,siteName2:pointSpeed[i+1].deviceId,speed:speedAreas, time0:new Date(pointSpeed[i].time),time: new Date(pointSpeed[i + 1].time)});
               }
-            }else{
+              console.log();
+            } else {
               this.speedArea = [];
               this.noTrackHistory = true;
               this.hasShowTrack = false;
               this.polyline.latlngs = [];
             }
-          }else{
+          } else {
             this.speedArea = [];
             this.noTrackHistory = true;
             this.hasShowTrack = false;
@@ -830,8 +883,7 @@
       distance(lat1, lon1, lat2, lon2, unit) {
         if ((lat1 == lat2) && (lon1 == lon2)) {
           return 0;
-        }
-        else {
+        } else {
           var radlat1 = Math.PI * lat1 / 180;
           var radlat2 = Math.PI * lat2 / 180;
           var theta = lon1 - lon2;
@@ -1179,18 +1231,71 @@
 </script>
 
 <style scoped lang="scss">
-  .myMapWrap /deep/ .trackAnimation_dialog{
-    .trackHistory_sel{
-      .el-select{
-        .el-input{
-          height:0.3rem;
+  #dock-container {
+    font-size: 14px;
+    position: fixed;
+    bottom: 0;
+    text-align: center;
+    right: 20%;
+    left: 20%;
+    width: 60%;
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px 10px 0 0;
+    z-index: 9999;
+  }
+  #dock-container li {
+    list-style-type: none;
+    display: inline-block;
+    position: relative;
+  }
+
+  #dock-container li img {
+    width: 64px;
+    height: 64px;
+    -webkit-box-reflect: below 2px
+    -webkit-gradient(linear, left top, left bottom, from(transparent),
+        color-stop(0.7, transparent), to(rgba(255,255,255,.5))); /* reflection is supported by webkit only */
+    -webkit-transition: all 0.3s;
+    -webkit-transform-origin: 50% 100%;
+  }
+  #dock-container li:hover img {
+    -webkit-transform: scale(2);
+    margin: 0 2em;
+  }
+  #dock-container li:hover + li img,
+  #dock-container li.prev img {
+    -webkit-transform: scale(1.5);
+    margin: 0 1.5em;
+  }
+
+  #dock-container li span {
+    display: none;
+    position: absolute;
+    bottom: 140px;
+    left: 0;
+    width: 100%;
+    background-color: rgba(0,0,0,0.75);
+    padding: 4px 0;
+    border-radius: 12px;
+  }
+  #dock-container li:hover span {
+    display: block;
+    color: #fff;
+  }
+  .myMapWrap /deep/ .trackAnimation_dialog {
+    .trackHistory_sel {
+      .el-select {
+        .el-input {
+          height: 0.3rem;
         }
-        .el-input__inner{
-          height:0.3rem;
+
+        .el-input__inner {
+          height: 0.3rem;
           padding: 0 0.55rem 0 0.3rem;
-          border-radius:0.06rem ;
+          border-radius: 0.06rem;
         }
-        .el-input__icon{
+
+        .el-input__icon {
           line-height: 0.3rem;
         }
       }
@@ -1204,79 +1309,88 @@
     position: relative;
 
     /*轨迹动画窗口*/
-    .trackAnimation_dialog{
-      position:absolute;
-      z-index:1000;
-      width:4rem;
+    .trackAnimation_dialog {
+      position: absolute;
+      z-index: 1000;
+      width: 4rem;
       /*height:9.14rem;*/
-      background:#FBFBFB;
+      background: #FBFBFB;
       top: 0.9rem;
       box-sizing: border-box;
       /*padding:0 0.12rem;*/
-      box-shadow: 0 0.02rem 0.04rem 0 rgba(0,0,0,0.50);
+      box-shadow: 0 0.02rem 0.04rem 0 rgba(0, 0, 0, 0.50);
       border-top-right-radius: 0.2rem;
       /*border-radius: 0 0.2rem 0.2rem 0;*/
-      .trackHistory_bottom{
-        position:relative;
-        height:8.24rem;
+      .trackHistory_bottom {
+        position: relative;
+        height: 8.24rem;
         overflow-y: auto;
         overflow-x: hidden;
-        margin-top:0.9rem;
+        margin-top: 0.9rem;
       }
-      .track_detailConBox{
+
+      .track_detailConBox {
         padding-top: 0.2rem;
-        position:absolute;
+        position: absolute;
         /*bottom:0;*/
       }
-      .track_noHistory{
-        font-size:0.14rem;
-        padding-top:0.5rem;
+
+      .track_noHistory {
+        font-size: 0.14rem;
+        padding-top: 0.5rem;
       }
-      .track_detailCon{
+
+      .track_detailCon {
         cursor: pointer;
-        width:3.75rem;
+        width: 3.75rem;
         box-sizing: border-box;
-        padding:0.14rem 0.2rem;
-        background:#fff;
-        border-radius:0.08rem;
-        margin-bottom:0.1rem;
-        div{
-          font-size:0.14rem;
+        padding: 0.14rem 0.2rem;
+        background: #fff;
+        border-radius: 0.08rem;
+        margin-bottom: 0.1rem;
+
+        div {
+          font-size: 0.14rem;
           font-family: 'pingfangMedium';
-          color:#333;
+          color: #333;
           text-align: left;
-          span{
-            font-family:'pingfangRegular';
-            color:#666;
+
+          span {
+            font-family: 'pingfangRegular';
+            color: #666;
           }
         }
       }
-      .trackHistory_top{
-        position:fixed;
-        width:4rem;
-        height:0.9rem;
-        left:0;
-        z-index:1001;
+
+      .trackHistory_top {
+        position: fixed;
+        width: 4rem;
+        height: 0.9rem;
+        left: 0;
+        z-index: 1001;
         border-top-right-radius: 0.2rem;
-        .trackHistory_title{
-          height:0.44rem;
+
+        .trackHistory_title {
+          height: 0.44rem;
           line-height: 0.44rem;
           background: #017AFF;
-          font-size:0.2rem;
-          color:#fff;
+          font-size: 0.2rem;
+          color: #fff;
           font-family: 'pingfangMedium';
           border-top-right-radius: 0.2rem;
         }
-        .trackHistory_sel{
-          padding-left:0.35rem;
-          height:0.46rem;
+
+        .trackHistory_sel {
+          padding-left: 0.35rem;
+          height: 0.46rem;
           background: #FFFFFF;
-          box-shadow: 0 0.02rem 0.04rem 0 rgba(0,0,0,0.20);
-          span{
-            font-size:0.18rem;
-            color:#333;
+          box-shadow: 0 0.02rem 0.04rem 0 rgba(0, 0, 0, 0.20);
+
+          span {
+            font-size: 0.18rem;
+            color: #333;
             font-family: 'pingfangMedium';
-            margin-right:0.12rem;
+            margin-right: 0.12rem;
           }
         }
       }
@@ -1286,10 +1400,12 @@
       width: 100%;
       height: 100vh;
     }
-    .infoListWrap{
-      position:relative;
+
+    .infoListWrap {
+      position: relative;
       z-index: 1300;
     }
+
     /*顶部信息*/
     .map_top {
       position: absolute;
@@ -1298,6 +1414,7 @@
       width: 100%;
       height: 0.8rem;
       z-index: 999;
+
       .searchInput {
         z-index: 999;
       }
@@ -1392,6 +1509,7 @@
       border-radius: 0.1rem;
       cursor: pointer;
       z-index: 999;
+
       i {
         position: absolute;
         width: 0.35rem;
@@ -1434,37 +1552,42 @@
           background: #017AFF;
           left: 52%;
         }
-      .map_alarmLineWrap {
-          width:100%;
+
+        .map_alarmLineWrap {
+          width: 100%;
           height: 4.57rem;
           position: absolute;
           /*overflow-y:auto;*/
           /*&:before{*/
-            /*content:'';*/
-            /*position:absolute;*/
-            /*width: 0.01rem;*/
-            /*background: #017AFF;*/
-            /*left:2.3rem;top:0;bottom:0;*/
+          /*content:'';*/
+          /*position:absolute;*/
+          /*width: 0.01rem;*/
+          /*background: #017AFF;*/
+          /*left:2.3rem;top:0;bottom:0;*/
           /*}*/
         }
+
         .map_alarmsWrap {
           position: absolute;
           bottom: 0;
-          width:2rem;
+          width: 2rem;
           transition: all .2s;
-          left:1.3rem;
+          left: 1.3rem;
+
           .map_alarms {
             /*height:1.2rem;*/
             height: 0.8rem;
           }
         }
+
         .animation_alarms {
           margin-top: 0.8rem;
           transition: all 1s;
           /*animation: fadeDown 1s linear;*/
         }
-        .animation_start{
-          transform:translateY(-5.7rem);
+
+        .animation_start {
+          transform: translateY(-5.7rem);
           transition: all .2s;
         }
 
@@ -1478,14 +1601,15 @@
           left: 50%;
           /*top:0.5rem;*/
           margin-left: -0.055rem;
-          &:before{
-            content:'';
-            position:absolute;
+
+          &:before {
+            content: '';
+            position: absolute;
             width: 0.01rem;
             background: #017AFF;
-            bottom:0;
-            height:0.8rem;
-            left:0.05rem;
+            bottom: 0;
+            height: 0.8rem;
+            left: 0.05rem;
             z-index: -1;
           }
 
@@ -1668,14 +1792,15 @@
         .alarm_info {
           background: url("../img/message_red.png") no-repeat center;
           background-size: 100% 100%;
-          &:before{
-            content:'';
-            position:absolute;
+
+          &:before {
+            content: '';
+            position: absolute;
             width: 0.01rem;
-            background:#CB0500;
-            bottom:0;
-            height:0.8rem;
-            left:0.05rem;
+            background: #CB0500;
+            bottom: 0;
+            height: 0.8rem;
+            left: 0.05rem;
             z-index: -1;
           }
 
@@ -1695,8 +1820,9 @@
             }
           }
         }
-        .map_alarmLineWrap{
-          height:4.2rem;
+
+        .map_alarmLineWrap {
+          height: 4.2rem;
           /*overflow-y: hidden !important;*/
         }
       }
@@ -1979,4 +2105,7 @@
       }
     }
   }
+
+
+
 </style>
