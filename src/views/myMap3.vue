@@ -784,7 +784,7 @@
                 let interpolate = route_interpolate_data[tmp[i - 1].id + '_' + tmp[i].id];
                 // console.log(tmp[i - 1].id + '_' + tmp[i].id);
                 if (interpolate) {
-                  console.log(interpolate)
+                  // console.log(interpolate)
                   for (let j = 0; j < interpolate.length; j++) {
                     points.push({...interpolate[j]})
                     jj++;
@@ -799,8 +799,8 @@
                 pointSpeed[kk] = {...tmpSpeed[i]};
               }
             }
-            console.log('points', points)
-            console.log('pointSpeed', pointSpeed);
+            // console.log('points', points)
+            // console.log('pointSpeed', pointSpeed);
             this.polyline.latlngs = points;
             setTimeout(() => {
               this.highlighted_segment = []
