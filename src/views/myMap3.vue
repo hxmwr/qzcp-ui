@@ -299,7 +299,6 @@
         </div>
         <div class="track_noHistory" v-if="noTrackHistory">暂无历史轨迹记录</div>
       </div>
-
     </div>
   </div>
 </template>
@@ -512,6 +511,7 @@
 
       // 告警滚动列表
       var index2 = 0
+      // var host = '172.16.0.34' + ':8889'
       var host = location.host.split(':')[0] + ':8889'
       var ws = new WebSocket('ws://' + host);
       ws.onmessage = (e) => {
