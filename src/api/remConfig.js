@@ -49,3 +49,8 @@ export const getTrackByTime = (data)=>{
 export const getInfoList = (data)=>{
   return axios.get(`${base}/vehicles`,{params:data});
 };
+
+// 获取历史告警数据
+export const getEllegalEvent = (data) => {
+  return axios.get(data)
+}

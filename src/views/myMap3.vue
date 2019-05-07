@@ -304,7 +304,7 @@
         <div class="track_noHistory" v-if="noTrackHistory">暂无历史轨迹记录</div>
       </div>
     </div>
-    <div id="dock-container">
+    <div id="dock-container" v-if="true">
       <ul>
         <li>
           <span>车辆登记</span>
@@ -800,6 +800,9 @@
                 pointSpeed[kk] = {...tmpSpeed[i]};
               }
             }
+            if (points.length == 1) {
+              this.animMarkerLatlng = points[0]
+            }
             // console.log('points', points)
             // console.log('pointSpeed', pointSpeed);
             this.polyline.latlngs = points;
@@ -825,7 +828,7 @@
               for (let i = 0; i < pointSpeed.length - 1; i++) {
                 let dist = this.distance(pointSpeed[i].lat, pointSpeed[i].lng, pointSpeed[i + 1].lat, pointSpeed[i + 1].lng, 'K');
                 let testDistTime = new Date(pointSpeed[i + 1].time).getTime() - new Date(pointSpeed[i].time).getTime();
-                let speedAreas = (dist * 1000 / (testDistTime / 1000)).toFixed(3);
+                let speedAreas = (dist * 3600 / (testDistTime / 1000)).toFixed(3);
                 let type = '正常';
                 let itemClass = 0;
 
