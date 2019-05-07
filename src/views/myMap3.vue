@@ -805,7 +805,10 @@
             this.polyline.latlngs = points;
             setTimeout(() => {
               this.highlighted_segment = []
-              this.$refs.polyline.mapObject._snaking = false
+              if (this.$refs.polyline.mapObject._snaking) {
+                this.$refs.polyline.mapObject._snakeEnd()
+              }
+              this.$refs.polyline.mapObject._snakeLatLngs = null
               this.$refs.polyline.mapObject.snakeIn()
             }, 0);
 

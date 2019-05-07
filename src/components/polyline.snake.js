@@ -22,7 +22,6 @@ L.Polyline.include({
   /// TODO: accept a 'map' parameter, fall back to addTo() in case
   /// performance.now is not available.
   snakeIn: function(){
-
     if (this._snaking) { return; }
 
     if ( !('performance' in window) ||
@@ -129,9 +128,6 @@ L.Polyline.include({
 L.Polyline.mergeOptions({
   snakingSpeed: 200	// In pixels/sec
 });
-
-
-
 
 
 L.LayerGroup.include({
