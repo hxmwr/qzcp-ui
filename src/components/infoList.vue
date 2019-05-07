@@ -54,7 +54,7 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="plate_no" label="违章车辆" align="center"></el-table-column>
-                <el-table-column prop="device_1" label="违章地点" align="center"></el-table-column>
+                <el-table-column prop="device_id" label="违章地点" align="center"></el-table-column>
                 <el-table-column label="违章时间" align="center">
                   <template slot-scope="scope">
                     <span>{{scope.row.recorded_at}}</span>
@@ -90,6 +90,7 @@
       props:['infoListShow'],
       data(){
         return{
+          locations: ['','白云中大道与南海路交叉(A点)', '白云中大道鹿鸣公园(B点)', '白云小区(C点)', '颐高电子(D点)', '白云中大道与南海路交叉(E点)'],
           break_actived:2,
           changeItems:0,
           limitNum:10,
