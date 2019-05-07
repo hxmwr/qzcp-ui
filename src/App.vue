@@ -41,4 +41,11 @@ export default {
       }
     }
   }
+  .popImgWrap{
+    /*width:11.9rem;*/
+    /*height:6.68rem;*/
+    /*img{*/
+      /*width:100%;*/
+    /*}*/
+  }
 </style>

@@ -62,7 +62,7 @@
                 </el-table-column>
                 <el-table-column label="违章实况" align="center">
                   <template slot-scope="scope">
-                      <el-popover ref="liveStatus" placement="left"  trigger="click">
+                      <el-popover ref="liveStatus" placement="left"  trigger="click" popper-class="popImgWrap">
                         <div class="img_wrap">
                           <img src="../img/example1.png" alt="">
                         </div>
@@ -87,7 +87,7 @@
   import {getEllegalEvents, getInfoList} from "../api/remConfig";
     export default {
       name: "infoList",
-      props:['infoListShow'],
+      props:['infoListShow','jumpBreak'],
       data(){
         return{
           locations: ['','白云中大道与南海路交叉(A点)', '白云中大道鹿鸣公园(B点)', '白云小区(C点)', '颐高电子(D点)', '白云中大道与南海路交叉(E点)'],
@@ -109,7 +109,11 @@
       watch:{
         infoListShow:function(val){
           if(val){
-            this.changeItems = 0;
+            if(this.jumpBreak == '2'){
+              this.changeItems = 1;
+            }else{
+              this.changeItems = 0;
+            }
             this.getInfoLists();
             this.breakParams = {
               event_type: this.event_type,
@@ -140,6 +144,8 @@
               this.breakData = r.data.result.map(e => ({...e, type: this.event_type}));
               this.illegal_events_total = r.data.total;
             }
+          }).catch(err=>{
+            console.log(err);
           })
         },
         getInfoLists(){
