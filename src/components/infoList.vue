@@ -44,18 +44,27 @@
           </div>
           <div class="infoList_breakTable infoList_table" :class="{showSelectedItem:changeItems==1}">
               <div class="break_select">
-                <span class="break_active">全部</span><span>逆行</span><span>超速</span><span>占用机动车道</span>
+                <!--<span :class="{break_active:break_actived==0}" @click="break_selByType(0)">全部</span>-->
+                <span @click="break_selByType(2)" :class="{break_active:break_actived==2}">逆行</span><span @click="break_selByType(1)" :class="{break_active:break_actived==1}">超速</span><span @click="break_selByType(3)" :class="{break_active:break_actived==3}">占用机动车道</span>
               </div>
               <el-table :data="breakData" style="width:100%">
-                <el-table-column prop="type" label="违章类型" align="center"></el-table-column>
+                <el-table-column label="违章类型" align="center">
+                  <template slot-scope="scope">
+                    <span>{{scope.row.type==1?'超速':(scope.row.type==2?'逆行':'占用机动车道')}}</span>
+                  </template>
+                </el-table-column>
                 <el-table-column prop="plate_no" label="违章车辆" align="center"></el-table-column>
-                <el-table-column prop="address" label="违章地点" align="center"></el-table-column>
-                <el-table-column prop="time" label="违章时间" align="center"></el-table-column>
+                <el-table-column prop="device_1" label="违章地点" align="center"></el-table-column>
+                <el-table-column label="违章时间" align="center">
+                  <template slot-scope="scope">
+                    <span>{{scope.row.recorded_at}}</span>
+                  </template>
+                </el-table-column>
                 <el-table-column label="违章实况" align="center">
                   <template slot-scope="scope">
-                      <el-popover ref="liveStatus" placement="left" width="1190" trigger="click">
+                      <el-popover ref="liveStatus" placement="left"  trigger="click">
                         <div class="img_wrap">
-                          <img src="" alt="">
+                          <img src="../img/example1.png" alt="">
                         </div>
                         <i class="break_status"  slot="reference"></i>
                       </el-popover>
@@ -64,7 +73,7 @@
               </el-table>
               <!-- 分页栏 -->
               <div class="page_bar">
-                <el-pagination class="paginationBar" :current-page="breakcurrentPage" background layout="total,prev,pager,next" @current-change="handlePageNum2" :total="breakData.length" :page-size="limitNum"></el-pagination>
+                <el-pagination class="paginationBar" :current-page="breakcurrentPage" background layout="total,prev,pager,next" @current-change="handlePageNum2" :total="illegal_events_total" :page-size="limitNum"></el-pagination>
               </div>
 
           </div>
@@ -75,45 +84,70 @@
 </template>
 
 <script>
-  import { getInfoList } from "../api/remConfig";
+  import {getEllegalEvents, getInfoList} from "../api/remConfig";
     export default {
       name: "infoList",
-      props:['infoListAllData','infoListShow'],
+      props:['infoListShow'],
       data(){
         return{
+          break_actived:2,
           changeItems:0,
           limitNum:10,
+          event_type: 2,
+          illegal_events_total: 0,
           currentPage:1,
           totalPage:1,
           breakcurrentPage:1,
+          infoListAllData: [],//车辆信息列表数据
           dialogVisible:true,
           searchInputVal:'',
-          breakData:[{
-            type:'逆行',
-            plate_no: '浙H19415',
-            address:'ZQ0168',
-            time:'2019/04/15 14:50:36'
-          },{
-            type:'逆行',
-            plate_no: '浙H19415',
-            address:'ZQ0168',
-            time:'2019/04/15 14:50:36'
-          },{
-            type:'逆行',
-            plate_no: '浙H19415',
-            address:'ZQ0168',
-            time:'2019/04/15 14:50:36'
-          }]
+          breakParams:{}, //违章列表的参数
+          breakData:[]
         }
       },
       watch:{
         infoListShow:function(val){
           if(val){
             this.changeItems = 0;
+            this.getInfoLists();
+            this.breakParams = {
+              event_type: this.event_type,
+              // offset: (val - 1) * this.limitNum,
+              offset:0,
+              limit: this.limitNum,
+            };
+            this.getBreakData(this.breakParams );
           }
         }
       },
       methods:{
+        break_selByType(type){
+          this.break_actived = type;
+          this.event_type = type;
+          this.breakcurrentPage = 1;
+          this.breakParams = {
+            event_type: this.event_type,
+            // offset: (val - 1) * this.limitNum,
+            offset:0,
+            limit: this.limitNum,
+          };
+          this.getBreakData(this.breakParams);
+        },
+        getBreakData(data){
+          getEllegalEvents(data).then(r => {
+            if (r.data.result) {
+              this.breakData = r.data.result.map(e => ({...e, type: this.event_type}));
+              this.illegal_events_total = r.data.total;
+            }
+          })
+        },
+        getInfoLists(){
+          getInfoList().then(refs => {
+            this.infoListAllData = refs.data.result;
+          }).catch(err => {
+            console.log(err);
+          })
+        },
         changeItem(type){
           this.changeItems = type;
         },
@@ -127,8 +161,8 @@
         searchInput(){
           getInfoList({"search":this.searchInputVal}).then(refs=>{
             console.log('fff:',refs);
-            // this.infoListData = refs.data.result;
-            this.$emit('changeData',refs.data.result);
+            this.infoListAllData = refs.data.result;
+            // this.$emit('changeData',refs.data.result);
           }).catch(err=>{
             console.log(err);
           })
@@ -138,8 +172,15 @@
           // this.logData['page'] = val;
           // this.getLogs(this.logData);
         },
-        handlePageNum2(val){
+        handlePageNum2(val) {
           console.log(val);
+          this.breakcurrentPage = val;
+          this.breakParams = {
+            event_type: this.event_type,
+            offset: (val - 1) * this.limitNum,
+            limit: this.limitNum,
+          };
+          this.getBreakData(this.breakParams);
         }
       }
     }
@@ -305,9 +346,6 @@
         cursor: pointer;
         &:last-child{
           border-right:1px solid #F0F0F0;
-        }
-        &:hover{
-          background:#eee;
         }
       }
       .break_active{

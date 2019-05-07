@@ -276,7 +276,6 @@
 
     <!--车辆信息列表页面-->
     <infoListDialog v-show="infoListShow" :infoListShow="infoListShow" class="infoListWrap" @closeInfoList="closeInfoList"
-                    :infoListAllData="infoListAllData" @changeData="changeInfoListData"
                     @historyTrack="historyTracks"></infoListDialog>
     <!--轨迹动画窗口-->
     <div class="trackAnimation_dialog" v-if="trackAnim_show">
@@ -292,8 +291,8 @@
       </div>
       <div class="trackHistory_bottom">
         <div class="track_detailConBox">
-          <div @click="selectTrackPoint({lat: item.lat, lng:item.lng}, item.speed, item.prevLatlng)"
-               class="track_detailCon" v-for="(item,key) in speedArea" :key="key">
+          <div @click="selectTrackPoint({lat: item.lat, lng:item.lng}, item.speed, item.prevLatlng, key)"
+               :class="{track_detailCon: true, active_history_record: active_history_record === key}" v-for="(item,key) in speedArea" :key="key">
             <div>区间: <span>{{item.siteName1}}---{{item.siteName2}}</span></div>
             <div>开始: <span>{{item.time0.toISOString().split('.')[0].replace('T', ' ')}}</span></div>
             <div>结束: <span>{{item.time.toISOString().split('.')[0].replace('T', ' ')}}</span></div>
@@ -378,7 +377,6 @@
         bycleOptionSelect: '',
         bycleOption: [],
         trackAnim_show: false,
-        infoListAllData: [],//车辆信息列表数据
         infoListShow: false,//车辆信息列表显示判断
         animMarkerLatlng: {lat: '0', lng: '0'},
         report_count: [], // 基站上报次数
@@ -402,7 +400,6 @@
         polyline: {
           latlngs: [],
           color: '#017AFF',
-
         },
         latlngs: [[28.966173, 118.84945, 0.7], [28.966173, 118.84945, 0.5]],
         heatPoints: [
@@ -454,7 +451,8 @@
         showMobileDialog: false,//车辆信息对话框
         searchInputVal: '',//搜索
         alarmData: [],
-        accident_data: []
+        accident_data: [],
+        active_history_record: null
       }
     },
     mounted() {
@@ -631,7 +629,8 @@
       clearInterval(this.timeInterval)
     },
     methods: {
-      selectTrackPoint(latlng, speed, prevLatlng) {
+      selectTrackPoint(latlng, speed, prevLatlng, key) {
+        this.active_history_record = key;
         this.$refs.polyline.mapObject._snakeEnd();
         this.animMarkerLatlng = latlng
         this.pointVelocity = speed
@@ -681,20 +680,13 @@
           console.log(err);
         });
       },
-      changeInfoListData(data) {
-        this.infoListAllData = data;
-      },
       closeInfoList() {
         this.infoListShow = false;
       },
       //车辆信息列表弹窗
       showInfoList() {
-        getInfoList().then(refs => {
-          this.infoListShow = true;
-          this.infoListAllData = refs.data.result;
-        }).catch(err => {
-          console.log(err);
-        })
+        this.infoListShow = true;
+
       },
       onSnake() {
         if (this.$refs.polyline) {
@@ -1239,6 +1231,25 @@
 </script>
 
 <style scoped lang="scss">
+  .active_history_record {
+    -webkit-border-radius: 0px!important;
+    -moz-border-radius: 0px!important;
+    border-radius: 0px!important;
+    border: 1px solid #2196f3;
+    position: relative;
+    &:after {
+      content: '';
+      display: block;
+      width: 10px;
+      background: #2196f3;
+      position: absolute;
+      right: -10px;
+      top: -1px;
+      bottom: -1px;
+    }
+
+  }
+
   #dock-container {
     font-size: 14px;
     position: fixed;
