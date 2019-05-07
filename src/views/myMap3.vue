@@ -307,26 +307,26 @@
       <ul>
         <li class="console_1">
           <span>登记管理</span>
-          <a href="#"><img @click="showDevelop" src="../img/manage.png"></a>
+          <img @click="showDevelop" src="../img/manage.png">
         </li>
         <li class="console_2">
           <span>即时路况</span>
-          <a href="#"><img @click="showDevelop" src="../img/road.png"></a>
+          <img @click="showDevelop" src="../img/road.png">
         </li>
         <li  class="console_3">
           <span>视频监控</span>
-          <a href="#"><img @click="showMonitor" src="../img/monitor.png"></a>
+          <img @click="showMonitor" src="../img/monitor.png">
         </li>
         <li class="console_4">
           <span>违法违章</span>
-          <a href="#"><img @click="showBreak"  src="../img/breakimg.png"></a>
+          <img @click="showBreak"  src="../img/breakimg.png">
         </li>
         <li class="console_5">
           <span>事故处理</span>
-          <a href="#"><img @click="showDevelop" src="../img/accident.png"></a></li>
+          <img @click="showDevelop" src="../img/accident.png"></li>
         <li class="console_6">
           <span>数据统计</span>
-          <a href="#"><img  @click="showDevelop" src="../img/datas.png"></a>
+          <img  @click="showDevelop" src="../img/datas.png">
         </li>
       </ul>
     </div>
@@ -1280,7 +1280,7 @@
     width:8.5rem;
     height:0.8rem;
     left:50%;
-    margin-left:-3.5rem;
+    margin-left:-4.2rem;
     z-index: 999;
     background: rgba(128,128,128,0.70);
     box-shadow: 0 2px 10px 0 rgba(0,0,0,0.30);
@@ -1300,11 +1300,16 @@
   #dock-container li img {
     width: 0.65rem;
     height:0.69rem;
+    cursor: pointer;
     -webkit-box-reflect: below 2px
     -webkit-gradient(linear, left top, left bottom, from(transparent),
         color-stop(0.7, transparent), to(rgba(255,255,255,.5))); /* reflection is supported by webkit only */
     -webkit-transition: all 0.3s;
     -webkit-transform-origin: 50% 100%;
+  }
+  #dock-container li.console_1 img{
+   top:0.08rem;
+    position:relative;
   }
   #dock-container li.console_2 img{
     width: 0.81rem;
@@ -1326,14 +1331,18 @@
     width: 0.60rem;
     height:0.67rem;
   }
-  #dock-container li:hover img {
-    -webkit-transform: scale(2);
-    /*margin: 0 2em;*/
+  #dock-container li:hover{
+    img{
+      -webkit-transform: scale(2);
+      /*margin: 0 2em;*/
+    }
   }
-  #dock-container li:hover + li img,
-  #dock-container li.prev img {
-    -webkit-transform: scale(1.5);
-    /*margin: 0 1.5em;*/
+  #dock-container li:hover + li
+ {
+    img{
+      -webkit-transform: scale(1.5);
+      /*margin: 0 1.5em;*/
+    }
   }
 
   #dock-container li span {
