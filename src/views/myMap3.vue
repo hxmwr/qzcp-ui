@@ -185,10 +185,10 @@
             <div class="flex flex_align">
               <div id="map_activeNum" style="width:1.7rem;height:1.3rem;"></div>
               <div class="map_dataDetail">
-                <div>上牌车辆总数: <span>740915</span></div>
-                <div>今日活动总数: <span>335788</span></div>
-                <div>外卖车辆总数: <span>10859</span></div>
-                <div>违标车辆总数: <span>13088</span></div>
+                <div>上牌车辆: <span>740915</span></div>
+                <div>今日活动: <span>335788</span></div>
+                <div>外卖车辆: <span>10859</span></div>
+                <div>违标车辆: <span>13088</span></div>
               </div>
             </div>
             <div class="map_rightTitle flex flex_center">
@@ -203,10 +203,10 @@
             <div class="flex flex_align">
               <div id="map_alarmTotal" style="width:1.7rem;height:1.3rem;"></div>
               <div class="map_dataDetail">
-                <div>超速告警总数: <span>149735</span></div>
-                <div>逆行告警总数: <span>145788</span></div>
-                <div>布控告警总数: <span>859</span></div>
-                <div>事故告警总数: <span>3088</span></div>
+                <div>超速告警: <span>149735</span></div>
+                <div>逆行告警: <span>145788</span></div>
+                <div>布控告警: <span>859</span></div>
+                <div>事故告警: <span>3088</span></div>
               </div>
             </div>
             <div class="map_rightTitle flex flex_center">
@@ -221,11 +221,11 @@
             <div class="flex flex_align">
               <div id="map_accidentTotal" style="width:1.7rem;height:1.3rem;"></div>
               <div class="map_dataDetail">
-                <div>事故报警总数: <span>190415</span></div>
-                <div>自动处警总数: <span>551</span></div>
-                <div>死亡事故总数: <span>32</span></div>
-                <div>伤人事故总数: <span>325</span></div>
-                <div>简易事故总数: <span>1089</span></div>
+                <div>事故报警: <span>190415</span></div>
+                <div>自动处警: <span>551</span></div>
+                <div>死亡事故: <span>32</span></div>
+                <div>伤人事故: <span>325</span></div>
+                <div>简易事故: <span>1089</span></div>
               </div>
             </div>
             <div class="map_rightTitle flex flex_center">
@@ -240,12 +240,12 @@
             <div class="flex flex_align">
               <div id="map_siteTotal" style="width:1.7rem;height:1.3rem;"></div>
               <div class="map_dataDetail">
-                <div>衢江区基站总数: <span>503</span></div>
-                <div>柯城区基站总数: <span>632</span></div>
-                <div>龙游县基站总数: <span>260</span></div>
-                <div>常山县基站总数: <span>255</span></div>
-                <div>江山市基站总数: <span>310</span></div>
-                <div>开化县基站总数: <span>222</span></div>
+                <div>衢江区: <span>503</span></div>
+                <div>柯城区: <span>632</span></div>
+                <div>龙游县: <span>260</span></div>
+                <div>常山县: <span>255</span></div>
+                <div>江山市: <span>310</span></div>
+                <div>开化县: <span>222</span></div>
               </div>
             </div>
             <div class="map_rightTitle flex flex_center">
@@ -1411,7 +1411,7 @@
 
     .infoListWrap {
       position: relative;
-      z-index: 10000;
+      z-index: 1000;
     }
 
     /*顶部信息*/
@@ -1537,7 +1537,8 @@
       top: 0.9rem;
       left: 0;
       z-index: 1000;
-      width: 4.4rem;
+      /*width: 4.4rem;*/
+      width:3.8rem;
       height: 9.14rem;
       box-sizing: border-box;
       background: #FCFCFC;
@@ -1580,8 +1581,7 @@
           bottom: 0;
           width: 2rem;
           transition: all .2s;
-          left: 1.3rem;
-
+          left: 1rem;
           .map_alarms {
             /*height:1.2rem;*/
             height: 0.8rem;
@@ -1648,7 +1648,8 @@
           .alarm_con {
             cursor: pointer;
             position: absolute;
-            width: 1.7rem;
+            /*width: 1.7rem;*/
+            width:1.4rem;
             height: 0.68rem;
             text-align: left;
             background: #FFFFFF;
@@ -1751,13 +1752,11 @@
           background: #017AFF;
           border-radius: 0 0.1rem 0.1rem 0;
           left: 0;
-          width: 0.38rem;
+          width: 0.34rem;
           height: 1rem;
           top: 50%;
           margin-top: -0.5rem;
           box-sizing: border-box;
-          padding-right: 0.05rem;
-
           span {
             font-size: 0.18rem;
             color: #FFFFFF;
@@ -1775,7 +1774,8 @@
 
       /*分割线*/
       .map_splitLine {
-        width: 4.1rem;
+        /*width: 4.1rem;*/
+        width:3.7rem;
         height: 0.01rem;
         background: #ccc;
         margin: 0 auto;
@@ -1831,6 +1831,7 @@
 
         .map_alarmLineWrap {
           height: 4.2rem;
+          /*overflow-y: auto;*/
           /*overflow-y: hidden !important;*/
         }
       }
@@ -1872,7 +1873,7 @@
         height: 0.28rem;
         background: url("../img/alarm_gray.png") no-repeat center;
         background-size: 100% 100%;
-        left: 0.2rem;
+        left: 0.1rem;
         top: 0.15rem;
       }
     }
@@ -1907,10 +1908,11 @@
       position: absolute;
       top: 0.9rem;
       right: 0;
-      z-index: 1100;
-      width: 4.1rem;
+      z-index: 1000;
+      width:3.6rem;
+      /*width: 4.1rem;*/
       height: 8.43rem;
-      padding-left: 0.2rem;
+      padding-left: 0.15rem;
       box-sizing: border-box;
       background: #FCFCFC;
       box-shadow: 0 0.02rem 0.04rem 0 rgba(0, 0, 0, 0.50);
@@ -1970,12 +1972,12 @@
             }
 
             .map_rightTitle {
-              width: 0.38rem;
+              width: 0.34rem;
               height: 1.3rem;
               background: #017AFF;
               border-radius: 0.1rem 0 0 0.1rem;
               box-sizing: border-box;
-              padding-left: 0.08rem;
+              padding-left: 0.05rem;
 
               span {
                 font-family: 'pingfangMedium';

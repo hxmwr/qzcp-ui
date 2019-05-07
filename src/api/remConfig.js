@@ -53,4 +53,5 @@ export const getInfoList = (data)=>{
 // 获取历史告警数据
 export const getEllegalEvent = (data) => {
   return axios.get(data)
-}
+};
+

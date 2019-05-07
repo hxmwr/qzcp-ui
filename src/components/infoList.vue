@@ -51,16 +51,22 @@
                 <el-table-column prop="plate_no" label="违章车辆" align="center"></el-table-column>
                 <el-table-column prop="address" label="违章地点" align="center"></el-table-column>
                 <el-table-column prop="time" label="违章时间" align="center"></el-table-column>
-                <el-table-column label="轨迹" align="center">
+                <el-table-column label="违章实况" align="center">
                   <template slot-scope="scope">
-                    <i class="break_status" @click="showHistoryTrack(scope.row.id,scope.row.plate_no)"></i>
+                      <el-popover ref="liveStatus" placement="left" width="1190" trigger="click">
+                        <div class="img_wrap">
+                          <img src="" alt="">
+                        </div>
+                        <i class="break_status"  slot="reference"></i>
+                      </el-popover>
                   </template>
                 </el-table-column>
               </el-table>
               <!-- 分页栏 -->
               <div class="page_bar">
-                <el-pagination class="paginationBar" :current-page="breakcurrentPage" background layout="total,prev,pager,next" @current-change="handlePageNum" :total="breakData.length" :page-size="limitNum"></el-pagination>
+                <el-pagination class="paginationBar" :current-page="breakcurrentPage" background layout="total,prev,pager,next" @current-change="handlePageNum2" :total="breakData.length" :page-size="limitNum"></el-pagination>
               </div>
+
           </div>
         </div>
       </el-dialog>
@@ -131,6 +137,9 @@
           this.currentPage = val;
           // this.logData['page'] = val;
           // this.getLogs(this.logData);
+        },
+        handlePageNum2(val){
+          console.log(val);
         }
       }
     }
