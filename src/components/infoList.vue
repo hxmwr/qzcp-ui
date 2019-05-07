@@ -10,15 +10,15 @@
         <div class="close_btn" @click="closeDialog"><img src="../img/closeBtn.png" alt=""></div>
         <div>
           <div class="infoList_title flex">
-            <div>统计列表</div><div class="active">车辆列表</div><div>告警列表</div><div>事故列表</div><div>基站列表</div>
+            <div :class="{active:changeItems==0}" @click="changeItem(0)">车辆列表</div><div :class="{active:changeItems==1}" @click="changeItem(1)">车辆列表</div>
           </div>
-          <div class="search_wrap">
-            <el-input class="searchInput" v-model="searchInputVal" placeholder="请输入车牌号/告警ID/车架号"
-                      @keyup.enter.native="searchInput">
-              <i slot="suffix" class="el-input__icon el-icon-search" @click="searchInput"></i>
-            </el-input>
-          </div>
-          <div class="infoList_table">
+          <!--<div class="search_wrap">-->
+            <!--<el-input class="searchInput" v-model="searchInputVal" placeholder="请输入车牌号/告警ID/车架号"-->
+                      <!--@keyup.enter.native="searchInput">-->
+              <!--<i slot="suffix" class="el-input__icon el-icon-search" @click="searchInput"></i>-->
+            <!--</el-input>-->
+          <!--</div>-->
+          <div class="infoList_table" :class="{showSelectedItem:changeItems==0}">
             <el-table :data="infoListAllData" style="width:100%">
               <el-table-column prop="id" label="ID" align="center"></el-table-column>
               <el-table-column prop="plate_no" label="车牌号" align="center"></el-table-column>
@@ -41,6 +41,9 @@
               <el-pagination class="paginationBar" :current-page="currentPage" background layout="total,prev,pager,next" @current-change="handlePageNum" :total="infoListAllData.length" :page-size="limitNum"></el-pagination>
             </div>
           </div>
+          <div class="infoList_breakTable" :class="{showSelectedItem:changeItems==1}">
+              违章列表
+          </div>
         </div>
       </el-dialog>
     </div>
@@ -51,47 +54,28 @@
   import { getInfoList } from "../api/remConfig";
     export default {
       name: "infoList",
-      props:['infoListAllData'],
+      props:['infoListAllData','infoListShow'],
       data(){
         return{
+          changeItems:0,
           limitNum:10,
           currentPage:1,
           totalPage:1,
           dialogVisible:true,
-          searchInputVal:'',
-          // infoListData:this.infoListAllData
-          // infoListData:[{
-          //   id:'ZH19415001ND',
-          //   licenseNum:'浙H19415',
-          //   frameNum:'112334565354324321',
-          //   type:'私人用车',
-          //   owner:'赵三宝',
-          //   phone:'18012346321'
-          // },{
-          //   id:'ZH19415001ND',
-          //   licenseNum:'浙H19415',
-          //   frameNum:'112334565354324321',
-          //   type:'私人用车',
-          //   owner:'赵三宝',
-          //   phone:'18012346321'
-          // },{
-          //   id:'ZH19415001ND',
-          //   licenseNum:'浙H19415',
-          //   frameNum:'112334565354324321',
-          //   type:'私人用车',
-          //   owner:'赵三宝',
-          //   phone:'18012346321'
-          // },{
-          //   id:'ZH19415001ND',
-          //   licenseNum:'浙H19415',
-          //   frameNum:'112334565354324321',
-          //   type:'私人用车',
-          //   owner:'赵三宝',
-          //   phone:'18012346321'
-          // }]
+          searchInputVal:''
+        }
+      },
+      watch:{
+        infoListShow:function(val){
+          if(val){
+            this.changeItems = 0;
+          }
         }
       },
       methods:{
+        changeItem(type){
+          this.changeItems = type;
+        },
         showHistoryTrack(vehicleId,plate_no){
           this.$emit('historyTrack',{"vehicle_id":vehicleId,"flag":1,"plate_no":plate_no});
         },
@@ -202,6 +186,7 @@
         width:260px;
         text-align: center;
         position:relative;
+        cursor: pointer;
         &:after{
           position:absolute;
           right:-1px;
@@ -224,6 +209,7 @@
     }
   }
   .popDialog /deep/ .infoList_table{
+    display: none;
     .el-table__header{
       thead th{
         div{
@@ -257,5 +243,11 @@
       background:url("../img/weizhang.png") no-repeat center;
       vertical-align: middle;
     }
+  }
+  .popDialog .infoList_breakTable{
+    display: none;
+  }
+  .popDialog .showSelectedItem{
+    display: block;
   }
 </style>

@@ -275,7 +275,7 @@
     <!--</div>-->
 
     <!--车辆信息列表页面-->
-    <infoListDialog v-show="infoListShow" class="infoListWrap" @closeInfoList="closeInfoList"
+    <infoListDialog v-show="infoListShow" :infoListShow="infoListShow" class="infoListWrap" @closeInfoList="closeInfoList"
                     :infoListAllData="infoListAllData" @changeData="changeInfoListData"
                     @historyTrack="historyTracks"></infoListDialog>
     <!--轨迹动画窗口-->
@@ -394,8 +394,8 @@
         dufaultMarkIcon: null,
         customMarkIcon: null,
         bycleIcon: null,
-        url: 'http://' + location.host.split(':')[0] + ':4040/map/{z}/{x}/{y}.png',
-        // url: 'http://172.16.0.34:4040/map/{z}/{x}/{y}.png',
+        // url: 'http://' + location.host.split(':')[0] + ':4040/map/{z}/{x}/{y}.png',
+        url: 'http://172.16.0.34:4040/map/{z}/{x}/{y}.png',
         center: [28.966173, 118.84945],
         zoom: 15,
         bounds: null,
@@ -500,7 +500,8 @@
 
       getBaseStation().then(function (r) {
         //得到基站值
-        me.base_stations = r.data.data
+        me.base_stations = r.data.data;
+        console.log(r);
       });
 
       // 获取历史过点数据
@@ -647,7 +648,7 @@
         });
         let data = {"vehicle_id": vehicleid, "flag": 1};
         // console.log('val',data);
-        this.getAllTracks(data);
+        this.getAllTracks(data,'history');
         searchInfo({"key_word": val}).then(refs => {
           // refs.data.profile
           this.detailMobileInfo = refs.data.profile;
@@ -673,7 +674,7 @@
         this.showMobileDialog = false;
         this.infoListShow = false;
         this.selectDialog = 1;
-        this.getAllTracks(data);
+        this.getAllTracks(data,'history');
         searchInfo({"key_word": data.plate_no}).then(refs => {
           this.detailMobileInfo = refs.data.profile;
         }).catch(err => {
@@ -734,7 +735,7 @@
         this.showAlarmDialog = false;
         this.selectDialog = 0;
         if (!this.hasShowTrack) {
-          this.getAllTracks(data);
+          this.getAllTracks(data,'alarm');
         } else {
           return false;
         }
@@ -758,9 +759,9 @@
         this.showMobileDialog = false;
         this.selectDialog = 1;
         this.selectTimeArea = data;
-        this.getAllTracks(data);
+        this.getAllTracks(data,'history');
       },
-      getAllTracks(data) {
+      getAllTracks(data,type) {
         getTrackByTime(data).then(refs => {
           const real_latlngs = [[], [28.958532, 118.850663], [28.966163,118.84944], [28.977356,118.849815], [28.973611,118.849643], [28.958532,118.850663]]
           let station_lnglats = this.base_stations.map(e => ({lat:real_latlngs[e.id][0], lng:real_latlngs[e.id][1], id:e.id}))
@@ -819,7 +820,9 @@
             //  console.log('dist:',dist);
             //  let testDistTime = new Date(this.testSpeed[1].time).getTime() - new Date(this.testSpeed[0].time).getTime();
             //   this.testSpeedArea = (dist*1000 / (testDistTime/1000)).toFixed(3);
-            this.trackAnim_show = true;
+            if(type!='alarm'){
+              this.trackAnim_show = true;
+            }
             this.speedArea = [];
             if (pointSpeed.length > 1) {
               for (let i = 0; i < pointSpeed.length - 1; i++) {
@@ -1246,7 +1249,7 @@
     width: 60%;
     background: rgba(255,255,255,0.2);
     border-radius: 10px 10px 0 0;
-    z-index: 9999;
+    z-index: 999;
   }
   #dock-container li {
     list-style-type: none;
@@ -1408,7 +1411,7 @@
 
     .infoListWrap {
       position: relative;
-      z-index: 1300;
+      z-index: 10000;
     }
 
     /*顶部信息*/
