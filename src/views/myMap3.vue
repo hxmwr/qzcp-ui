@@ -337,7 +337,7 @@
       <div class="close_imgBG" @click="close_img"><-</div>
     </div>
     <!--正在开发中-->
-    <developing v-show="showDeveloping" @closeDevelop="closeDevelop"></developing>
+    <developing v-show="showDeveloping" @closeDevelop="closeDevelop" class="developing"></developing>
   </div>
 </template>
 
@@ -1482,7 +1482,9 @@
       position: relative;
       z-index: 1000;
     }
-
+    .developing{
+      z-index: 1000;
+    }
     /*顶部信息*/
     .map_top {
       position: absolute;
