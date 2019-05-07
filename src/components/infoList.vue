@@ -39,7 +39,7 @@
             </el-table>
             <!-- 分页栏 -->
             <div class="page_bar">
-              <el-pagination class="paginationBar" :current-page="currentPage" background layout="total,prev,pager,next" @current-change="handlePageNum" :total="infoListAllData.length" :page-size="limitNum"></el-pagination>
+              <el-pagination class="paginationBar" :current-page="currentPage" background layout="total,prev,pager,next" @current-change="handlePageNum" :total="infoListTotal" :page-size="limitNum"></el-pagination>
             </div>
           </div>
           <div class="infoList_breakTable infoList_table" :class="{showSelectedItem:changeItems==1}">
@@ -54,7 +54,11 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="plate_no" label="违章车辆" align="center"></el-table-column>
-                <el-table-column prop="device_1" label="违章地点" align="center"></el-table-column>
+                <el-table-column label="违章地点" align="center">
+                  <template slot-scope="scope">
+                    <span>{{locations[scope.row.device_id]}}</span>
+                  </template>
+                </el-table-column>
                 <el-table-column label="违章时间" align="center">
                   <template slot-scope="scope">
                     <span>{{scope.row.recorded_at}}</span>
@@ -90,15 +94,18 @@
       props:['infoListShow','jumpBreak'],
       data(){
         return{
+          locations: ['','白云中大道与南海路交叉(A点)', '白云中大道鹿鸣公园(B点)', '白云小区(C点)', '颐高电子(D点)', '白云中大道与南海路交叉(E点)'],
           break_actived:2,
           changeItems:0,
           limitNum:10,
           event_type: 2,
+          infoListTotal:0,
           illegal_events_total: 0,
           currentPage:1,
           totalPage:1,
           breakcurrentPage:1,
           infoListAllData: [],//车辆信息列表数据
+          infolistParams:{},//车辆列表分页参数
           dialogVisible:true,
           searchInputVal:'',
           breakParams:{}, //违章列表的参数
@@ -113,10 +120,15 @@
             }else{
               this.changeItems = 0;
             }
-            this.getInfoLists();
+            this.currentPage = 1;
+            this.breakcurrentPage = 1;
+            this.infolistParams = {
+              offset:0,
+              limit:this.limitNum
+            };
+            this.getInfoLists(this.infolistParams);
             this.breakParams = {
               event_type: this.event_type,
-              // offset: (val - 1) * this.limitNum,
               offset:0,
               limit: this.limitNum,
             };
@@ -126,6 +138,7 @@
       },
       methods:{
         break_selByType(type){
+          //违章列表类型选择
           this.break_actived = type;
           this.event_type = type;
           this.breakcurrentPage = 1;
@@ -138,6 +151,7 @@
           this.getBreakData(this.breakParams);
         },
         getBreakData(data){
+          //违章列表数据
           getEllegalEvents(data).then(r => {
             if (r.data.result) {
               this.breakData = r.data.result.map(e => ({...e, type: this.event_type}));
@@ -147,8 +161,10 @@
             console.log(err);
           })
         },
-        getInfoLists(){
-          getInfoList().then(refs => {
+        getInfoLists(data){
+          //车辆列表
+          getInfoList(data).then(refs => {
+            this.infoListTotal = refs.data.total;
             this.infoListAllData = refs.data.result;
           }).catch(err => {
             console.log(err);
@@ -156,6 +172,10 @@
         },
         changeItem(type){
           this.changeItems = type;
+          // this.infolistParams['offset'] = 0;
+          // this.breakParams['offset'] = 0;
+          // this.currentPage = 1;
+          // this.breakcurrentPage = 1;
         },
         showHistoryTrack(vehicleId,plate_no){
           this.$emit('historyTrack',{"vehicle_id":vehicleId,"flag":1,"plate_no":plate_no});
@@ -175,8 +195,11 @@
         },
         handlePageNum(val){
           this.currentPage = val;
-          // this.logData['page'] = val;
-          // this.getLogs(this.logData);
+          this.infolistParams = {
+            offset:(val - 1) * this.limitNum,
+            limit:this.limitNum
+          };
+          this.getInfoLists(this.infolistParams);
         },
         handlePageNum2(val) {
           console.log(val);
