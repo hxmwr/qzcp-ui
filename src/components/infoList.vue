@@ -59,7 +59,7 @@
               </el-table>
               <!-- 分页栏 -->
               <div class="page_bar">
-                <el-pagination class="paginationBar" :current-page="breakcurrentPage" background layout="total,prev,pager,next" @current-change="handlePageNum" :total="breakData.length" :page-size="limitNum"></el-pagination>
+                <el-pagination class="paginationBar" :current-page="breakcurrentPage" background layout="total,prev,pager,next" @current-change="handlePageNum" :total="illegal_events_total" :page-size="limitNum"></el-pagination>
               </div>
           </div>
         </div>
@@ -69,7 +69,7 @@
 </template>
 
 <script>
-  import { getInfoList } from "../api/remConfig";
+  import {getEllegalEvents, getInfoList} from "../api/remConfig";
     export default {
       name: "infoList",
       props:['infoListAllData','infoListShow'],
@@ -77,27 +77,14 @@
         return{
           changeItems:0,
           limitNum:10,
+          event_type: 0,
+          illegal_events_total: 0,
           currentPage:1,
           totalPage:1,
           breakcurrentPage:1,
           dialogVisible:true,
           searchInputVal:'',
-          breakData:[{
-            type:'逆行',
-            plate_no: '浙H19415',
-            address:'ZQ0168',
-            time:'2019/04/15 14:50:36'
-          },{
-            type:'逆行',
-            plate_no: '浙H19415',
-            address:'ZQ0168',
-            time:'2019/04/15 14:50:36'
-          },{
-            type:'逆行',
-            plate_no: '浙H19415',
-            address:'ZQ0168',
-            time:'2019/04/15 14:50:36'
-          }]
+          breakData:[]
         }
       },
       watch:{
@@ -131,6 +118,16 @@
           this.currentPage = val;
           // this.logData['page'] = val;
           // this.getLogs(this.logData);
+          getEllegalEvents({
+            event_type: this.event_type,
+            offset: (val - 1) * this.limitNum,
+            limit: this.limitNum,
+          }).then(r => {
+            if (r.data.result) {
+              this.breakData = r.data.result.map(e => ({...e, type: this.event_type}));
+              this.illegal_events_total = r.data.result.total;
+            }
+          })
         }
       }
     }
