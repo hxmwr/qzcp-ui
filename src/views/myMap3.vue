@@ -304,7 +304,7 @@
         <div class="track_noHistory" v-if="noTrackHistory">暂无历史轨迹记录</div>
       </div>
     </div>
-    <div id="dock-container">
+    <div id="dock-container" v-if="true">
       <ul>
         <li>
           <span>车辆登记</span>
@@ -798,6 +798,9 @@
                 points[jj] = {...tmp[i]};
                 pointSpeed[kk] = {...tmpSpeed[i]};
               }
+            }
+            if (points.length == 1) {
+              this.animMarkerLatlng = points[0]
             }
             // console.log('points', points)
             // console.log('pointSpeed', pointSpeed);
