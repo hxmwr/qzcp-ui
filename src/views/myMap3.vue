@@ -275,7 +275,7 @@
     <!--</div>-->
 
     <!--车辆信息列表页面-->
-    <infoListDialog v-show="infoListShow" :infoListShow="infoListShow" class="infoListWrap" @closeInfoList="closeInfoList"
+    <infoListDialog v-show="infoListShow" :infoListShow="infoListShow" class="infoListWrap" @closeInfoList="closeInfoList" :jumpBreak="jumpBreak"
                     @historyTrack="historyTracks"></infoListDialog>
     <!--轨迹动画窗口-->
     <div class="trackAnimation_dialog" v-if="trackAnim_show">
@@ -305,39 +305,39 @@
     </div>
     <div id="dock-container" v-if="true">
       <ul>
-        <li>
-          <span>车辆登记</span>
-          <a href="#"><img src="http://demos.cssstars.com/Mac-Address-Book-icon.png"></a>
+        <li class="console_1">
+          <span>登记管理</span>
+          <a href="#"><img @click="showDevelop" src="../img/manage.png"></a>
         </li>
-        <li>
+        <li class="console_2">
           <span>即时路况</span>
-          <a href="#"><img src="http://demos.cssstars.com/Mac-App-Store-icon.png"></a>
+          <a href="#"><img @click="showDevelop" src="../img/road.png"></a>
         </li>
-        <li>
+        <li  class="console_3">
+          <span>视频监控</span>
+          <a href="#"><img @click="showMonitor" src="../img/monitor.png"></a>
+        </li>
+        <li class="console_4">
           <span>违法违章</span>
-          <a href="#"><img src="http://demos.cssstars.com/chrome_ico.png"></a>
+          <a href="#"><img @click="showBreak"  src="../img/breakimg.png"></a>
         </li>
-        <li>
+        <li class="console_5">
           <span>事故处理</span>
-          <a href="#"><img src="http://demos.cssstars.com/firefox.png"></a>
-        </li>
-        <li>
+          <a href="#"><img @click="showDevelop" src="../img/accident.png"></a></li>
+        <li class="console_6">
           <span>数据统计</span>
-          <a href="#"><img src="http://demos.cssstars.com/Mac-icon.png"></a></li>
-        <li>
-          <span>视频查证</span>
-          <a href="#"><img src="http://demos.cssstars.com/mac-icon%20(1).png"></a>
-        </li>
-        <li>
-          <span>Chat</span>
-          <a href="#"><img src="http://demos.cssstars.com/MetroUI-Apps-Mac-iChat-icon.png"></a>
-        </li>
-        <li>
-          <span>Apple</span>
-          <a href="#"><img src="http://demos.cssstars.com/apple-icon.png"></a>
+          <a href="#"><img  @click="showDevelop" src="../img/datas.png"></a>
         </li>
       </ul>
     </div>
+
+    <!--视频监控弹窗页面-->
+    <div class="videoMonitor_popup" v-if="showVideoMonitor">
+      <div class="img_bg"></div>
+      <div class="close_imgBG" @click="close_img"><-</div>
+    </div>
+    <!--正在开发中-->
+    <developing v-show="showDeveloping" @closeDevelop="closeDevelop"></developing>
   </div>
 </template>
 
@@ -345,6 +345,7 @@
   import infoListDialog from '../components/infoList'
   import alarmDialog from '../components/alarmDialog'
   import mobileInfo from '../components/mobileInfo'
+  import developing from '../components/developing'
   import {
     getBaseStation,
     getTrack,
@@ -367,10 +368,13 @@
   export default {
     name: "test",
     components: {
-      alarmDialog, mobileInfo, infoListDialog
+      alarmDialog, mobileInfo, infoListDialog,developing
     },
     data() {
       return {
+        showDeveloping:false,
+        jumpBreak:2,
+        showVideoMonitor:false,
         highlighted_segment: [],
         pointVelocity: 0,
         noTrackHistory: false,
@@ -629,6 +633,22 @@
       clearInterval(this.timeInterval)
     },
     methods: {
+      closeDevelop(){
+        this.showDeveloping = false;
+      },
+      showDevelop(){
+        this.showDeveloping = true;
+      },
+      showBreak(){
+        this.infoListShow = true;
+        this.jumpBreak = 2;
+      },
+      close_img(){
+        this.showVideoMonitor = false;
+      },
+      showMonitor(){
+        this.showVideoMonitor = true;
+      },
       selectTrackPoint(latlng, speed, prevLatlng, key) {
         this.active_history_record = key;
         this.$refs.polyline.mapObject._snakeEnd();
@@ -686,7 +706,7 @@
       //车辆信息列表弹窗
       showInfoList() {
         this.infoListShow = true;
-
+        this.jumpBreak = 1;
       },
       onSnake() {
         if (this.$refs.polyline) {
@@ -1255,36 +1275,65 @@
     position: fixed;
     bottom: 0;
     text-align: center;
-    right: 20%;
-    left: 20%;
-    width: 60%;
-    background: rgba(255,255,255,0.2);
-    border-radius: 10px 10px 0 0;
+    /*right: 20%;*/
+    /*left: 20%;*/
+    width:8.5rem;
+    height:0.8rem;
+    left:50%;
+    margin-left:-3.5rem;
     z-index: 999;
+    background: rgba(128,128,128,0.70);
+    box-shadow: 0 2px 10px 0 rgba(0,0,0,0.30);
+    border-radius: 20px 20px 0 0;
+  }
+  #dock-container ul{
+    padding:0;
+    margin:0;
   }
   #dock-container li {
     list-style-type: none;
     display: inline-block;
     position: relative;
+    width:16%;
   }
 
   #dock-container li img {
-    width: 64px;
-    height: 64px;
+    width: 0.65rem;
+    height:0.69rem;
     -webkit-box-reflect: below 2px
     -webkit-gradient(linear, left top, left bottom, from(transparent),
         color-stop(0.7, transparent), to(rgba(255,255,255,.5))); /* reflection is supported by webkit only */
     -webkit-transition: all 0.3s;
     -webkit-transform-origin: 50% 100%;
   }
+  #dock-container li.console_2 img{
+    width: 0.81rem;
+    height:0.60rem;
+  }
+  #dock-container li.console_3 img{
+    width: 0.75rem;
+    height:0.60rem;
+  }
+  #dock-container li.console_4 img{
+    width: 0.79rem;
+    height:0.60rem;
+  }
+  #dock-container li.console_5 img{
+    width: 0.60rem;
+    height:0.72rem;
+  }
+  #dock-container li.console_6 img{
+    width: 0.60rem;
+    height:0.67rem;
+  }
   #dock-container li:hover img {
     -webkit-transform: scale(2);
-    margin: 0 2em;
+    /*margin: 0 2em;*/
   }
   #dock-container li:hover + li img,
   #dock-container li.prev img {
     -webkit-transform: scale(1.5);
-    margin: 0 1.5em;
+    /*margin: 0 1.5em;*/
   }
 
   #dock-container li span {
@@ -1298,7 +1347,7 @@
     border-radius: 12px;
   }
   #dock-container li:hover span {
-    display: block;
+    display: inline-block;
     color: #fff;
   }
   .myMapWrap /deep/ .trackAnimation_dialog {
@@ -2070,6 +2119,30 @@
       span {
         font-size: 0.14rem;
         color: #333333;
+      }
+    }
+    //视频监控页面
+    .videoMonitor_popup{
+      position:absolute;
+      top:0;left:0;bottom:0;right:0;
+      z-index: 1001;
+      background:#0D0D0D;
+      .img_bg{
+        width:100%;
+        height:100%;
+        background:url("../img/monitoring.png") no-repeat center;
+        background-size: contain;
+      }
+      .close_imgBG{
+        position:absolute;
+        cursor: pointer;
+        top:0.1rem;
+        left:1rem;
+        color:#fff;
+        font-size:0.5rem;
+      }
+      img{
+        width:100%;
       }
     }
   }
