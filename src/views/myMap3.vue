@@ -394,8 +394,8 @@
         dufaultMarkIcon: null,
         customMarkIcon: null,
         bycleIcon: null,
-        url: 'http://' + location.host.split(':')[0] + ':4040/map/{z}/{x}/{y}.png',
-        // url: 'http://172.16.0.34:4040/map/{z}/{x}/{y}.png',
+        // url: 'http://' + location.host.split(':')[0] + ':4040/map/{z}/{x}/{y}.png',
+        url: 'http://172.16.0.34:4040/map/{z}/{x}/{y}.png',
         center: [28.966173, 118.84945],
         zoom: 15,
         bounds: null,
@@ -500,7 +500,8 @@
 
       getBaseStation().then(function (r) {
         //得到基站值
-        me.base_stations = r.data.data
+        me.base_stations = r.data.data;
+        console.log(r);
       });
 
       // 获取历史过点数据
