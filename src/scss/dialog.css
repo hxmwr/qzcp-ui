@@ -7,7 +7,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  cursor: pointer; }
+  cursor: pointer;
+  z-index: 101; }
   .popDialog .close_btn img {
     max-width: 100%; }
 
