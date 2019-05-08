@@ -396,8 +396,8 @@
         dufaultMarkIcon: null,
         customMarkIcon: null,
         bycleIcon: null,
-        // url: 'http://' + location.host.split(':')[0] + ':4040/map/{z}/{x}/{y}.png',
-        url: 'http://172.16.0.34:4040/map/{z}/{x}/{y}.png',
+        url: 'http://' + location.host.split(':')[0] + ':4040/map/{z}/{x}/{y}.png',
+        // url: 'http://172.16.0.34:4040/map/{z}/{x}/{y}.png',
         center: [28.966173, 118.84945],
         zoom: 15,
         bounds: null,
@@ -1295,6 +1295,7 @@
     display: inline-block;
     position: relative;
     width:16%;
+    font-weight: bold;
   }
 
   #dock-container li img {
@@ -1510,7 +1511,7 @@
       }
 
       span {
-        font-size: 0.28rem;
+        font-size: 0.42rem;
         font-family: 'pingfangBold';
         margin-left: 0.18rem;
       }
