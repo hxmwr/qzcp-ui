@@ -1295,6 +1295,7 @@
     display: inline-block;
     position: relative;
     width:16%;
+    font-weight: bold;
   }
 
   #dock-container li img {
@@ -1510,7 +1511,7 @@
       }
 
       span {
-        font-size: 0.28rem;
+        font-size: 0.42rem;
         font-family: 'pingfangBold';
         margin-left: 0.18rem;
       }
