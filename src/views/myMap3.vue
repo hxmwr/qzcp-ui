@@ -463,7 +463,7 @@
       const me = this;
       // this.dufaultMarkIcon = new L.Icon.Default();
       this.dufaultMarkIcon = L.icon({
-        iconUrl: '../../static/bs-online.gif',
+        iconUrl: '../../static/radio.gif',
         iconSize: [25, 45.8],
         iconAnchor: [12, 41],
         popupAnchor: [1, -34],
@@ -1594,8 +1594,8 @@
         position: absolute;
         width: 0.35rem;
         height: 0.36rem;
-        background: url("../img/alarm_blue.png") no-repeat center;
-        background-size: 100% 100%;
+        background: url("../img/alarm.gif") no-repeat center;
+        background-size: 140% 140%;
         top: 50%;
         left: 50%;
         margin-top: -0.18rem;
