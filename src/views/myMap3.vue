@@ -372,6 +372,7 @@
     },
     data() {
       return {
+        fromInfoList:0, //判断是否从车辆列表页面过来的
         showDeveloping:false,
         jumpBreak:2,
         showVideoMonitor:false,
@@ -693,6 +694,8 @@
         this.showMobileDialog = false;
         this.infoListShow = false;
         this.selectDialog = 1;
+        this.fromInfoList = 1; //从车辆列表过来的
+        this.bycleOptionSelect = data.plate_no;
         this.getAllTracks(data,'history');
         searchInfo({"key_word": data.plate_no}).then(refs => {
           this.detailMobileInfo = refs.data.profile;
@@ -702,6 +705,7 @@
       },
       closeInfoList() {
         this.infoListShow = false;
+
       },
       //车辆信息列表弹窗
       showInfoList() {
@@ -746,6 +750,7 @@
         this.showTrack = false;
         this.showAlarmDialog = false;
         this.selectDialog = 0;
+        this.fromInfoList = 0;
         if (!this.hasShowTrack) {
           this.getAllTracks(data,'alarm');
         } else {
@@ -929,10 +934,16 @@
         //关闭轨迹
         this.selectTimeArea = '';
         this.searchInputVal = '';
-        this.showTrack = true;
-        this.hasShowTrack = false;
         this.polyline.latlngs = [];
         this.trackAnim_show = false;
+        if(this.fromInfoList == 1){
+          this.infoListShow = true;
+          this.showTrack = true;
+          this.hasShowTrack = false;
+        }else{
+          this.showTrack = true;
+          this.hasShowTrack = false;
+        }
       },
       hiddenDialog() {
         this.showAlarmDialog = false;
@@ -961,6 +972,7 @@
             console.log(refs);
             this.showMobileDialog = true;
             this.detailMobileInfo = refs.data.profile;
+            this.fromInfoList = 0;
           }).catch(err => {
             console.log(err);
           });
