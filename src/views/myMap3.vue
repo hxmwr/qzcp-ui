@@ -320,27 +320,69 @@
     <div id="dock-container" v-if="true">
       <ul>
         <li class="console_1">
-          <span>登记管理</span>
-          <img @click="showDevelop" src="../img/manage.png">
+          <div class="sub_menuBox">
+            <div class="sub_menu">
+              <div>
+                <i class="sub_menu1"></i><i class="sub_menu2"></i>
+              </div>
+            </div>
+            <img @click="showDevelop" src="../img/manage.png">
+          </div>
+          <!--<span>登记管理</span>-->
         </li>
         <li class="console_2">
-          <span>即时路况</span>
-          <img @click="showDevelop" src="../img/road.png">
+          <div class="sub_menuBox">
+            <div class="sub_menu">
+              <div>
+              </div>
+            </div>
+            <img @click="showDevelop" src="../img/road.png">
+          </div>
+          <!--<span>即时路况</span>-->
         </li>
         <li  class="console_3">
-          <span>视频监控</span>
-          <img @click="showMonitor" src="../img/monitor.png">
+          <div class="sub_menuBox">
+            <div class="sub_menu">
+              <div>
+                <b>视频监控</b>
+              </div>
+            </div>
+            <img @click="showMonitor" src="../img/monitor.png">
+          </div>
+          <!--<span>视频监控</span>-->
         </li>
         <li class="console_4">
-          <span>违法违章</span>
-          <img @click="showBreak"  src="../img/breakimg.png">
+          <div class="sub_menuBox">
+            <div class="sub_menu">
+              <div>
+                <b>违法违章</b>
+              </div>
+            </div>
+            <img @click="showBreak"  src="../img/breakimg.png">
+          </div>
+          <!--<span>违法违章</span>-->
         </li>
         <li class="console_5">
-          <span>事故处理</span>
-          <img @click="showDevelop" src="../img/accident.png"></li>
+          <!--<span>事故处理</span>-->
+          <div class="sub_menuBox">
+            <div class="sub_menu">
+              <div>
+                <i class="sub_menu1"></i><i class="sub_menu2"></i><i class="sub_menu3"></i>
+              </div>
+            </div>
+            <img @click="showDevelop" src="../img/accident.png">
+          </div>
+        </li>
         <li class="console_6">
-          <span>数据统计</span>
-          <img  @click="showDevelop" src="../img/datas.png">
+          <div class="sub_menuBox">
+            <div class="sub_menu">
+              <div>
+                <b>数据统计</b>
+              </div>
+            </div>
+            <img  @click="showDevelop" src="../img/datas.png">
+          </div>
+          <!--<span>数据统计</span>-->
         </li>
       </ul>
     </div>
@@ -1369,6 +1411,128 @@
     position: relative;
     width:16%;
     font-weight: bold;
+    .sub_menuBox{
+      -webkit-transition: all 0.3s;
+      position:relative;
+      .sub_menu{
+        display: none;
+        position:absolute;
+        top:-0.3rem;
+        left:50%;
+        margin-left:-0.45rem;
+        width:0.9rem;
+        height:0.3rem;
+        background:url("../img/Rectangle.png") no-repeat center;
+        background-size:100% 100%;
+        div{
+          width:100%;
+          height:100%;
+          display: flex;
+          justify-content: space-around;
+          align-items: center;
+          i{
+            position:relative;
+            top:-0.02rem;
+            cursor: pointer;
+          }
+          b{
+            font-weight: normal;
+            font-size:0.12rem;
+            color:#fff;
+            position: relative;
+            top:-0.02rem;
+          }
+        }
+      }
+    }
+  }
+  #dock-container li.console_5{
+    .sub_menuBox{
+      .sub_menu{
+        .sub_menu1{
+          display: inline-block;
+          width:0.14rem;
+          height:0.14rem;
+          background:url("../img/alarmInfo.png") no-repeat center;
+          background-size:100% 100%;
+          &:hover{
+            background:url("../img/alarmInfo_active.png") no-repeat center;
+            background-size:100% 100%;
+          }
+        }
+        .sub_menu2{
+          display: inline-block;
+          width:0.2rem;
+          height:0.14rem;
+          background:url("../img/cloudjing.png") no-repeat center;
+          background-size:100% 100%;
+          &:hover{
+            background:url("../img/cloudjing_active.png") no-repeat center;
+            background-size:100% 100%;
+          }
+        }
+        .sub_menu3{
+          display: inline-block;
+          width:0.15rem;
+          height:0.15rem;
+          background:url("../img/sanfangtonghua.png") no-repeat center;
+          background-size:100% 100%;
+          &:hover{
+            background:url("../img/sanfangtonghua_active.png") no-repeat center;
+            background-size:100% 100%;
+          }
+        }
+      }
+    }
+  }
+  #dock-container li.console_1{
+    .sub_menuBox{
+      .sub_menu{
+        margin-left:-0.35rem;
+        width:0.7rem;
+        .sub_menu1{
+          display: inline-block;
+          width:0.215rem;
+          height:0.125rem;
+          background:url("../img/console1_1.png") no-repeat center;
+          background-size:100% 100%;
+          &:hover{
+            background:url("../img/console1_1active.png") no-repeat center;
+            background-size:100% 100%;
+          }
+        }
+        .sub_menu2{
+          display: inline-block;
+          width:0.22rem;
+          height:0.135rem;
+          background:url("../img/console1_2.png") no-repeat center;
+          background-size:100% 100%;
+          &:hover{
+            background:url("../img/console1_2active.png") no-repeat center;
+            background-size:100% 100%;
+          }
+        }
+      }
+    }
+  }
+  #dock-container li.console_2{
+    .sub_menuBox{
+      .sub_menu{
+        width: 1.8rem;
+        height:1.3rem;
+        top:-1.3rem;
+        margin-left:-0.9rem;
+        div{
+          width:1.6rem;
+          height:0.9rem;
+          margin:0 auto;
+          position: relative;
+          top:0.08rem;
+          background:url("../img/mapdemo.jpg") no-repeat center;
+          background-size:cover;
+        }
+      }
+    }
   }
 
   #dock-container li img {
@@ -1406,16 +1570,20 @@
     height:0.67rem;
   }
   #dock-container li:hover{
-    img{
+    .sub_menuBox{
       -webkit-transform: scale(2);
-      /*margin: 0 2em;*/
+      .sub_menu{
+        display: block;
+      }
     }
+    /*img{*/
+      /*-webkit-transform: scale(2);*/
+    /*}*/
   }
   #dock-container li:hover + li
  {
     img{
       -webkit-transform: scale(1.5);
-      /*margin: 0 1.5em;*/
     }
   }
 
