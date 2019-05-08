@@ -404,7 +404,7 @@
         bounds: null,
         polyline: {
           latlngs: [],
-          color: '#017AFF',
+          color: '#d7ff18',
         },
         latlngs: [[28.966173, 118.84945, 0.7], [28.966173, 118.84945, 0.5]],
         heatPoints: [
@@ -1596,25 +1596,24 @@
       position: absolute;
       top: 0.9rem;
       left: 0.2rem;
-      width: 0.5rem;
-      height: 0.5rem;
-      background: #FFFFFF;
+      width: 0.8rem;
+      height: 0.8rem;
+      background: lightgreen;
       box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.50);
       border-radius: 0.1rem;
-      border: 3px solid #037aff;
+      /*border: 2px solid #037aff;*/
       cursor: pointer;
       z-index: 999;
 
       i {
-        position: absolute;
-        width: 0.35rem;
-        height: 0.36rem;
+        /*position: absolute;*/
+        display: block;
+        width: 100%;
+        height: 100%;
         background: url("../img/alarm.gif") no-repeat center;
-        background-size: 140% 140%;
-        top: 50%;
-        left: 50%;
-        margin-top: -0.18rem;
-        margin-left: -0.17rem;
+        background-size: 120% 120%;
+        /*top: 50%;*/
+        /*left: 50%;*/
       }
     }
 
