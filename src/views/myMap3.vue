@@ -323,10 +323,10 @@
           <div class="sub_menuBox">
             <div class="sub_menu">
               <div>
-                <i class="sub_menu1"></i><i class="sub_menu2"></i>
+                <i class="sub_menu1" @click="showDevelop(submenu_allInfo[0])"></i><i class="sub_menu2" @click="showDevelop(submenu_allInfo[1])"></i>
               </div>
             </div>
-            <img @click="showDevelop" src="../img/manage.png">
+            <img src="../img/manage.png">
           </div>
           <!--<span>登记管理</span>-->
         </li>
@@ -367,10 +367,10 @@
           <div class="sub_menuBox">
             <div class="sub_menu">
               <div>
-                <i class="sub_menu1"></i><i class="sub_menu2"></i><i class="sub_menu3"></i>
+                <i class="sub_menu1" @click="showDevelop(submenu_allInfo[2])"></i><i class="sub_menu2" @click="showDevelop(submenu_allInfo[3])"></i><i class="sub_menu3" @click="showDevelop(submenu_allInfo[4])"></i>
               </div>
             </div>
-            <img @click="showDevelop" src="../img/accident.png">
+            <img src="../img/accident.png">
           </div>
         </li>
         <li class="console_6">
@@ -380,7 +380,7 @@
                 <b>数据统计</b>
               </div>
             </div>
-            <img  @click="showDevelop" src="../img/datas.png">
+            <img  @click="showDevelop(submenu_allInfo[5])" src="../img/datas.png">
           </div>
           <!--<span>数据统计</span>-->
         </li>
@@ -393,7 +393,7 @@
       <div class="close_imgBG" @click="close_img"><-</div>
     </div>
     <!--正在开发中-->
-    <developing v-show="showDeveloping" @closeDevelop="closeDevelop" class="developing"></developing>
+    <developing v-show="showDeveloping" @closeDevelop="closeDevelop" class="developing" :submenu_dialog="submenu_dialog"></developing>
 
   </div>
 </template>
@@ -430,6 +430,26 @@
     },
     data() {
       return {
+        submenu_allInfo:[{
+          title:'车辆登记管理',
+          content:'车主信息录入,车辆信息录入，拍照登记发放，车辆人员照片录入，购车地点，时间等相关 信息录入，实现人、车 、牌一一绑定，作为非机动车管理的基础数据'
+        },{
+          title:'车辆注销管理',
+          content:'车辆注销报废管理,实现报废注销车辆有据可查，同时可以审查旧电瓶的回收，实现车辆完整生命周期管理'
+        },{
+          title:'事故处理',
+          content:'事故信息上报，包括事故简报，车主信息，事故现场照片，事故处理结果'
+        },{
+          title:'远程出警',
+          content:'小微事故远程处理，快速缓解交通压力'
+        },{
+          title:'三方通话',
+          content:'构建事故方、交警和包厢三方实时沟通交流平台'
+        },{
+          title:'数据统计',
+          content:'可以对非机动车违章违法信息，非机动车行驶上路信息，事故信息等进行数据统计，可出定制化年度报表。同时基站采集的数据、案件数据、车辆数据、驾驶人数据、城市基础设施等数据进行关联分析统计'
+        }],
+        submenu_dialog:{},
         logout_show:false,
         fromInfoList:0, //判断是否从车辆列表页面过来的
         showDeveloping:false,
@@ -715,8 +735,9 @@
       closeDevelop(){
         this.showDeveloping = false;
       },
-      showDevelop(){
+      showDevelop(detail){
         this.showDeveloping = true;
+        this.submenu_dialog = detail;
       },
       showBreak(){
         this.infoListShow = true;
