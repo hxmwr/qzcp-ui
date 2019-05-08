@@ -55,3 +55,17 @@ export const getEllegalEvents = (data) => {
   return axios.get(`${base}/illegal-events`, {params:data})
 };
 
+//登录
+export const toLogin = (data)=>{
+  return axios.post(`${base}/user/login`,data);
+};
+
+//验证登录
+export const checklogin = (data)=>{
+  return axios.get(`${base}/user/is-login`,{params:data});
+};
+
+//登出
+export const toLogout = (data)=>{
+  return axios.get(`${base}/user/logout`,{params:data});
+};

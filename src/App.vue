@@ -41,11 +41,9 @@ export default {
       }
     }
   }
-  .popImgWrap{
-    /*width:11.9rem;*/
-    /*height:6.68rem;*/
-    /*img{*/
-      /*width:100%;*/
-    /*}*/
+  .el-message{
+    .el-message__icon{
+      font-size:0.2rem;
+    }
   }
 </style>
