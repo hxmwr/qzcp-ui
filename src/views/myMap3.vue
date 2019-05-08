@@ -372,6 +372,7 @@
     },
     data() {
       return {
+        fromInfoList:0, //判断是否从车辆列表页面过来的
         showDeveloping:false,
         jumpBreak:2,
         showVideoMonitor:false,
@@ -396,8 +397,8 @@
         dufaultMarkIcon: null,
         customMarkIcon: null,
         bycleIcon: null,
-        url: 'http://' + location.host.split(':')[0] + ':4040/map/{z}/{x}/{y}.png',
-        // url: 'http://172.16.0.34:4040/map/{z}/{x}/{y}.png',
+        // url: 'http://' + location.host.split(':')[0] + ':4040/map/{z}/{x}/{y}.png',
+        url: 'http://172.16.0.34:4040/map/{z}/{x}/{y}.png',
         center: [28.966173, 118.84945],
         zoom: 15,
         bounds: null,
@@ -679,7 +680,7 @@
       },
       getPlateNo() {
         let temp = [];
-        getInfoList().then(refs => {
+        getInfoList({offset:0, limit:10000}).then(refs => {
           refs.data.result.forEach(e => {
             temp.push({id: e.id, value: e.plate_no});
           });
@@ -693,6 +694,8 @@
         this.showMobileDialog = false;
         this.infoListShow = false;
         this.selectDialog = 1;
+        this.fromInfoList = 1; //从车辆列表过来的
+        this.bycleOptionSelect = data.plate_no;
         this.getAllTracks(data,'history');
         searchInfo({"key_word": data.plate_no}).then(refs => {
           this.detailMobileInfo = refs.data.profile;
@@ -702,6 +705,7 @@
       },
       closeInfoList() {
         this.infoListShow = false;
+
       },
       //车辆信息列表弹窗
       showInfoList() {
@@ -746,6 +750,7 @@
         this.showTrack = false;
         this.showAlarmDialog = false;
         this.selectDialog = 0;
+        this.fromInfoList = 0;
         if (!this.hasShowTrack) {
           this.getAllTracks(data,'alarm');
         } else {
@@ -778,6 +783,9 @@
           const real_latlngs = [[], [28.958532, 118.850663], [28.966163,118.84944], [28.977356,118.849815], [28.973611,118.849643], [28.958532,118.850663]]
           let station_lnglats = this.base_stations.map(e => ({lat:real_latlngs[e.id][0], lng:real_latlngs[e.id][1], id:e.id}))
           // let station_lnglats2 = station_lnglats.map(e => ({lat: e[0], lng: e[1]}))
+          if(type=='history'){
+            this.trackAnim_show = true;
+          }
           if (refs.data.result.length > 0) {
             this.bycleOptionSelect = refs.data.result[0].plate_no;
             this.noTrackHistory = false;
@@ -832,9 +840,7 @@
             //  console.log('dist:',dist);
             //  let testDistTime = new Date(this.testSpeed[1].time).getTime() - new Date(this.testSpeed[0].time).getTime();
             //   this.testSpeedArea = (dist*1000 / (testDistTime/1000)).toFixed(3);
-            if(type!='alarm'){
-              this.trackAnim_show = true;
-            }
+
             this.speedArea = [];
             if (pointSpeed.length > 1) {
               for (let i = 0; i < pointSpeed.length - 1; i++) {
@@ -928,10 +934,16 @@
         //关闭轨迹
         this.selectTimeArea = '';
         this.searchInputVal = '';
-        this.showTrack = true;
-        this.hasShowTrack = false;
         this.polyline.latlngs = [];
         this.trackAnim_show = false;
+        if(this.fromInfoList == 1){
+          this.infoListShow = true;
+          this.showTrack = true;
+          this.hasShowTrack = false;
+        }else{
+          this.showTrack = true;
+          this.hasShowTrack = false;
+        }
       },
       hiddenDialog() {
         this.showAlarmDialog = false;
@@ -960,6 +972,7 @@
             console.log(refs);
             this.showMobileDialog = true;
             this.detailMobileInfo = refs.data.profile;
+            this.fromInfoList = 0;
           }).catch(err => {
             console.log(err);
           });
