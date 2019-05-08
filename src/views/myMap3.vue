@@ -396,8 +396,8 @@
         dufaultMarkIcon: null,
         customMarkIcon: null,
         bycleIcon: null,
-        url: 'http://' + location.host.split(':')[0] + ':4040/map/{z}/{x}/{y}.png',
-        // url: 'http://172.16.0.34:4040/map/{z}/{x}/{y}.png',
+        // url: 'http://' + location.host.split(':')[0] + ':4040/map/{z}/{x}/{y}.png',
+        url: 'http://172.16.0.34:4040/map/{z}/{x}/{y}.png',
         center: [28.966173, 118.84945],
         zoom: 15,
         bounds: null,
@@ -778,6 +778,9 @@
           const real_latlngs = [[], [28.958532, 118.850663], [28.966163,118.84944], [28.977356,118.849815], [28.973611,118.849643], [28.958532,118.850663]]
           let station_lnglats = this.base_stations.map(e => ({lat:real_latlngs[e.id][0], lng:real_latlngs[e.id][1], id:e.id}))
           // let station_lnglats2 = station_lnglats.map(e => ({lat: e[0], lng: e[1]}))
+          if(type=='history'){
+            this.trackAnim_show = true;
+          }
           if (refs.data.result.length > 0) {
             this.bycleOptionSelect = refs.data.result[0].plate_no;
             this.noTrackHistory = false;
@@ -832,9 +835,7 @@
             //  console.log('dist:',dist);
             //  let testDistTime = new Date(this.testSpeed[1].time).getTime() - new Date(this.testSpeed[0].time).getTime();
             //   this.testSpeedArea = (dist*1000 / (testDistTime/1000)).toFixed(3);
-            if(type!='alarm'){
-              this.trackAnim_show = true;
-            }
+
             this.speedArea = [];
             if (pointSpeed.length > 1) {
               for (let i = 0; i < pointSpeed.length - 1; i++) {
