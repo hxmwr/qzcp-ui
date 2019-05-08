@@ -1601,6 +1601,7 @@
       background: #FFFFFF;
       box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.50);
       border-radius: 0.1rem;
+      border: 3px solid #037aff;
       cursor: pointer;
       z-index: 999;
 
