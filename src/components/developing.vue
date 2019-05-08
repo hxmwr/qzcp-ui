@@ -1,9 +1,9 @@
 <template>
     <div class="popDialog">
-      <el-dialog  :visible.sync="dialogVisible"
+      <el-dialog  :visible.sync="dialogVisible" :title="submenu_dialog.title"
                   :close-on-click-modal="false" :modal-append-to-body="false" :show-close="false">
         <div class="close_btn" @click="closeDialog"><img src="../img/closeBtn.png" alt=""></div>
-        <div class="content">功能正在开发中,敬请期待~</div>
+        <div class="content">{{submenu_dialog.content}}</div>
       </el-dialog>
     </div>
 </template>
@@ -11,6 +11,7 @@
 <script>
     export default {
       name: "developing",
+      props:['submenu_dialog'],
       data(){
           return{
             dialogVisible:true
@@ -38,7 +39,7 @@
           top:5px;
         }
         .content{
-          font-size:25px;
+          font-size:20px;
           padding-bottom:25px;
         }
       }
