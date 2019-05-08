@@ -464,7 +464,7 @@
       const me = this;
       // this.dufaultMarkIcon = new L.Icon.Default();
       this.dufaultMarkIcon = L.icon({
-        iconUrl: '../../static/radio.gif',
+        iconUrl: '../../static/bs.gif',
         iconSize: [25, 45.8],
         iconAnchor: [12, 41],
         popupAnchor: [1, -34],
