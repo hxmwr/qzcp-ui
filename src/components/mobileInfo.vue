@@ -27,9 +27,9 @@
             注册地：<span>柯城区</span>
           </div>
           <div class="split_line"></div>
-          <div>
-            待处理违法: <span>共计4次违法记录</span> <button class="show_btn">查看详情</button>
-          </div>
+          <!--<div>-->
+            <!--待处理违法: <span>共计4次违法记录</span> <button class="show_btn">查看详情</button>-->
+          <!--</div>-->
           <div class="mobile_infoTime">
             <div class="mobile_infoTitle">轨迹查询:</div>
             <div class="mobile_dataWrap">

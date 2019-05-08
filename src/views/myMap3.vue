@@ -679,7 +679,7 @@
       },
       getPlateNo() {
         let temp = [];
-        getInfoList().then(refs => {
+        getInfoList({offset:0, limit:10000}).then(refs => {
           refs.data.result.forEach(e => {
             temp.push({id: e.id, value: e.plate_no});
           });
