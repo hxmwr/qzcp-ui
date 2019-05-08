@@ -1434,6 +1434,7 @@
     font-weight: bold;
     .sub_menuBox{
       -webkit-transition: all 0.3s;
+      -webkit-transform-origin: 50% 100%;
       position:relative;
       .sub_menu{
         display: none;
