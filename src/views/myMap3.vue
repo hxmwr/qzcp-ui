@@ -334,9 +334,10 @@
           <div class="sub_menuBox">
             <div class="sub_menu">
               <div>
+                <b>道路实况</b>
               </div>
             </div>
-            <img @click="showDevelop" src="../img/road.png">
+            <img @click="showDevelop({title: '道路实况'})" src="../img/road.png">
           </div>
           <!--<span>即时路况</span>-->
         </li>
@@ -1540,18 +1541,14 @@
   #dock-container li.console_2{
     .sub_menuBox{
       .sub_menu{
-        width: 1.8rem;
-        height:1.3rem;
-        top:-1.3rem;
-        margin-left:-0.9rem;
         div{
-          width:1.6rem;
-          height:0.9rem;
-          margin:0 auto;
-          position: relative;
-          top:0.08rem;
-          background:url("../img/mapdemo.jpg") no-repeat center;
-          background-size:cover;
+          /*width:1.6rem;*/
+          /*height:0.9rem;*/
+          /*margin:0 auto;*/
+          /*position: relative;*/
+          /*top:0.08rem;*/
+          /*background:url("../img/mapdemo.jpg") no-repeat center;*/
+          /*background-size:cover;*/
         }
       }
     }

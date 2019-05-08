@@ -3,7 +3,8 @@
       <el-dialog  :visible.sync="dialogVisible" :title="submenu_dialog.title"
                   :close-on-click-modal="false" :modal-append-to-body="false" :show-close="false">
         <div class="close_btn" @click="closeDialog"><img src="../img/closeBtn.png" alt=""></div>
-        <div class="content">{{submenu_dialog.content}}</div>
+        <div class="content">{{submenu_dialog.content}}<img v-if="!submenu_dialog.content" style="width: 100%;" src="../img/mapdemo.jpg" />
+        </div>
       </el-dialog>
     </div>
 </template>
