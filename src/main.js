@@ -20,6 +20,7 @@ import LMovingMarker from 'vue2-leaflet-movingmarker'
 import { Icon } from 'leaflet'
 
 import 'leaflet/dist/leaflet.css'
+import {checklogin} from './api/remConfig'
 
 Vue.component('l-map', LMap);
 Vue.component('l-tile-layer', LTileLayer);
@@ -40,6 +41,27 @@ Icon.Default.mergeOptions({
 remconfig();//'rem'转换
 window.addEventListener('resize',function(){
   remconfig();
+});
+
+router.beforeEach((to, from,next)=>{
+  const nextRoute = ['myMap3'];
+  if(nextRoute.indexOf(to.name)>=0){
+    checklogin().then(refs=>{
+      if(refs.data==1){
+        //登录状态1:已登录 0未登录
+        next();
+      }else{
+        //未登录状态
+        // console.log('ddd');
+        router.push({name: 'login'})
+      }
+    }).catch(err=>{
+      console.log(err);
+      router.push({name: 'login'})
+    });
+  }else{
+    next();
+  }
 });
 
 /* eslint-disable no-new */

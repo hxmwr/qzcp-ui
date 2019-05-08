@@ -256,6 +256,20 @@
       </div>
     </div>
 
+    <!--退出登录-->
+    <div class="logout" @click="toLogout"></div>
+    <div class="popDialog logoutDialog" v-if="logout_show">
+      <el-dialog :visible.sync="logout_show" :close-on-click-modal="false" :modal-append-to-body="false" :show-close="false">
+        <div class="close_btn" @click="cancelLogout"><img src="../img/closeBtn.png" alt=""></div>
+        <div>
+          是否确认退出系统？
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="confirmLogout">确 定</el-button>
+          <el-button @click="cancelLogout">取 消</el-button>
+        </span>
+      </el-dialog>
+    </div>
     <!--告警详情弹窗-->
     <alarmDialog v-if="showAlarmDialog" @closeDia="hiddenDialog" @toshowTrack="toShowTrack" :detailAlarm="detailAlarm"
                  :detailType="detailType"></alarmDialog>
@@ -338,6 +352,7 @@
     </div>
     <!--正在开发中-->
     <developing v-show="showDeveloping" @closeDevelop="closeDevelop" class="developing"></developing>
+
   </div>
 </template>
 
@@ -353,7 +368,8 @@
     searchInfo,
     getTrackByTime,
     getInfoList,
-    getPoints
+    getPoints,
+    toLogout
   } from "../api/remConfig";
   import {gen_mock_event} from '../data/accident-data'
   import {gen_mock_alert, gen_alert_desc} from '../data/alarm-data'
@@ -372,6 +388,7 @@
     },
     data() {
       return {
+        logout_show:false,
         fromInfoList:0, //判断是否从车辆列表页面过来的
         showDeveloping:false,
         jumpBreak:2,
@@ -634,6 +651,25 @@
       clearInterval(this.timeInterval)
     },
     methods: {
+      confirmLogout(){
+        //确认登出
+        toLogout().then(refs=>{
+          console.log(refs);
+          if(refs.data=='ok'){
+            this.logout_show = false;
+            this.$router.push('/');
+          }
+        }).catch(err=>{
+          console.log(err);
+        })
+      },
+      cancelLogout(){
+        //取消登出
+        this.logout_show = false;
+      },
+      toLogout(){
+        this.logout_show = true;
+      },
       closeDevelop(){
         this.showDeveloping = false;
       },
@@ -1265,6 +1301,29 @@
 </script>
 
 <style scoped lang="scss">
+  @import '~@/scss/dialog.scss';
+  .logoutDialog /deep/ .el-dialog{
+      margin-top:35vh !important;
+     .el-dialog__header{
+       height:40px;
+       line-height: 40px;
+     }
+     .el-dialog__body{
+       div{
+         font-size:20px;
+       }
+       .close_btn{
+         top:2px;
+       }
+     }
+     .el-dialog__footer{
+       display: flex;
+       justify-content: flex-end;
+       .dialog-footer{
+         font-size:14px;
+       }
+     }
+  }
   .active_history_record {
     -webkit-border-radius: 0px!important;
     -moz-border-radius: 0px!important;
@@ -1492,13 +1551,24 @@
       width: 100%;
       height: 100vh;
     }
-
     .infoListWrap {
       position: relative;
-      z-index: 1000;
+      z-index: 1001;
     }
     .developing{
+      z-index: 1001;
+    }
+    /*退出登录*/
+    .logout{
+      position: fixed;
+      width:0.41rem;
+      height:0.42rem;
+      background:url("../img/logout.png") no-repeat center;
+      background-size:100% 100%;
+      bottom:0.15rem;
+      right:0.2rem;
       z-index: 1000;
+      cursor: pointer;
     }
     /*顶部信息*/
     .map_top {
