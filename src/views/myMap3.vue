@@ -948,6 +948,7 @@
       hiddenDialog() {
         this.showAlarmDialog = false;
         this.hasShowTrack = false;
+        this.polyline.latlngs = [];
         this.trackAnim_show = false;
       },
       hiddenMobileDialog() {
