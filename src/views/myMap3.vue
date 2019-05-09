@@ -48,7 +48,7 @@
     </l-map>
     <!--顶部-->
     <div class="map_top flex flex_center">
-      <i class="logo"></i><span>衢州市非机动车"芯车牌"管理系统</span>
+      <i class="logo"></i><span>衢州市“芯城市”智慧物联-非机动车场景演示系统</span>
       <!--搜索框-->
       <div class="map_searchWrap" v-if="false"><i></i></div>
       <!--展开的搜索框-->
@@ -87,8 +87,8 @@
             <div class="map_alarms" v-for="(item,key) in alarmData" :key="item.id">
               <!--左边信息-->
               <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}">
-                <div class="left alarm_time"><span>{{item.time}}</span><i></i></div>
-                <div class="right alarm_con" @click="openAlarmDialog(item,'1')">
+                <div class="left alarm_time"><span>{{item.time}}</span><i :class="item.category == 2?'car':'bicycle'"></i></div>
+                <div class="right alarm_con":style="{background: item.type=='过车'?'':'#ffc107'}" @click="openAlarmDialog(item,'1')">
                   <i></i>
                   <div>车牌号:{{item.plate_no}}</div>
                   <div>基站:QZRF{{('' + item.device_id).padStart(5, '0')}}</div>
@@ -97,8 +97,8 @@
               </div>
               <!--右边信息-->
               <div class="alarm_info alarm_right" :class="{showLeft:item.id%2==0}">
-                <div class="right alarm_time"><i></i><span>{{item.time}}</span></div>
-                <div class="left alarm_con" @click="openAlarmDialog(item,'1')">
+                <div class="right alarm_time"><i :class="item.category == 2?'car':'bicycle'"></i><span>{{item.time}}</span></div>
+                <div class="left alarm_con":style="{background: item.type=='过车'?'':'#ffc107'}" @click="openAlarmDialog(item,'1')">
                   <i></i>
                   <div>车牌号:{{item.plate_no}}</div>
                   <div>基站:QZRF{{(item.device_id + '').padStart(5, '0')}}</div>
@@ -133,7 +133,7 @@
 
               <div class="alarm_info alarm_left" :class="{showLeft:item.id%2==1}">
                 <div class="left alarm_time"><span>{{item.time}}</span><i></i></div>
-                <div class="right alarm_con" @click="openAlarmDialog(item,'2')">
+                <div class="right alarm_con" :style="{background: item.type=='过车'?'#333':'#ffc107'}" @click="openAlarmDialog(item,'2')">
                   <i></i>
                   <div>车牌号:{{item.plate_no}}</div>
                   <div>基站:{{item.device_id}}</div>
@@ -143,7 +143,7 @@
               <!--右边信息-->
               <div class="alarm_info alarm_right" :class="{showLeft:item.id%2==0}">
                 <div class="right alarm_time"><i></i><span>{{item.time}}</span></div>
-                <div class="left alarm_con" @click="openAlarmDialog(item,'2')">
+                <div class="left alarm_con" :style="{background: item.type=='过车'?'#333':'#ffc107'}" @click="openAlarmDialog(item,'2')">
                   <i></i>
                   <div>车牌号:{{item.plate_no}}</div>
                   <div>基站:{{item.device_id}}</div>
@@ -477,8 +477,8 @@
         dufaultMarkIcon: null,
         customMarkIcon: null,
         bycleIcon: null,
-        url: 'http://' + location.host.split(':')[0] + ':4040/map/{z}/{x}/{y}.png',
-        // url: 'http://172.16.0.34:4040/map/{z}/{x}/{y}.png',
+        // url: 'http://' + location.host.split(':')[0] + ':4040/map/{z}/{x}/{y}.png',
+        url: 'http://172.16.0.34:4040/map/{z}/{x}/{y}.png',
         center: [28.966173, 118.84945],
         zoom: 15,
         bounds: null,
@@ -602,7 +602,8 @@
               vehicle_id: e.vehicle_id,
               location: ['', '白云中大道与南海路交叉(A点)', '白云中大道鹿鸣公园(B点)', '白云小区(C点)', '颐高电子(D点)', '白云中大道与南海路交叉(E点)'][e.device_id],
               type: e.entity_id == 5?'上机动车道行驶': '过车',
-              time: this.toTimeString(new Date(Date.parse(e.time) - 3600 * 8 * 1000))
+              time: this.toTimeString(new Date(Date.parse(e.time) - 3600 * 8 * 1000)),
+              category: [23].includes(e.vehicle_id)?2: null
             }
           });
           let i = 0;
@@ -676,7 +677,7 @@
       fn();
 
       // 告警滚动列表
-      var index2 = 0
+      var index2 = 1
       // var host = '172.16.0.34' + ':8889'
       var host = location.host.split(':')[0] + ':8889'
       var ws = new WebSocket('ws://' + host);
@@ -1986,6 +1987,11 @@
               background-size: 100% 100%;
               vertical-align: middle;
             }
+            i.car {
+              background: url("../img/vehicle-2.png") no-repeat center;
+              -webkit-background-size: 100%;
+              background-size: 100%;
+            }
           }
 
           .alarm_con {
@@ -2012,6 +2018,7 @@
               top: 50%;
               margin-top: -0.07rem;
             }
+
 
             div {
               font-size: 0.14rem;
@@ -2066,6 +2073,11 @@
               background: url("../img/mobile_right.png") no-repeat center;
               background-size: 100% 100%;
               margin-right: 0.1rem;
+            }
+            i.car {
+              background: url("../img/vehicle-2.png") no-repeat center;
+              -webkit-background-size: 100%;
+              background-size: 100%;
             }
           }
         }
