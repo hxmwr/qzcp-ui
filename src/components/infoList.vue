@@ -5,7 +5,7 @@
         :visible.sync="dialogVisible"
         :close-on-click-modal="false" :modal-append-to-body="false" :show-close="false">
         <div slot="title" class="dialogTitle">
-          <i class="logo"></i><span>衢州市非机动车"芯车牌"管理系统</span>
+          <i class="logo"></i><span>衢州市“芯城市”智慧物联-非机动车场景演示系统</span>
         </div>
         <div class="close_btn" @click="closeDialog"><img src="../img/closeBtn.png" alt=""></div>
         <div>

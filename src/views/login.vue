@@ -1,7 +1,7 @@
 <template>
     <div class="loginWrap">
       <div class="login_box">
-        <div class="logo_black"><i></i><span>衢州市非机动车"芯车牌"管理系统</span></div>
+        <div class="logo_black"><i></i><span>衢州市“芯城市”智慧物联-非机动车场景演示系统</span></div>
         <div>
           <el-form :model="loginData" :rules="loginDataRule" ref="loginRef">
             <el-form-item prop="username">
@@ -97,12 +97,12 @@
     justify-content: center;
     align-items: center;
     .login_box{
-      width:5.02rem;
-      height:3.1rem;
+      width:5.4rem;
+      height:3.2rem;
       background:#fff;
       border-radius: 0.1rem;
       box-sizing: border-box;
-      padding:0.2rem 0 0;
+      padding:0.3rem 0 0;
       .logo_black{
         margin-bottom:0.3rem;
         display: flex;
