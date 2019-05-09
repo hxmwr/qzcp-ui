@@ -82,6 +82,11 @@
         <!--</div>-->
         <div class="map_alarmLineWrap">
           <!--<div class="map_alarmsWrap" >-->
+          <div class="scroll-bar-wrapper">
+
+            <div class="scroll-bar-handle"></div>
+            <div class="scroll-bar"></div>
+          </div>
           <div class="map_alarmsWrap" :class="{animation_start:showAnimation}"
                :style="{transform: 'translateY(' + offset2 + 'rem)', transition: transition1?'all .2s':'none'}">
             <div class="map_alarms" v-for="(item,key) in alarmData" :key="item.id">
@@ -541,6 +546,54 @@
       }
     },
     mounted() {
+      const scrollBarHandle = document.querySelector('.scroll-bar-handle');
+      let isMouseDown = false;
+      let scrolling = false;
+      let scrollSpeed = 0;
+      const that = this;
+      function doScrollAnimation() {
+        let remBase = parseFloat(document.documentElement.style.fontSize)
+        let h = document.querySelector('.map_alarmsWrap').clientHeight;
+        if (scrolling && isMouseDown) {
+          let currentOffset = that.offset2 * remBase
+          currentOffset += (-scrollSpeed / 10);
+          if (currentOffset < (remBase * -4.2)) {
+            currentOffset = (remBase * -4.2)
+          } else if (currentOffset > (remBase * -4.2 + h)) {
+            currentOffset = (remBase * -4.2 + h)
+          }
+          that.offset2 = currentOffset / parseFloat(document.documentElement.style.fontSize);
+
+          window.requestAnimationFrame(doScrollAnimation)
+        }
+      }
+
+      document.querySelector('.scroll-bar').addEventListener('mousedown', e =>{
+        let h = e.target.clientHeight;
+        let offsetY = e.offsetY;
+        let handleOffsetY = offsetY - h/2;
+        scrollBarHandle.style.transform = 'translateY(' + handleOffsetY +'px)';
+        isMouseDown = true;
+        scrolling = true;
+        scrollSpeed = handleOffsetY;
+        window.requestAnimationFrame(doScrollAnimation)
+      });
+
+      document.querySelector('.scroll-bar').addEventListener('mousemove', e =>{
+        if (!isMouseDown) return;
+        let h = e.target.clientHeight;
+        let offsetY = e.offsetY;
+        let handleOffsetY = offsetY - h/2;
+        console.log(handleOffsetY);
+        scrollBarHandle.style.transform = 'translateY(' + handleOffsetY +'px)';
+        scrollSpeed = handleOffsetY;
+      });
+
+      document.documentElement.addEventListener('mouseup', e => {
+        isMouseDown = false;
+        scrolling = false;
+        scrollBarHandle.style.transform = 'none';
+      });
       const me = this;
       // this.dufaultMarkIcon = new L.Icon.Default();
       this.dufaultMarkIcon = L.icon({
@@ -1363,10 +1416,45 @@
       }
     }
   }
+
+
+
+
 </script>
 
 <style scoped lang="scss">
   @import '~@/scss/dialog.scss';
+
+  .scroll-bar-wrapper {
+    visibility: hidden;
+    overflow: hidden;
+    position: absolute;
+    width: 13px;
+    top: 0;
+    right: 2px;
+    height: 4.1rem;
+    background: rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 2px;
+  }
+
+  .scroll-bar {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    opacity: 0;
+  }
+  .scroll-bar-handle {
+    width: 11px;
+    background: rgba(0, 0, 0, 0.3);
+    height: 30px;
+    border-radius: 4px;
+  }
+
   .logoutDialog /deep/ .el-dialog{
       margin-top:35vh !important;
      .el-dialog__header{
@@ -1918,6 +2006,14 @@
           /*background: #017AFF;*/
           /*left:2.3rem;top:0;bottom:0;*/
           /*}*/
+          .scroll-bar-wrapper {
+            /*visibility: visible;*/
+          }
+        }
+        .map_alarmLineWrap:hover {
+          .scroll-bar-wrapper {
+            visibility: visible;
+          }
         }
 
         .map_alarmsWrap {
