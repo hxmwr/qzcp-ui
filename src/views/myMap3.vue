@@ -656,7 +656,7 @@
               location: ['', '白云中大道与南海路交叉(A点)', '白云中大道鹿鸣公园(B点)', '白云小区(C点)', '颐高电子(D点)', '白云中大道与南海路交叉(E点)'][e.device_id],
               type: e.entity_id == 5?'上机动车道行驶': '过车',
               time: this.toTimeString(new Date(Date.parse(e.time) - 3600 * 8 * 1000)),
-              category: [23, 22].includes(e.vehicle_id)?2: null
+              category: [23, 22].includes(parseInt(e.vehicle_id))?2: null
             }
           });
           let i = 0;
