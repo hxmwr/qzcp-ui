@@ -13,7 +13,7 @@
                车牌号: <span>衢{{ detailAlarm.plate_no}}</span>
              </div>
              <div v-if="detailAlarm.velocity">
-               车辆速度：<span>{{ parseFloat(detailAlarm.velocity).toFixed(2) }}m/s</span>
+               车辆速度：<span>{{(parseFloat(detailAlarm.velocity) * 3600).toFixed(2) }}km/h</span>
              </div>
              <div>
                告警类型: <span>{{detailAlarm.type}}</span>
@@ -56,7 +56,6 @@
                <span>{{detailAlarm.description}}</span>
              </div>
            </div>
-
          </el-dialog>
        </div>
     </div>
@@ -85,12 +84,16 @@
         }
       },
       methods:{
+        getDateTimeString(date) {
+          let arr = date.toISOString().split('.')[0].split('T')
+          return arr[0] + ' ' + arr[1]
+        },
         closeDialog(){
           this.$emit('closeDia');
         },
         showTrackMap(){
           //点击查看轨迹，隐藏界面上所有元素
-          this.$emit('toshowTrack',{"vehicle_id":this.detailAlarm['vehicle_id'],"flag":1});
+          this.$emit('toshowTrack',{"vehicle_id":this.detailAlarm['vehicle_id'],"flag":1, "start_time": this.getDateTimeString(new Date((new Date).getTime() + 4 * 3600 * 1000))});
         }
       }
     }
