@@ -74,7 +74,6 @@
           }
       },
       mounted(){
-        console.log('shh');
         if(this.detailType==1){
           this.alarmCon = true;
           this.showTitle = '告警详情（衢'+this.detailAlarm['plate_no'] + '）';
